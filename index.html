@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CryptoAyuda AI Guardian | Protect Your Digital Assets</title>
+    <meta name="description" content="AI that protects your crypto from scams. Analyze wallets, tokens and crypto websites instantly using artificial intelligence.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+    <!-- PayPal SDK -->
+    <script src="https://www.paypal.com/sdk/js?client-id=AWn_Xn6_0m5-3wM31kC3lE71x3t1U883yH5D94D6K9-2B3484h-l4B1sD7M_m0W1-v609Z_b18E1h9s5&currency=USD"></script>
+</head>
+<body>
+    <div class="background-grid"></div>
+    <div class="particles" id="particles-container"></div>
+
+    <nav class="navbar">
+        <div class="container nav-container">
+            <a href="#" class="logo" data-route="home">
+                <i class="fa-solid fa-shield-halved"></i>
+                CryptoAyuda <span>AI</span>
+            </a>
+            <div class="nav-links">
+                <a href="#" class="nav-link" data-route="home">Home</a>
+                <a href="#" class="nav-link" data-route="tools">AI Tools</a>
+                <a href="#" class="nav-link" data-route="blog">Blog</a>
+                <a href="#" class="nav-link" data-route="pricing">Pricing</a>
+                <a href="#" class="nav-link" data-route="about">About</a>
+                <a href="#" class="nav-link" data-route="resources">Security Resources</a>
+                <button class="btn btn-outline nav-btn" id="nav-auth-btn" data-route="auth">Login</button>
+            </div>
+            <button class="mobile-menu-btn" id="mobile-menu-btn">
+                <i class="fa-solid fa-bars"></i>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Main Content Area for SPA Routing -->
+    <main id="app-content"></main>
+
+    <!-- Global Footer -->
+    <footer class="footer">
+        <div class="container footer-container">
+            <div class="footer-col brand-col">
+                <a href="#" class="logo footer-logo" data-route="home">
+                    <i class="fa-solid fa-shield-halved"></i>
+                    CryptoAyuda <span>AI</span>
+                </a>
+                <p class="footer-desc">The ultimate AI-powered cybersecurity guard for your crypto, NFTs, and DeFi investments. Stay secure.</p>
+                <div class="social-links">
+                    <a href="#"><i class="fa-brands fa-x-twitter"></i></a>
+                    <a href="#"><i class="fa-brands fa-discord"></i></a>
+                    <a href="#"><i class="fa-brands fa-telegram"></i></a>
+                    <a href="#"><i class="fa-brands fa-github"></i></a>
+                </div>
+            </div>
+            <div class="footer-col">
+                <h3>Product</h3>
+                <a href="#" data-route="tools">API Tools</a>
+                <a href="#" data-route="pricing">Pricing</a>
+                <a href="#">API Documentation</a>
+                <a href="#">Integrations</a>
+            </div>
+            <div class="footer-col">
+                <h3>Resources</h3>
+                <a href="#" data-route="blog">Blog</a>
+                <a href="#" data-route="resources">Security Guides</a>
+                <a href="#">Scam Database</a>
+                <a href="#">Help Center</a>
+            </div>
+            <div class="footer-col">
+                <h3>Company</h3>
+                <a href="#" data-route="about">About Us</a>
+                <a href="#">Terms of Service</a>
+                <a href="#">Privacy Policy</a>
+                <a href="#">Contact</a>
+            </div>
+        </div>
+        <div class="container copyright">
+            <p>&copy; 2026 CryptoAyuda AI Guardian. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- AI Chatbot Assistant Widget -->
+    <div class="chatbot-widget" id="chatbot-widget">
+        <button class="chatbot-toggle" id="chatbot-toggle">
+            <i class="fa-solid fa-robot"></i>
+        </button>
+        <div class="chatbot-window" id="chatbot-window">
+            <div class="chatbot-header">
+                <div class="ch-info">
+                    <i class="fa-solid fa-robot"></i>
+                    <div>
+                        <h4>AI Assistant</h4>
+                        <span class="status-indicator">Online</span>
+                    </div>
+                </div>
+                <button class="chatbot-close" id="chatbot-close"><i class="fa-solid fa-times"></i></button>
+            </div>
+            <div class="chatbot-messages" id="chatbot-messages">
+                <div class="message ai-message">
+                    <p>Hello! I'm your CryptoAyuda AI Assistant. How can I help you secure your assets today?</p>
+                    <div class="quick-questions">
+                        <button class="qq-btn">Is this token safe?</button>
+                        <button class="qq-btn">Is this wallet suspicious?</button>
+                        <button class="qq-btn">How to avoid rug pulls?</button>
+                    </div>
+                </div>
+            </div>
+            <div class="chatbot-input-area">
+                <input type="text" id="chatbot-input" placeholder="Ask about a token, wallet or site...">
+                <button id="chatbot-send"><i class="fa-solid fa-paper-plane"></i></button>
+            </div>
+        </div>
+    </div>
+
+    <script src="views.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
