@@ -26,9 +26,14 @@ app.use(express.json());
 app.use(express.static(path.join(__dirname)));
 
 // === Database Setup ===
-const db = new sqlite3.Database('./database.sqlite', (err) => {
+// Vercel Serverless functions have a read-only filesystem except for /tmp
+const dbPath = process.env.VERCEL || process.env.NODE_ENV === 'production' 
+    ? '/tmp/database.sqlite' 
+    : path.join(__dirname, 'database.sqlite');
+
+const db = new sqlite3.Database(dbPath, (err) => {
     if (err) console.error("Database connection error:", err.message);
-    else console.log("Connected to the SQLite database.");
+    else console.log(`Connected to the SQLite database at ${dbPath}`);
 });
 
 // Create tables
@@ -113,7 +118,7 @@ app.post('/api/orders', authenticateToken, async (req, res) => {
             amount: { currency_code: 'USD', value: price },
             description: `CryptoAyuda AI Guardian - ${planType.toUpperCase()} Plan`,
             payee: {
-                email_address: 'tbrcarabelli@gmail.com'
+                email_address: "tbrcarabelli@gmail.com"
             }
         }]
     });
@@ -342,7 +347,12 @@ app.get('/api/analyze/phishing', authenticateToken, async (req, res) => {
     }
 });
 
-// Restart the server implementation (Wait until next tool for PayPal)
-app.listen(PORT, () => {
-    console.log(`CryptoAyuda Backend Server running on http://localhost:${PORT}`);
-});
+// Export the app for Vercel Serverless Functions
+module.exports = app;
+
+// Only start the server if running locally (not imported as a module)
+if (require.main === module) {
+    app.listen(PORT, () => {
+        console.log(`CryptoAyuda Backend Server running on http://localhost:${PORT}`);
+    });
+}

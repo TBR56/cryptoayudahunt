@@ -5,15 +5,16 @@
 window.views = {
     home: () => `
         <section class="hero">
+            <div class="hero-glow"></div>
             <div class="container hero-container">
-                <div class="hero-content">
-                    <div class="badge">Enterprise-Grade Security</div>
-                    <h1 class="mb-3">Protect your crypto assets with <span class="text-gradient">Artificial Intelligence</span>.</h1>
-                    <p class="hero-sub">Analyze wallets, tokens and crypto websites instantly using artificial intelligence. Secure your digital assets before you transact.</p>
+                <div class="hero-content fade-in">
+                    <div class="badge"><i class="fa-solid fa-sparkles"></i> Advanced AI Neural Network</div>
+                    <h1>AI that protects your crypto from <span class="highlight">scams.</span></h1>
+                    <p class="hero-sub">Analyze wallets, tokens and crypto websites instantly using artificial-intelligence models trained on millions of malicious data points. Secure your digital wealth before you transact.</p>
                     
                     <div class="hero-interactive">
                         <div class="input-group">
-                            <i class="fa-solid fa-magnifying-glass"></i>
+                            <i class="fa-solid fa-bolt" style="color: var(--accent-vibrant);"></i>
                             <input type="text" id="hero-input" placeholder="Paste wallet address, token contract or website link...">
                         </div>
                         <div class="hero-buttons">
@@ -24,9 +25,9 @@ window.views = {
                         <div id="analysis-result-area" class="analysis-result-area" style="display: none;"></div>
                     </div>
                 </div>
-                <div class="hero-visual">
-                    <div class="cyber-shield">
-                        <i class="fa-solid fa-shield-halved"></i>
+                <div class="hero-visual fade-in" style="animation-delay: 0.2s;">
+                    <div class="cyber-shield position-relative">
+                        <i class="fa-solid fa-shield-cat"></i>
                         <div class="pulse-ring"></div>
                         <div class="pulse-ring delay-1"></div>
                     </div>
@@ -144,7 +145,7 @@ window.views = {
                         <p>Check any URL or dApp link against our global registry of malicious domains.</p>
                         <div class="tool-input-group mt-3">
                             <input type="text" class="custom-input tool-specific-input" placeholder="https://..." id="url-input" />
-                            <button class="btn btn-primary tool-demo-btn mt-3 w-100" data-tool="phishing" data-input="#url-input">Check URL</button>
+                            <button class="btn btn-outline tool-demo-btn" data-tool="phishing" data-input="#url-input">Check URL</button>
                         </div>
                         <div class="tool-result mt-4" style="display:none;"></div>
                     </div>
@@ -248,21 +249,7 @@ window.views = {
                         <li><i class="fa-solid fa-check"></i> AI Crypto Assistant access</li>
                         <li><i class="fa-solid fa-check"></i> API Access (1K requests)</li>
                     </ul>
-                    <div id="paypal-button-container-pro" class="mt-4"></div>
-                    <button class="btn btn-primary full-width" id="fake-pro-btn" style="display:none;">Upgrade to Pro</button>
-                </div>
-                
-                <div class="pricing-card" style="border-color: var(--accent-glow);">
-                    <div class="plan-name">Elite Plan</div>
-                    <div class="plan-price">$49<span>/mo</span></div>
-                    <p class="plan-desc">For institutional funds, DAOs, and crypto whales.</p>
-                    <ul class="plan-features">
-                        <li><i class="fa-solid fa-check"></i> <strong>Everything in Pro</strong></li>
-                        <li><i class="fa-solid fa-check"></i> Custom API Integrations</li>
-                        <li><i class="fa-solid fa-check"></i> 24/7 Priority Support</li>
-                        <li><i class="fa-solid fa-check"></i> Dedicated Account Manager</li>
-                    </ul>
-                    <div id="paypal-button-container-elite" class="mt-4"></div>
+                    <button class="btn btn-primary full-width">Upgrade to Pro</button>
                 </div>
 
             </div>
@@ -358,33 +345,47 @@ window.views = {
     `,
     
     auth: () => `
-        <section class="auth-section d-flex align-center justify-center" style="min-height: 80vh; padding-top: 100px;">
-            <div class="auth-box card-blur p-4 fade-in center" style="max-width: 420px; width: 100%; border-top: 2px solid var(--accent-glow); margin: 0 auto;">
-                <div class="auth-tabs d-flex justify-between mb-4" style="border-bottom: 1px solid var(--border-subtle); padding-bottom: 10px;">
-                    <button class="btn btn-ghost active w-50" id="tab-login">Login</button>
-                    <button class="btn btn-ghost w-50" id="tab-register">Register</button>
+        <section class="auth-section d-flex align-center justify-center p-y-2" style="min-height: 80vh; padding-top: 100px;">
+            <div class="auth-box fade-in" style="max-width: 440px; width: 100%; background: var(--surface-color); border: 1px solid rgba(255,255,255,0.08); border-radius: 24px; padding: 40px; box-shadow: var(--shadow-premium); backdrop-filter: var(--glass-blur);">
+                
+                <div style="text-align: center; margin-bottom: 30px;">
+                    <i class="fa-solid fa-shield-cat" style="font-size: 2.5rem; color: var(--primary-color); text-shadow: 0 0 20px rgba(255,255,255,0.5); margin-bottom: 16px;"></i>
+                    <h2 style="font-size: 1.8rem; margin-bottom: 8px;">Welcome Back</h2>
+                    <p style="color: var(--secondary-color); font-size: 0.95rem;">Enter your credentials to access the AI dashboard.</p>
+                </div>
+
+                <div class="auth-tabs d-flex justify-between mb-4" style="background: rgba(0,0,0,0.3); padding: 5px; border-radius: 99px;">
+                    <button class="btn btn-ghost active w-50" id="tab-login" style="border-radius: 99px; padding: 10px;">Login</button>
+                    <button class="btn btn-ghost w-50" id="tab-register" style="border-radius: 99px; padding: 10px;">Register</button>
                 </div>
                 
                 <div id="login-form">
-                    <h3 class="mb-4">Welcome Back</h3>
-                    <div style="text-align: left;">
-                        <input type="email" id="login-email" class="custom-input w-100 mb-3" placeholder="Email Address">
-                        <input type="password" id="login-pass" class="custom-input w-100 mb-4" placeholder="Password">
+                    <div class="input-group" style="background: rgba(0,0,0,0.4); border-radius: 12px; margin-bottom: 16px;">
+                        <i class="fa-solid fa-envelope"></i>
+                        <input type="email" id="login-email" placeholder="Email Address" style="width: 100%;">
                     </div>
-                    <button class="btn btn-accent w-100" id="btn-login" style="padding: 14px;">Login to Dashboard</button>
+                    <div class="input-group" style="background: rgba(0,0,0,0.4); border-radius: 12px; margin-bottom: 24px;">
+                        <i class="fa-solid fa-lock"></i>
+                        <input type="password" id="login-pass" placeholder="Password" style="width: 100%;">
+                    </div>
+                    <button class="btn btn-primary w-100" id="btn-login" style="padding: 16px; font-size: 1.05rem;">Login to Dashboard <i class="fa-solid fa-arrow-right ml-2"></i></button>
                     <p class="text-medium mt-3 text-center" id="login-error" style="display:none;"></p>
                 </div>
 
                 <div id="register-form" style="display:none;">
-                    <h3 class="mb-4">Create Account</h3>
-                    <div style="text-align: left;">
-                        <input type="email" id="reg-email" class="custom-input w-100 mb-3" placeholder="Email Address">
-                        <input type="password" id="reg-pass" class="custom-input w-100 mb-4" placeholder="Password">
+                    <div class="input-group" style="background: rgba(0,0,0,0.4); border-radius: 12px; margin-bottom: 16px;">
+                        <i class="fa-solid fa-envelope"></i>
+                        <input type="email" id="reg-email" placeholder="Email Address" style="width: 100%;">
                     </div>
-                    <button class="btn btn-primary w-100" id="btn-register" style="padding: 14px;">Sign Up for Free</button>
+                    <div class="input-group" style="background: rgba(0,0,0,0.4); border-radius: 12px; margin-bottom: 24px;">
+                        <i class="fa-solid fa-lock"></i>
+                        <input type="password" id="reg-pass" placeholder="Password" style="width: 100%;">
+                    </div>
+                    <button class="btn btn-primary w-100" id="btn-register" style="padding: 16px; font-size: 1.05rem;">Create Account <i class="fa-solid fa-user-plus ml-2"></i></button>
                     <p class="text-medium mt-3 text-center" id="reg-error" style="display:none;"></p>
                     <p class="text-low mt-3 text-center" id="reg-success" style="display:none;"></p>
                 </div>
+
             </div>
         </section>
     `
