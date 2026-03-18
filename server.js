@@ -111,7 +111,10 @@ app.post('/api/orders', authenticateToken, async (req, res) => {
         intent: 'CAPTURE',
         purchase_units: [{
             amount: { currency_code: 'USD', value: price },
-            description: `CryptoAyuda AI Guardian - ${planType.toUpperCase()} Plan`
+            description: `CryptoAyuda AI Guardian - ${planType.toUpperCase()} Plan`,
+            payee: {
+                email_address: 'tbrcarabelli@gmail.com'
+            }
         }]
     });
 

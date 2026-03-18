@@ -7,8 +7,8 @@ window.views = {
         <section class="hero">
             <div class="container hero-container">
                 <div class="hero-content">
-                    <div class="badge">Advanced AI Neural Network</div>
-                    <h1>AI that protects your crypto from scams.</h1>
+                    <div class="badge">Enterprise-Grade Security</div>
+                    <h1 class="mb-3">Protect your crypto assets with <span class="text-gradient">Artificial Intelligence</span>.</h1>
                     <p class="hero-sub">Analyze wallets, tokens and crypto websites instantly using artificial intelligence. Secure your digital assets before you transact.</p>
                     
                     <div class="hero-interactive">
@@ -144,7 +144,7 @@ window.views = {
                         <p>Check any URL or dApp link against our global registry of malicious domains.</p>
                         <div class="tool-input-group mt-3">
                             <input type="text" class="custom-input tool-specific-input" placeholder="https://..." id="url-input" />
-                            <button class="btn btn-outline tool-demo-btn" data-tool="phishing" data-input="#url-input">Check URL</button>
+                            <button class="btn btn-primary tool-demo-btn mt-3 w-100" data-tool="phishing" data-input="#url-input">Check URL</button>
                         </div>
                         <div class="tool-result mt-4" style="display:none;"></div>
                     </div>
@@ -248,7 +248,21 @@ window.views = {
                         <li><i class="fa-solid fa-check"></i> AI Crypto Assistant access</li>
                         <li><i class="fa-solid fa-check"></i> API Access (1K requests)</li>
                     </ul>
-                    <button class="btn btn-primary full-width">Upgrade to Pro</button>
+                    <div id="paypal-button-container-pro" class="mt-4"></div>
+                    <button class="btn btn-primary full-width" id="fake-pro-btn" style="display:none;">Upgrade to Pro</button>
+                </div>
+                
+                <div class="pricing-card" style="border-color: var(--accent-glow);">
+                    <div class="plan-name">Elite Plan</div>
+                    <div class="plan-price">$49<span>/mo</span></div>
+                    <p class="plan-desc">For institutional funds, DAOs, and crypto whales.</p>
+                    <ul class="plan-features">
+                        <li><i class="fa-solid fa-check"></i> <strong>Everything in Pro</strong></li>
+                        <li><i class="fa-solid fa-check"></i> Custom API Integrations</li>
+                        <li><i class="fa-solid fa-check"></i> 24/7 Priority Support</li>
+                        <li><i class="fa-solid fa-check"></i> Dedicated Account Manager</li>
+                    </ul>
+                    <div id="paypal-button-container-elite" class="mt-4"></div>
                 </div>
 
             </div>
@@ -344,26 +358,30 @@ window.views = {
     `,
     
     auth: () => `
-        <section class="auth-section d-flex align-center justify-center p-y-2">
-            <div class="auth-box card-blur p-4 fade-in" style="max-width: 400px; width: 100%; border: 1px solid var(--accent-color);">
-                <div class="auth-tabs d-flex justify-between mb-4">
+        <section class="auth-section d-flex align-center justify-center" style="min-height: 80vh; padding-top: 100px;">
+            <div class="auth-box card-blur p-4 fade-in center" style="max-width: 420px; width: 100%; border-top: 2px solid var(--accent-glow); margin: 0 auto;">
+                <div class="auth-tabs d-flex justify-between mb-4" style="border-bottom: 1px solid var(--border-subtle); padding-bottom: 10px;">
                     <button class="btn btn-ghost active w-50" id="tab-login">Login</button>
                     <button class="btn btn-ghost w-50" id="tab-register">Register</button>
                 </div>
                 
                 <div id="login-form">
-                    <h3 class="mb-3">Welcome Back</h3>
-                    <input type="email" id="login-email" class="custom-input w-100 mb-3" placeholder="Email Address">
-                    <input type="password" id="login-pass" class="custom-input w-100 mb-3" placeholder="Password">
-                    <button class="btn btn-accent w-100" id="btn-login">Login to Dashboard</button>
+                    <h3 class="mb-4">Welcome Back</h3>
+                    <div style="text-align: left;">
+                        <input type="email" id="login-email" class="custom-input w-100 mb-3" placeholder="Email Address">
+                        <input type="password" id="login-pass" class="custom-input w-100 mb-4" placeholder="Password">
+                    </div>
+                    <button class="btn btn-accent w-100" id="btn-login" style="padding: 14px;">Login to Dashboard</button>
                     <p class="text-medium mt-3 text-center" id="login-error" style="display:none;"></p>
                 </div>
 
                 <div id="register-form" style="display:none;">
-                    <h3 class="mb-3">Create Account</h3>
-                    <input type="email" id="reg-email" class="custom-input w-100 mb-3" placeholder="Email Address">
-                    <input type="password" id="reg-pass" class="custom-input w-100 mb-3" placeholder="Password">
-                    <button class="btn btn-outline w-100" id="btn-register">Sign Up for Free</button>
+                    <h3 class="mb-4">Create Account</h3>
+                    <div style="text-align: left;">
+                        <input type="email" id="reg-email" class="custom-input w-100 mb-3" placeholder="Email Address">
+                        <input type="password" id="reg-pass" class="custom-input w-100 mb-4" placeholder="Password">
+                    </div>
+                    <button class="btn btn-primary w-100" id="btn-register" style="padding: 14px;">Sign Up for Free</button>
                     <p class="text-medium mt-3 text-center" id="reg-error" style="display:none;"></p>
                     <p class="text-low mt-3 text-center" id="reg-success" style="display:none;"></p>
                 </div>
