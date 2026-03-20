@@ -20,7 +20,24 @@ const paypalClient = new paypal.core.PayPalHttpClient(environment);
 
 app.use(cors());
 app.use(express.json());
-app.use(express.static(path.join(__dirname)));
+
+// Determine the project root for static files
+// On Vercel, __dirname points to .vercel/output — use VERCEL_ROOT or process.cwd()
+const STATIC_DIR = process.env.VERCEL
+    ? process.cwd()
+    : path.join(__dirname);
+
+app.use(express.static(STATIC_DIR));
+
+// Explicit root route (needed on Vercel)
+app.get(['/', /^\/(?!api)/], (req, res) => {
+    const file = path.join(STATIC_DIR, 'index.html');
+    if (fs.existsSync(file)) {
+        res.sendFile(file);
+    } else {
+        res.status(404).send('index.html not found. Check static dir: ' + STATIC_DIR);
+    }
+});
 
 // ============================================================
 // PURE JSON "DATABASE" — works on Vercel (no native modules)
@@ -362,6 +379,8 @@ app.get('/api/analyze/phishing', authenticateToken, async (req, res) => {
         res.status(500).json({ error: 'Failed to analyze URL' });
     }
 });
+
+// SPA catch-all placeholder — handled above by the regex route
 
 // Export for Vercel Serverless Functions
 module.exports = app;
