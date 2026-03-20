@@ -179,15 +179,22 @@ document.addEventListener('DOMContentLoaded', () => {
             // Generate AI Response
             setTimeout(() => {
                 thinkingNode.remove();
-                let reply = "I analyzed standard patterns, and this looks generally secure, but exercise caution. Never share your seed phrase.";
                 
                 const lower = text.toLowerCase();
-                if (lower.includes('token')) {
-                    reply = "I've checked the token contract. Liquidity appears locked for 6 months, and the contract is perfectly verified. Risk score: 24/100 (Low Risk).";
-                } else if (lower.includes('wallet')) {
-                    reply = "This wallet has interacted with known phishing contracts in the past 30 days. Exercise EXTREME caution. Risk score: 89/100 (High Risk).";
-                } else if (lower.includes('nft') || lower.includes('legit')) {
-                    reply = "The NFT contract has a hidden mint function that could dilute your assets. The team is anonymous. Risk score: 76/100 (Medium/High Risk).";
+                let reply = "I've analyzed your request against my current web3 threat database. Can you provide a specific address or URL for a deep audit?";
+                
+                if (lower.includes("hello") || lower.includes("hi")) {
+                    reply = "Hello! I am the AI Guardian Assistant. I'm monitoring real-time blockchain signals to keep your assets safe. How can I help you today?";
+                } else if (lower.includes("scam") || lower.includes("safe") || lower.includes("rug")) {
+                    reply = "Security is my priority. My neural network analyzes contract bytecode, liquidity locks, and holder distributions. I recommend using the 'Rug Pull Predictor' for a full scan.";
+                } else if (lower.includes("plan") || lower.includes("price") || lower.includes("premium")) {
+                    reply = "Our Pro and Elite plans offer unlimited real-time scanning and institutional API access. Professional traders use our Elite plan for sub-second threat detection.";
+                } else if (lower.includes("wallet") || lower.includes("address")) {
+                    reply = "I can scan any EVM-compatible wallet. I check for interactions with mixers like Tornado Cash and known phishing deployers. Use the Wallet Guardian tool above!";
+                } else if (lower.includes("hack") || lower.includes("drain")) {
+                    reply = "URGENT: If you suspect a drainer, revoke all approvals immediately using tools like Revoke.cash, then use our Wallet Guardian to see where funds are moving.";
+                } else if (lower.includes("token") || lower.includes("contract")) {
+                    reply = "I recommend checking the 'Honeypot' status and 'Tax' levels. High sell taxes (>10%) are often a sign of a slow rug pull. My rug predictor tool can check this for you.";
                 }
 
                 const finalAi = document.createElement('div');
@@ -228,12 +235,20 @@ function bindViewEvents(route) {
                 gate.innerHTML = `
                     <div class="plan-gate-inner">
                         <i class="fa-solid fa-lock" style="font-size:2rem;color:var(--accent-color);margin-bottom:12px;"></i>
-                        <h3>Upgrade to Run Scans</h3>
-                        <p>Your current plan is <strong>Free</strong>. Upgrade to <strong>Pro</strong> or <strong>Elite</strong> to use the live AI scanners.</p>
-                        <button class="btn btn-primary" onclick="navigateTo('pricing')" style="margin-top:16px;">See Plans &amp; Upgrade</button>
+                        <h3>Limited Free Access</h3>
+                        <p>Your current plan is <strong>Free</strong>. You have <strong>3 daily scans</strong> across all tools.</p>
+                        <button class="btn btn-primary" onclick="navigateTo('pricing')" style="margin-top:16px;">Get Unlimited Scans</button>
                     </div>
                 `;
                 toolsSection.prepend(gate);
+            }
+        } else {
+            // Show Developer API for premium tiers
+            const apiCard = document.getElementById('api-access-card');
+            if (apiCard) {
+                apiCard.style.display = 'block';
+                const email = localStorage.getItem('email') || 'USER';
+                document.getElementById('display-api-key').textContent = `CA-${email.split('@')[0].toUpperCase()}-${Math.random().toString(36).substr(2, 9).toUpperCase()}`;
             }
         }
 
@@ -443,11 +458,24 @@ async function performScan(input, type, container) {
             endpoint = `/api/analyze/phishing?url=${input}`;
         }
 
-        const res = await fetch(endpoint);
+        const res = await fetch(endpoint, {
+            headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
+        });
         const data = await res.json();
+
+        if (res.status === 403 && data.limitReached) {
+            container.innerHTML = `
+                <div class="scan-error-card" style="border:1px solid rgba(239,68,68,0.3);background:rgba(239,68,68,0.05);padding:20px;border-radius:15px;text-align:center;">
+                    <i class="fa-solid fa-circle-exclamation" style="color:#ef4444;font-size:1.5rem;margin-bottom:10px;"></i>
+                    <h4 style="color:#fff;">Limit Reached</h4>
+                    <p style="font-size:0.85rem;color:var(--secondary-color);margin-bottom:15px;">You've used your 3 daily scans. Upgrade to Pro for unlimited AI intelligence.</p>
+                    <button class="btn btn-primary btn-small" onclick="navigateTo('pricing')">View Plans</button>
+                </div>
+            `;
+            return;
+        }
         
-        let riskScore = data.riskScore || 0;
-        let riskLevelClass = data.riskLevel ? data.riskLevel.toLowerCase() : 'low';
+        if (!res.ok) throw new Error(data.error || "Analysis failed");
         
         // Build issue list HTML
         let issueHTML = '';
@@ -508,16 +536,30 @@ async function runRealToolScan(type, inputValue, container) {
     const headers = { 'Authorization': `Bearer ${token}` };
 
     try {
-        if(type === 'wallet') {
-            const res = await fetch(`/api/analyze/wallet?address=${inputValue}`, { headers });
-            const data = await res.json();
+        let endpoint = '';
+        if(type === 'wallet') endpoint = `/api/analyze/wallet?address=${inputValue}`;
+        else if(type === 'rug') endpoint = `/api/analyze/token?address=${inputValue}`;
+        else if(type === 'phishing') endpoint = `/api/analyze/phishing?url=${inputValue}`;
+
+        const res = await fetch(endpoint, { headers });
+        const data = await res.json();
             
-            if(res.status === 401 || res.status === 403) throw new Error("Session expired. Please log in again.");
-            if(data.error) throw new Error(data.error);
+        if(res.status === 403 && data.limitReached) {
+            container.innerHTML = `
+                <div class="scan-error-card" style="border:1px solid rgba(239,68,68,0.3);background:rgba(239,68,68,0.05);padding:20px;border-radius:15px;text-align:center;">
+                    <i class="fa-solid fa-circle-exclamation" style="color:#ef4444;font-size:1.5rem;margin-bottom:10px;"></i>
+                    <h4 style="color:#fff;">Limit Reached</h4>
+                    <p style="font-size:0.85rem;color:var(--secondary-color);margin-bottom:15px;">You've used your 3 daily scans. Upgrade to Pro for unlimited AI intelligence.</p>
+                    <button class="btn btn-primary btn-small" onclick="navigateTo('pricing')">View Plans</button>
+                </div>
+            `;
+            return;
+        }
 
-            // Badges for tags
+        if(!res.ok) throw new Error(data.error || "Analysis failed");
+
+        if(type === 'wallet') {
             let tagsHtml = data.tags.map(t => `<span class="badge ${t.includes('Spam') ? 'badge-high' : 'badge-low'}">${t}</span>`).join(' ');
-
             container.innerHTML = `
                 <div class="tool-report fade-in">
                     <div class="report-header flex-between mb-3 border-bottom pb-2">
@@ -534,9 +576,7 @@ async function runRealToolScan(type, inputValue, container) {
                             <div>${tagsHtml || '-'}</div>
                         </div>
                     </div>
-                    <div class="report-row mb-2">
-                        <strong class="text-medium">Detection History:</strong>
-                    </div>
+                    <div class="report-row mb-2"><strong class="text-medium">Detection History:</strong></div>
                     <ul class="issue-list text-sm mb-3">
                         ${data.riskFlags.map(f => `<li><i class="fa-solid fa-flag text-${f.includes('CRITICAL') || f.includes('HIGH') ? 'high' : (f.includes('MEDIUM') ? 'medium' : 'low')}"></i> ${f}</li>`).join('')}
                     </ul>
@@ -544,61 +584,28 @@ async function runRealToolScan(type, inputValue, container) {
                 </div>
             `;
         } else if(type === 'rug') {
-            const res = await fetch(`/api/analyze/token?address=${inputValue}`, { headers });
-            const data = await res.json();
-            
-            if(res.status === 401 || res.status === 403) throw new Error("Session expired. Please log in again.");
-            if(data.error) throw new Error(data.error);
             if(!data.found) throw new Error(data.message);
-
             container.innerHTML = `
                 <div class="tool-report fade-in">
                     <div class="report-header flex-between mb-3 border-bottom pb-2">
                         <span><strong>Token Analyzed:</strong> ${data.raw.name} (${data.raw.symbol})</span>
                         <span class="text-muted" title="${inputValue}">${inputValue.substring(0,6)}...${inputValue.slice(-4)}</span>
                     </div>
-                    
                     <div class="report-grid mb-3" style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
-                         <div class="grid-item">
-                            <small class="text-muted">Rug Pull Risk</small>
-                            <h4 class="text-${data.riskLevel.toLowerCase()}">${data.riskScore}/100</h4>
-                        </div>
-                        <div class="grid-item">
-                            <small class="text-muted">Taxes (Buy/Sell)</small>
-                            <h4>${data.raw.buyTax} / ${data.raw.sellTax}</h4>
-                        </div>
-                        <div class="grid-item">
-                            <small class="text-muted">Holders</small>
-                            <h4>${data.raw.holders}</h4>
-                        </div>
-                         <div class="grid-item">
-                            <small class="text-muted">Traded On</small>
-                            <h4>${data.raw.dex}</h4>
-                        </div>
+                         <div class="grid-item"><small class="text-muted">Rug Pull Risk</small><h4 class="text-${data.riskLevel.toLowerCase()}">${data.riskScore}/100</h4></div>
+                         <div class="grid-item"><small class="text-muted">Taxes (Buy/Sell)</small><h4>${data.raw.buyTax} / ${data.raw.sellTax}</h4></div>
+                         <div class="grid-item"><small class="text-muted">Holders</small><h4>${data.raw.holders}</h4></div>
+                         <div class="grid-item"><small class="text-muted">Traded On</small><h4>${data.raw.dex}</h4></div>
                     </div>
-
                     ${data.riskFlags.length > 0 && data.riskScore > 0 ? `
                     <div class="report-row mb-2"><strong class="text-high">Security Warnings:</strong></div>
                     <ul class="issue-list text-sm mb-3">
                         ${data.riskFlags.map(f => `<li><i class="fa-solid fa-triangle-exclamation text-${f.includes('CRITICAL') || f.includes('HIGH') ? 'high' : 'medium'}"></i> ${f}</li>`).join('')}
                     </ul>` : ''}
-
-                    ${data.positiveSignals.length > 0 ? `
-                    <div class="report-row mb-2"><strong class="text-low">Positive Indicators:</strong></div>
-                    <ul class="issue-list text-sm mb-3">
-                        ${data.positiveSignals.map(f => `<li><i class="fa-solid fa-check text-low"></i> ${f}</li>`).join('')}
-                    </ul>` : ''}
-
                     <p class="summary-text ${data.riskScore > 50 ? 'warning' : ''}">AI Summary: Risk is evaluated at <b>${data.riskLevel}</b> based on contract logic heuristics.</p>
                 </div>
             `;
         } else if(type === 'phishing') {
-            const res = await fetch(`/api/analyze/phishing?url=${inputValue}`, { headers });
-            const data = await res.json();
-            
-            if(res.status === 401 || res.status === 403) throw new Error("Session expired. Please log in again.");
-            if(data.error) throw new Error(data.error);
-
             container.innerHTML = `
                 <div class="tool-report fade-in">
                     <div class="report-header flex-between mb-3 border-bottom pb-2">
@@ -606,18 +613,10 @@ async function runRealToolScan(type, inputValue, container) {
                         <span class="text-muted" title="${data.cleanUrl}">${data.cleanUrl.substring(0,30)}</span>
                     </div>
                     <div class="report-grid mb-3">
-                        <div class="grid-item">
-                            <small class="text-muted">Phishing Probability</small>
-                            <h4 class="text-${data.riskLevel.toLowerCase()}">${data.riskScore}%</h4>
-                        </div>
-                        <div class="grid-item">
-                            <small class="text-muted">Status</small>
-                            <h4 class="text-${data.isMalicious ? 'high' : 'low'}">${data.isMalicious ? 'Flagged Malicious' : 'Clean'}</h4>
-                        </div>
+                        <div class="grid-item"><small class="text-muted">Phishing Probability</small><h4 class="text-${data.riskLevel.toLowerCase()}">${data.riskScore}%</h4></div>
+                        <div class="grid-item"><small class="text-muted">Status</small><h4 class="text-${data.isMalicious ? 'high' : 'low'}">${data.isMalicious ? 'Flagged Malicious' : 'Clean'}</h4></div>
                     </div>
-                    <div class="report-row mb-2">
-                        <strong class="text-medium">Details:</strong>
-                    </div>
+                    <div class="report-row mb-2"><strong class="text-medium">Details:</strong></div>
                     <ul class="issue-list text-sm mb-3">
                         ${data.riskFlags.map(f => `<li><i class="fa-solid ${data.isMalicious ? 'fa-skull-crossbones text-high' : 'fa-info-circle text-muted'}"></i> ${f}</li>`).join('')}
                     </ul>

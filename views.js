@@ -149,6 +149,18 @@ window.views = {
                         </div>
                         <div class="tool-result mt-4" style="display:none;"></div>
                     </div>
+
+                    <!-- Tool 4 (Pro/Elite Only) -->
+                    <div class="tool-card" id="api-access-card" style="display:none;">
+                        <i class="fa-solid fa-code tool-icon"></i>
+                        <h3>Developer API</h3>
+                        <p>Integrate our AI Guardian intelligence into your own dApps and bots.</p>
+                        <div class="api-key-box mt-3" style="background:rgba(0,0,0,0.3);padding:15px;border-radius:10px;border:1px dashed var(--accent-color);">
+                            <code id="display-api-key" style="color:var(--accent-color);font-size:0.8rem;">CA-EYE-XXXX-XXXX-XXXX</code>
+                            <button class="btn btn-icon-small" style="margin-left:10px;"><i class="fa-solid fa-copy"></i></button>
+                        </div>
+                        <p class="mt-2" style="font-size:0.75rem;color:var(--secondary-color);">* Premium API Documentation: <a href="#" style="color:var(--accent-color);">docs.cryptoayuda.ai</a></p>
+                    </div>
                 </div>
             </div>
         </section>

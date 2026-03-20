@@ -73,7 +73,9 @@ function seedAdmin(db) {
             password: hash,
             plan: 'elite',
             role: 'admin',
-            created_at: new Date().toISOString()
+            created_at: new Date().toISOString(),
+            dailyScans: 0,
+            lastScanDate: new Date().toISOString().split('T')[0]
         });
         writeDB(db);
         console.log('Admin user seeded: admin / Stbr1234');
@@ -119,7 +121,9 @@ app.post('/api/auth/register', async (req, res) => {
             password: hash,
             plan: 'free',
             role: 'user',
-            created_at: new Date().toISOString()
+            created_at: new Date().toISOString(),
+            dailyScans: 0,
+            lastScanDate: new Date().toISOString().split('T')[0]
         };
         db.users.push(user);
         writeDB(db);
@@ -241,14 +245,53 @@ app.post('/api/orders/capture', authenticateToken, async (req, res) => {
     }
 });
 
+// === Scan Limit Helper ===
+function checkScanLimit(req, res, next) {
+    const db = readDB();
+    const user = db.users.find(u => u.id === req.user.id);
+    if (!user) return res.status(404).json({ error: "User not found" });
+
+    // Admins and Pro/Elite are unlimited
+    if (user.role === 'admin' || user.plan === 'pro' || user.plan === 'elite') {
+        return next();
+    }
+
+    const today = new Date().toISOString().split('T')[0];
+    if (user.lastScanDate !== today) {
+        user.dailyScans = 0;
+        user.lastScanDate = today;
+    }
+
+    if (user.dailyScans >= 3) {
+        return res.status(403).json({ 
+            error: "Daily scan limit reached (3/3).", 
+            limitReached: true,
+            suggestUpgrade: true 
+        });
+    }
+
+    // Increment scan count but DON'T write to DB yet (next() will handle the actual scan)
+    // We'll increment and write inside the actual analysis routes to be safe
+    req.dbUser = user;
+    next();
+}
+
 // === AI Analysis Routes ===
-app.get('/api/analyze/token', authenticateToken, async (req, res) => {
+app.get('/api/analyze/token', authenticateToken, checkScanLimit, async (req, res) => {
     try {
         const { address, chain_id = '1' } = req.query;
         if (!address) return res.status(400).json({ error: 'Token address is required' });
 
         const response = await axios.get(`https://api.gopluslabs.io/api/v1/token_security/${chain_id}?contract_addresses=${address}`);
         const data = response.data.result[address.toLowerCase()];
+
+        // Increment scan count if successful
+        const db = readDB();
+        const user = db.users.find(u => u.id === req.user.id);
+        if (user && user.plan === 'free') {
+            user.dailyScans += 1;
+            writeDB(db);
+        }
 
         if (!data) return res.json({ found: false, message: "No security data found for this contract address." });
 
@@ -300,13 +343,21 @@ app.get('/api/analyze/token', authenticateToken, async (req, res) => {
     }
 });
 
-app.get('/api/analyze/wallet', authenticateToken, async (req, res) => {
+app.get('/api/analyze/wallet', authenticateToken, checkScanLimit, async (req, res) => {
     try {
         const { address } = req.query;
         if (!address) return res.status(400).json({ error: 'Wallet address is required' });
 
         const response = await axios.get(`https://api.gopluslabs.io/api/v1/address_security/${address}`);
         const data = response.data.result;
+
+        // Increment scan count
+        const db = readDB();
+        const user = db.users.find(u => u.id === req.user.id);
+        if (user && user.plan === 'free') {
+            user.dailyScans += 1;
+            writeDB(db);
+        }
 
         let riskScore = 0;
         let riskFlags = [];
@@ -341,7 +392,7 @@ app.get('/api/analyze/wallet', authenticateToken, async (req, res) => {
     }
 });
 
-app.get('/api/analyze/phishing', authenticateToken, async (req, res) => {
+app.get('/api/analyze/phishing', authenticateToken, checkScanLimit, async (req, res) => {
     try {
         let { url } = req.query;
         if (!url) return res.status(400).json({ error: 'URL is required' });
@@ -349,6 +400,14 @@ app.get('/api/analyze/phishing', authenticateToken, async (req, res) => {
         const cleanUrl = url.replace(/^https?:\/\//, '').replace(/\/$/, '');
         const response = await axios.get(`https://api.gopluslabs.io/api/v1/phishing_site?url=${cleanUrl}`);
         const data = response.data.result;
+
+        // Increment scan count
+        const db = readDB();
+        const user = db.users.find(u => u.id === req.user.id);
+        if (user && user.plan === 'free') {
+            user.dailyScans += 1;
+            writeDB(db);
+        }
 
         let riskScore = 0;
         let riskFlags = [];
