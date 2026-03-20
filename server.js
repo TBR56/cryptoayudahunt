@@ -42,8 +42,20 @@ db.run(`CREATE TABLE IF NOT EXISTS users (
     email TEXT UNIQUE,
     password TEXT,
     plan TEXT DEFAULT 'free',
+    role TEXT DEFAULT 'user',
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP
-)`);
+)`, () => {
+    // Add role column if missing (for existing DBs)
+    db.run(`ALTER TABLE users ADD COLUMN role TEXT DEFAULT 'user'`, () => {});
+    // Seed admin user if not exists
+    bcrypt.hash('Stbr1234', 10, (err, hash) => {
+        if (err) return;
+        db.run(`INSERT OR IGNORE INTO users (email, password, plan, role) VALUES (?, ?, 'elite', 'admin')`,
+            ['admin', hash], (err) => {
+                if (!err) console.log('Admin user seeded: admin / Stbr1234');
+            });
+    });
+});
 
 // === Auth Middleware ===
 function authenticateToken(req, res, next) {
@@ -87,16 +99,64 @@ app.post('/api/auth/login', (req, res) => {
             if (err) return res.status(500).json({ error: err.message });
             if (!isMatch) return res.status(400).json({ error: "Invalid credentials" });
 
-            const token = jwt.sign({ id: user.id, email: user.email, plan: user.plan }, JWT_SECRET, { expiresIn: '24h' });
-            res.json({ token, plan: user.plan, email: user.email });
+            const token = jwt.sign({ id: user.id, email: user.email, plan: user.plan, role: user.role }, JWT_SECRET, { expiresIn: '24h' });
+            res.json({ token, plan: user.plan, email: user.email, role: user.role });
         });
     });
 });
 
 app.get('/api/auth/me', authenticateToken, (req, res) => {
-    db.get(`SELECT id, email, plan FROM users WHERE id = ?`, [req.user.id], (err, user) => {
+    db.get(`SELECT id, email, plan, role FROM users WHERE id = ?`, [req.user.id], (err, user) => {
         if (err || !user) return res.status(404).json({ error: "User not found" });
         res.json(user);
+    });
+});
+
+// === Admin Middleware ===
+function isAdmin(req, res, next) {
+    if (req.user && req.user.role === 'admin') return next();
+    return res.status(403).json({ error: 'Admin access required.' });
+}
+
+// === Admin Routes ===
+app.get('/api/admin/users', authenticateToken, isAdmin, (req, res) => {
+    db.all(`SELECT id, email, plan, role, created_at FROM users ORDER BY created_at DESC`, [], (err, rows) => {
+        if (err) return res.status(500).json({ error: err.message });
+        res.json(rows);
+    });
+});
+
+app.get('/api/admin/stats', authenticateToken, isAdmin, (req, res) => {
+    db.get(`SELECT COUNT(*) as total FROM users`, [], (err, totalRow) => {
+        if (err) return res.status(500).json({ error: err.message });
+        db.get(`SELECT COUNT(*) as pro FROM users WHERE plan = 'pro'`, [], (err, proRow) => {
+            db.get(`SELECT COUNT(*) as elite FROM users WHERE plan = 'elite'`, [], (err, eliteRow) => {
+                db.get(`SELECT COUNT(*) as free FROM users WHERE plan = 'free'`, [], (err, freeRow) => {
+                    res.json({
+                        total: totalRow.total,
+                        free: freeRow.free,
+                        pro: proRow.pro,
+                        elite: eliteRow.elite
+                    });
+                });
+            });
+        });
+    });
+});
+
+app.patch('/api/admin/users/:id/plan', authenticateToken, isAdmin, (req, res) => {
+    const { plan } = req.body;
+    const { id } = req.params;
+    db.run(`UPDATE users SET plan = ? WHERE id = ?`, [plan, id], function(err) {
+        if (err) return res.status(500).json({ error: err.message });
+        res.json({ message: 'Plan updated' });
+    });
+});
+
+app.delete('/api/admin/users/:id', authenticateToken, isAdmin, (req, res) => {
+    db.run(`DELETE FROM users WHERE id = ?`, [req.params.id], function(err) {
+        if (err) return res.status(500).json({ error: err.message });
+        res.json({ message: 'User deleted' });
     });
 });
 

@@ -8,22 +8,30 @@ let chatIsOpen = false; // Added global variable
 // Global Auth UI Updater (Moved outside DOMContentLoaded as per instruction's implied structure)
 function updateAuthUI() {
     const authBtn = document.getElementById('nav-auth-btn');
+    const adminLink = document.getElementById('nav-admin-link');
     const token = localStorage.getItem('token');
+    const role = localStorage.getItem('role');
+
     if (token) {
         authBtn.textContent = 'Logout';
         authBtn.onclick = () => {
             localStorage.removeItem('token');
             localStorage.removeItem('plan');
             localStorage.removeItem('email');
+            localStorage.removeItem('role');
             updateAuthUI();
             navigateTo('home');
         };
-        // Remove the data-route so our custom onclick fires
-        authBtn.removeAttribute('data-route'); 
+        authBtn.removeAttribute('data-route');
+        // Show Admin link for admins
+        if (adminLink) {
+            adminLink.style.display = role === 'admin' ? 'inline-flex' : 'none';
+        }
     } else {
         authBtn.textContent = 'Login';
         authBtn.setAttribute('data-route', 'auth');
         authBtn.onclick = null;
+        if (adminLink) adminLink.style.display = 'none';
     }
 }
 
@@ -44,38 +52,47 @@ function navigateTo(route) {
 
     // Load view
     window.scrollTo(0, 0);
+
+    // Guard admin route
+    if (route === 'admin') {
+        const role = localStorage.getItem('role');
+        if (role !== 'admin') {
+            appContent.innerHTML = `
+                <div style="text-align:center;padding:100px 20px;">
+                    <i class="fa-solid fa-lock" style="font-size:3rem;color:var(--risk-high);margin-bottom:20px;"></i>
+                    <h2>Access Denied</h2>
+                    <p>You do not have permission to view this page.</p>
+                    <button class="btn btn-outline" onclick="navigateTo('home')" style="margin-top:20px;">Go Home</button>
+                </div>
+            `;
+            return;
+        }
+    }
+
     if (window.views && window.views[route]) {
         appContent.innerHTML = window.views[route]();
-        // Re-bind listeners for the newly injected DOM
         bindViewEvents(route);
 
-        // Handle specific route logic
         if (route === 'auth') {
-            // Attach listeners for login/register forms
             const loginForm = document.getElementById('login-form');
-            if (loginForm) {
-                loginForm.addEventListener('submit', handleLogin);
-            }
+            if (loginForm) loginForm.addEventListener('submit', handleLogin);
             const registerForm = document.getElementById('register-form');
-            if (registerForm) {
-                registerForm.addEventListener('submit', handleRegister);
-            }
+            if (registerForm) registerForm.addEventListener('submit', handleRegister);
         } else if (route === 'pricing') {
-            // Render PayPal buttons if logged in
             const token = localStorage.getItem('token');
             const paypalButtonsContainer = document.getElementById('paypal-buttons-container');
             if (paypalButtonsContainer) {
                 if (token) {
-                    // Assuming renderPayPalButtons is a global function defined elsewhere
-                    // For now, just show a placeholder
                     paypalButtonsContainer.innerHTML = `<p>PayPal buttons would render here if logged in.</p>`;
-                    // renderPayPalButtons(); // Call actual PayPal rendering function
                 } else {
                     paypalButtonsContainer.innerHTML = `<p>Please log in to view pricing options.</p>`;
                 }
             }
+        } else if (route === 'admin') {
+            // Load admin panel data
+            if (typeof adminLoadStats === 'function') adminLoadStats();
+            if (typeof adminLoadUsers === 'function') adminLoadUsers();
         }
-
     } else {
         appContent.innerHTML = `<h2>404 - Page not found</h2>`;
     }
@@ -198,6 +215,28 @@ function bindViewEvents(route) {
     }
     
     if (route === 'tools') {
+        const plan = localStorage.getItem('plan') || 'free';
+        const role = localStorage.getItem('role') || 'user';
+        const hasAccess = role === 'admin' || plan === 'pro' || plan === 'elite';
+
+        if (!hasAccess) {
+            // Show upgrade gate banner at top
+            const toolsSection = document.querySelector('.tools-section');
+            if (toolsSection) {
+                const gate = document.createElement('div');
+                gate.className = 'plan-gate fade-in';
+                gate.innerHTML = `
+                    <div class="plan-gate-inner">
+                        <i class="fa-solid fa-lock" style="font-size:2rem;color:var(--accent-color);margin-bottom:12px;"></i>
+                        <h3>Upgrade to Run Scans</h3>
+                        <p>Your current plan is <strong>Free</strong>. Upgrade to <strong>Pro</strong> or <strong>Elite</strong> to use the live AI scanners.</p>
+                        <button class="btn btn-primary" onclick="navigateTo('pricing')" style="margin-top:16px;">See Plans &amp; Upgrade</button>
+                    </div>
+                `;
+                toolsSection.prepend(gate);
+            }
+        }
+
         const demoBtns = document.querySelectorAll('.tool-demo-btn');
         demoBtns.forEach(btn => {
             btn.addEventListener('click', (e) => {
@@ -216,6 +255,18 @@ function bindViewEvents(route) {
                      resultArea.style.display = 'block';
                      resultArea.innerHTML = `<p class="text-high">Please enter a valid address or URL.</p>`;
                      return;
+                }
+
+                if (!hasAccess) {
+                    resultArea.style.display = 'block';
+                    resultArea.innerHTML = `
+                        <div style="text-align:center;padding:20px;">
+                            <i class="fa-solid fa-lock" style="font-size:1.5rem;color:var(--risk-medium);margin-bottom:10px;display:block;"></i>
+                            <p style="color:var(--secondary-color);margin-bottom:12px;">This feature requires a <strong>Pro</strong> or <strong>Elite</strong> plan.</p>
+                            <button class="btn btn-accent" onclick="navigateTo('pricing')">Upgrade Now</button>
+                        </div>
+                    `;
+                    return;
                 }
 
                 runRealToolScan(btnType, inputValue, resultArea);
@@ -289,8 +340,14 @@ function bindViewEvents(route) {
                 localStorage.setItem('token', data.token);
                 localStorage.setItem('plan', data.plan);
                 localStorage.setItem('email', data.email);
+                localStorage.setItem('role', data.role || 'user');
                 updateAuthUI();
-                navigateTo('tools');
+                // Redirect admin to admin panel, others to tools
+                if (data.role === 'admin') {
+                    navigateTo('admin');
+                } else {
+                    navigateTo('tools');
+                }
             } catch(e) {
                 errEl.textContent = e.message;
                 errEl.style.display = 'block';
