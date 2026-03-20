@@ -357,54 +357,59 @@ function bindViewEvents(route) {
 
     if (route === 'pricing') {
         const token = localStorage.getItem('token');
-        const paymentBtns = document.querySelectorAll('.payment-btn');
+        const paymentTriggers = document.querySelectorAll('.payment-trigger');
 
-        if (!token) {
-            paymentBtns.forEach(btn => {
-                btn.textContent = "Login to Subscribe";
-                btn.addEventListener('click', () => navigateTo('auth'));
+        paymentTriggers.forEach(btn => {
+            btn.addEventListener('click', () => {
+                if (!token) {
+                    alert("Please register or log in to purchase a premium plan.");
+                    navigateTo('auth');
+                    return;
+                }
+
+                // If logged in, show PayPal buttons for this plan
+                const plan = btn.getAttribute('data-plan');
+                const containerId = `paypal-button-container-${plan}`;
+                const containerEl = document.getElementById(containerId);
+                
+                if (containerEl && window.paypal) {
+                    btn.style.display = 'none'; // Hide the "Upgrade" button
+                    containerEl.style.display = 'block';
+                    
+                    // Render PayPal buttons only when clicked
+                    paypal.Buttons({
+                        createOrder: function(data, actions) {
+                            return fetch('/api/orders', {
+                                method: 'post',
+                                headers: { 
+                                    'Content-Type': 'application/json',
+                                    'Authorization': `Bearer ${token}`
+                                },
+                                body: JSON.stringify({ planType: plan })
+                            }).then(res => res.json()).then(orderData => orderData.id);
+                        },
+                        onApprove: function(data, actions) {
+                            return fetch('/api/orders/capture', {
+                                method: 'post',
+                                headers: { 
+                                    'Content-Type': 'application/json',
+                                    'Authorization': `Bearer ${token}`
+                                },
+                                body: JSON.stringify({ orderID: data.orderID, planType: plan })
+                            }).then(res => res.json())
+                            .then(orderData => {
+                                let msg = "Payment successful! Your plan is upgraded.";
+                                if (orderData.error) msg = "Payment failed: " + orderData.error;
+                                else {
+                                    localStorage.setItem('plan', orderData.plan);
+                                }
+                                alert(msg);
+                                navigateTo('tools');
+                            });
+                        }
+                    }).render(`#${containerId}`);
+                }
             });
-            return;
-        }
-
-        // Render PayPal buttons automatically if logged in
-        paymentBtns.forEach(btn => btn.style.display = 'none'); // Hide standard buttons
-
-        ['pro', 'elite'].forEach(plan => {
-            const containerId = `#paypal-button-container-${plan}`;
-            const containerEl = document.querySelector(containerId);
-            if (containerEl && window.paypal) {
-                containerEl.style.display = 'block';
-                paypal.Buttons({
-                    createOrder: function(data, actions) {
-                        return fetch('/api/orders', {
-                            method: 'post',
-                            headers: { 
-                                'Content-Type': 'application/json',
-                                'Authorization': `Bearer ${localStorage.getItem('token')}`
-                            },
-                            body: JSON.stringify({ planType: plan })
-                        }).then(res => res.json()).then(orderData => orderData.id);
-                    },
-                    onApprove: function(data, actions) {
-                        return fetch('/api/orders/capture', {
-                            method: 'post',
-                            headers: { 
-                                'Content-Type': 'application/json',
-                                'Authorization': `Bearer ${localStorage.getItem('token')}`
-                            },
-                            body: JSON.stringify({ orderID: data.orderID, planType: plan })
-                        }).then(res => res.json())
-                        .then(orderData => {
-                            let msg = "Payment successful! Your plan is upgraded.";
-                            if (orderData.error) msg = "Payment failed: " + orderData.error;
-                            else localStorage.setItem('plan', orderData.plan);
-                            alert(msg);
-                            navigateTo('tools');
-                        });
-                    }
-                }).render(containerId);
-            }
         });
     }
 }

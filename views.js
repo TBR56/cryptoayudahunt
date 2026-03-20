@@ -234,10 +234,10 @@ window.views = {
                         <li class="disabled"><i class="fa-solid fa-xmark"></i> Real-time scam alerts</li>
                         <li class="disabled"><i class="fa-solid fa-xmark"></i> AI Crypto Assistant access</li>
                     </ul>
-                    <button class="btn btn-outline full-width">Sign Up Free</button>
+                    <button class="btn btn-outline full-width" data-route="auth">Sign Up Free</button>
                 </div>
 
-                <div class="pricing-card pro">
+                <div class="pricing-card pro active">
                     <div class="badge plan-badge">Most Popular</div>
                     <div class="plan-name">Pro Plan</div>
                     <div class="plan-price">$29<span>/mo</span></div>
@@ -249,7 +249,23 @@ window.views = {
                         <li><i class="fa-solid fa-check"></i> AI Crypto Assistant access</li>
                         <li><i class="fa-solid fa-check"></i> API Access (1K requests)</li>
                     </ul>
-                    <button class="btn btn-primary full-width">Upgrade to Pro</button>
+                    <div id="paypal-button-container-pro" class="paypal-container"></div>
+                    <button class="btn btn-primary full-width payment-trigger" data-plan="pro">Upgrade to Pro</button>
+                </div>
+
+                <div class="pricing-card elite">
+                    <div class="plan-name">Elite Plan</div>
+                    <div class="plan-price">$99<span>/mo</span></div>
+                    <p class="plan-desc">Enterprise-grade protection for institutions and whales.</p>
+                    <ul class="plan-features">
+                        <li><i class="fa-solid fa-check"></i> Everything in Pro</li>
+                        <li><i class="fa-solid fa-check"></i> Institutional API access</li>
+                        <li><i class="fa-solid fa-check"></i> Priority AI processing</li>
+                        <li><i class="fa-solid fa-check"></i> Personalized security audit</li>
+                        <li><i class="fa-solid fa-check"></i> 24/7 Dedicated Support</li>
+                    </ul>
+                    <div id="paypal-button-container-elite" class="paypal-container"></div>
+                    <button class="btn btn-accent full-width payment-trigger" data-plan="elite">Get Elite Protection</button>
                 </div>
 
             </div>

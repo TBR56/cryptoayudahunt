@@ -196,8 +196,8 @@ app.delete('/api/admin/users/:id', authenticateToken, isAdmin, (req, res) => {
 app.post('/api/orders', authenticateToken, async (req, res) => {
     const { planType } = req.body;
     let price = '0.00';
-    if (planType === 'pro') price = '9.99';
-    if (planType === 'elite') price = '49.99';
+    if (planType === 'pro') price = '29.00';
+    if (planType === 'elite') price = '99.00';
     if (price === '0.00') return res.status(400).json({ error: "Invalid plan" });
 
     const request = new paypal.orders.OrdersCreateRequest();
