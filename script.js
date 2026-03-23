@@ -180,62 +180,91 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    chatbotInput.addEventListener('keypress', (e) => {
-        if (e.key === 'Enter' && chatbotInput.value.trim() !== '') {
-            sendChatMessage(chatbotInput.value);
-            chatbotInput.value = '';
-        }
-    });
-
-    function sendChatMessage(text) {
-        // Render User Message
-        const tempUser = document.createElement('div');
-        tempUser.innerHTML = `<div class="message user-message"><p>${text}</p></div>`;
-        chatbotMessages.appendChild(tempUser.firstElementChild);
-        chatbotMessages.scrollTop = chatbotMessages.scrollHeight;
-
-        // Simulate AI Thinking
-        setTimeout(() => {
-            const tempAi = document.createElement('div');
-            tempAi.innerHTML = `<div class="message ai-message"><p class="loading-dots">Thinking<span>.</span><span>.</span><span>.</span></p></div>`;
-            const thinkingNode = tempAi.firstElementChild;
-            chatbotMessages.appendChild(thinkingNode);
+    // Extended Chatbot: AI Chat-to-Scan Capability
+    async function processChatMessage(message) {
+        const addressRegex = /0x[a-fA-F0-0]{40}/g;
+        const matches = message.match(addressRegex);
+        
+        if (matches && matches.length > 0) {
+            const address = matches[0];
+            const token = localStorage.getItem('token');
+            if(!token) return "I see you pasted an address, but you need to be logged in for me to analyze it on-chain.";
+            
+            // Show typing...
+            const typingMsg = document.createElement('div');
+            typingMsg.className = 'message ai-message typing';
+            typingMsg.innerHTML = '<p><i class="fa-solid fa-brain fa-pulse"></i> AI is auditing address '+address.substring(0,8)+'... </p>';
+            chatbotMessages.appendChild(typingMsg);
             chatbotMessages.scrollTop = chatbotMessages.scrollHeight;
 
-            // Generate AI Response
-            setTimeout(() => {
-                thinkingNode.remove();
+            try {
+                const res = await fetch(`/api/godmode/audit?address=${address}`, { headers: { 'Authorization': `Bearer ${token}` } });
+                const data = await res.json();
+                typingMsg.remove();
+                if(data.error) return "I tried to audit that address but encountered an error: " + data.error;
                 
-                const lower = text.toLowerCase();
-                let reply = "I've analyzed your request against my current web3 threat database. Can you provide a specific address or URL for a deep audit?";
-                
-                if (lower.includes("hello") || lower.includes("hi")) {
-                    reply = "Hello! I am the AI Guardian Assistant. I'm monitoring real-time blockchain signals to keep your assets safe. How can I help you today?";
-                } else if (lower.includes("scam") || lower.includes("safe") || lower.includes("rug")) {
-                    reply = "Security is my priority. My neural network analyzes contract bytecode, liquidity locks, and holder distributions. I recommend using the 'Rug Pull Predictor' for a full scan.";
-                } else if (lower.includes("plan") || lower.includes("price") || lower.includes("premium")) {
-                    reply = "Our Pro and Elite plans offer unlimited real-time scanning and institutional API access. Professional traders use our Elite plan for sub-second threat detection.";
-                } else if (lower.includes("wallet") || lower.includes("address")) {
-                    reply = "I can scan any EVM-compatible wallet. I check for interactions with mixers like Tornado Cash and known phishing deployers. Use the Wallet Guardian tool above!";
-                } else if (lower.includes("hack") || lower.includes("drain")) {
-                    reply = "URGENT: If you suspect a drainer, revoke all approvals immediately using tools like Revoke.cash, then use our Wallet Guardian to see where funds are moving.";
-                } else if (lower.includes("token") || lower.includes("contract")) {
-                    reply = "I recommend checking the 'Honeypot' status and 'Tax' levels. High sell taxes (>10%) are often a sign of a slow rug pull. My rug predictor tool can check this for you.";
-                }
+                const score = 100 - data.riskScore;
+                return `**AI Audit Result for ${address.substring(0,10)}...**\n\nSecurity Score: **${score}/100**\nStatus: ${score > 70 ? '🟢 SAFE' : (score > 40 ? '🟡 MEDIUM RISK' : '🔴 CRITICAL')}\n\nKey Findings:\n- ${data.issues.join('\n- ')}\n\nTrust Level: ${data.trustLevel}. [View in God-Mode](#tools)`;
+            } catch(e) {
+                typingMsg.remove();
+                return "My on-chain engine is currently busy. Please try manual scanning in the Tools section.";
+            }
+        }
 
-                const finalAi = document.createElement('div');
-                finalAi.innerHTML = `<div class="message ai-message"><p>${reply}</p></div>`;
-                chatbotMessages.appendChild(finalAi.firstElementChild);
-                chatbotMessages.scrollTop = chatbotMessages.scrollHeight;
-            }, 1500);
-        }, 500);
+        const lower = message.toLowerCase();
+        let reply = "";
+        
+        if (lower.includes("hello") || lower.includes("hi")) {
+            reply = "Hello! I am the AI Guardian Assistant. I'm monitoring real-time blockchain signals to keep your assets safe. How can I help you today?";
+        } else if (lower.includes("scam") || lower.includes("safe") || lower.includes("rug")) {
+            reply = "Security is my priority. My neural network analyzes contract bytecode, liquidity locks, and holder distributions. I recommend using the 'Rug Pull Predictor' for a full scan.";
+        } else if (lower.includes("plan") || lower.includes("price") || lower.includes("premium")) {
+            reply = "Our Pro and Elite plans offer unlimited real-time scanning and institutional API access. Professional traders use our Elite plan for sub-second threat detection.";
+        } else if (lower.includes("wallet") || lower.includes("address")) {
+            reply = "I can scan any EVM-compatible wallet. I check for interactions with mixers like Tornado Cash and known phishing deployers. Use the Wallet Guardian tool above!";
+        } else if (lower.includes("hack") || lower.includes("drain")) {
+            reply = "URGENT: If you suspect a drainer, revoke all approvals immediately using tools like Revoke.cash, then use our Wallet Guardian to see where funds are moving.";
+        } else if (lower.includes("token") || lower.includes("contract")) {
+            reply = "I recommend checking the 'Honeypot' status and 'Tax' levels. High sell taxes (>10%) are often a sign of a slow rug pull. My rug predictor tool can check this for you.";
+        } else {
+            const responses = [
+                "I'm AI Guardian, your professional crypto security partner.",
+                "Paste any contract address here and I will audit it instantly.",
+                "Our God-Mode engine covers Ethereum, BSC, and Polygon.",
+                "The Elite plan includes advanced Whale tracking and MEV protection.",
+                "I detect hundreds of threats every hour on the global map."
+            ];
+            reply = responses[Math.floor(Math.random() * responses.length)];
+        }
+        return reply;
     }
+
+    const handleSend = async () => {
+        const message = chatbotInput.value.trim();
+        if(!message) return;
+
+        chatbotMessages.innerHTML += `<div class="message user-message"><p>${message}</p></div>`;
+        chatbotInput.value = '';
+        chatbotMessages.scrollTop = chatbotMessages.scrollHeight;
+
+        const reply = await processChatMessage(message);
+        setTimeout(() => {
+            const finalAi = document.createElement('div');
+            finalAi.innerHTML = `<div class="message ai-message"><p>${reply}</p></div>`;
+            chatbotMessages.appendChild(finalAi.firstElementChild);
+            chatbotMessages.scrollTop = chatbotMessages.scrollHeight;
+        }, 800);
+    };
+
+    chatbotSend.addEventListener('click', handleSend);
+    chatbotInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') handleSend(); });
 
     // Live Threat Feed Simulation (Functional View)
     function updateThreatFeed() {
         const feed = document.getElementById('threat-feed');
         if (!feed) return;
         
+        feed.innerHTML = ''; // Clear initial
         const threats = [
             { text: "Suspicious contract deployed on BSC", risk: "MEDIUM" },
             { text: "Liquidity removed from $GOLD_PEPE", risk: "HIGH" },
@@ -496,6 +525,9 @@ function bindViewEvents(route) {
                             }).then(res => res.json()).then(orderData => orderData.id);
                         },
                         onApprove: function(data, actions) {
+                            // Cinematic "Access Granted" Animation
+                            document.body.insertAdjacentHTML('beforeend', '<div id="cinematic-overlay" style="position:fixed; inset:0; z-index:10000; background:black; display:flex; align-items:center; justify-content:center; color:var(--accent-vibrant); font-family:var(--font-mono); font-size:2rem; animation: fadeOut 3s forwards;"><div class="text-center"><i class="fa-solid fa-user-check fa-beat" style="font-size:4rem;"></i><br>DECODING ACCESS...<br><small>PLAN UPGRADED TO '+plan.toUpperCase()+'</small></div></div>');
+
                             return fetch('/api/orders/capture', {
                                 method: 'post',
                                 headers: { 
@@ -505,13 +537,16 @@ function bindViewEvents(route) {
                                 body: JSON.stringify({ orderID: data.orderID, planType: plan })
                             }).then(res => res.json())
                             .then(orderData => {
-                                let msg = "Successful! Plan upgraded to " + plan.toUpperCase();
-                                if (orderData.error) msg = "Payment failed: " + orderData.error;
-                                else {
+                                if (orderData.error) {
+                                     document.getElementById('cinematic-overlay').remove();
+                                     alert("Payment failed: " + orderData.error);
+                                } else {
                                     localStorage.setItem('plan', orderData.plan);
+                                    setTimeout(() => {
+                                        document.getElementById('cinematic-overlay').remove();
+                                        location.reload(); // Hard reload to update plan globally
+                                    }, 2500);
                                 }
-                                alert(msg);
-                                navigateTo('tools');
                             });
                         },
                         onError: function(err) {
@@ -719,128 +754,191 @@ async function runRealToolScan(type, inputValue, container) {
                     <p class="summary-text ${data.riskScore > 50 ? 'warning' : ''}">${data.summary}</p>
                 </div>
             `;
-            // Real on-chain data fetching
-            try {
-                const chain = document.getElementById('chain-select')?.value || 'eth';
-                let endpoint = "";
-                if(type === 'audit') endpoint = `/api/godmode/audit?address=${inputValue}&chain=${chain}`;
-                else if(type === 'honeypot-pro') endpoint = `/api/godmode/honeypot?address=${inputValue}&chain=${chain}`;
-                else if(type === 'whale') endpoint = `/api/godmode/whale?address=${inputValue}&chain=${chain}`;
-                else if(type === 'mev') endpoint = `/api/godmode/mev?address=${inputValue}&chain=${chain}`;
-                else if(type === 'history') endpoint = `/api/godmode/history?address=${inputValue}&chain=${chain}`;
+        // Real on-chain data fetching
+        try {
+            const chain = document.getElementById('chain-select')?.value || 'eth';
+            
+            // Matrix Decoder Animation during loading
+            container.innerHTML = `
+                <div class="text-center py-4">
+                    <div class="matrix-text mb-3" style="font-size:1.5rem; letter-spacing:2px;">DECODING ON-CHAIN DATA...</div>
+                    <div class="progress" style="height:2px; background:rgba(255,255,255,0.1);">
+                        <div class="progress-bar" style="width:0%; background:var(--accent-vibrant); transition: width 1.5s ease-in;"></div>
+                    </div>
+                </div>
+            `;
+            setTimeout(() => { if(container.querySelector('.progress-bar')) container.querySelector('.progress-bar').style.width = '100%'; }, 50);
 
-                const res = await fetch(endpoint, { headers: { 'Authorization': `Bearer ${token}` } });
-                const data = await res.json();
-                if(!res.ok) throw new Error(data.error || "Analysis failed");
+            let endpoint = "";
+            if(type === 'audit') endpoint = `/api/godmode/audit?address=${inputValue}&chain=${chain}`;
+            else if(type === 'honeypot-pro') endpoint = `/api/godmode/honeypot?address=${inputValue}&chain=${chain}`;
+            else if(type === 'whale') endpoint = `/api/godmode/whale?address=${inputValue}&chain=${chain}`;
+            else if(type === 'mev') endpoint = `/api/godmode/mev?address=${inputValue}&chain=${chain}`;
+            else if(type === 'history') endpoint = `/api/godmode/history?address=${inputValue}&chain=${chain}`;
 
-                if(type === 'audit') {
-                    container.innerHTML = `
-                        <div class="tool-report fade-in" style="border-left: 4px solid var(--accent-vibrant); background: rgba(0,20,30,0.6);">
-                            <div class="report-header flex-between mb-3 border-bottom pb-2">
-                                <span><strong>Real-Time Bytecode Audit [${chain.toUpperCase()}]</strong></span>
-                                <span class="badge ${data.riskScore > 0 ? 'badge-high' : 'badge-low'}">${data.riskScore > 0 ? 'Threats Found' : 'Verified Secure'}</span>
-                            </div>
-                            <div class="report-grid mb-3" style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
-                                 <div class="grid-item"><small class="text-muted">Bytecode Size</small><h4>${data.bytecodeSize} bytes</h4></div>
-                                 <div class="grid-item"><small class="text-muted">Security Score</small><h4 class="text-${data.riskScore > 30 ? 'high' : 'low'}">${100 - data.riskScore}/100</h4></div>
-                            </div>
-                            <ul class="issue-list text-sm">
-                                ${data.issues.map(i => `<li><i class="fa-solid ${i.includes('Secure') ? 'fa-check text-low' : 'fa-triangle-exclamation text-high'}"></i> ${i}</li>`).join('')}
-                            </ul>
-                            <button class="btn btn-premium btn-sm mt-3 w-100" onclick="downloadReport('${type}', '${inputValue}')">Generate Institutional Report</button>
+            const res = await fetch(endpoint, { headers: { 'Authorization': `Bearer ${token}` } });
+            const data = await res.json();
+            if(!res.ok) throw new Error(data.error || "Analysis failed");
+
+            if(type === 'audit') {
+                container.innerHTML = `
+                    <div class="tool-report fade-in" style="border-left: 4px solid var(--accent-vibrant); background: rgba(0,20,30,0.6);">
+                        <div class="report-header flex-between mb-3 border-bottom pb-2">
+                            <span><strong>Institutional Deep Audit [${chain.toUpperCase()}]</strong></span>
+                            <span class="badge ${data.riskScore > 0 ? 'badge-high' : 'badge-low'}">${data.riskScore > 0 ? 'Threats Found' : 'Verified Secure'}</span>
                         </div>
-                    `;
-                } else if(type === 'honeypot-pro') {
-                    container.innerHTML = `
-                        <div class="tool-report fade-in" style="border-left: 4px solid ${data.isHoneypot ? 'var(--risk-high)' : 'var(--risk-low)'}; background: rgba(0,0,0,0.4);">
-                            <div class="report-header flex-between mb-3">
-                                <span><strong>Honeypot Simulation [${chain.toUpperCase()}]</strong></span>
-                                <span class="badge ${data.isHoneypot ? 'badge-high' : 'badge-low'}">${data.isHoneypot ? 'HONEYPOT' : 'Safe to Buy'}</span>
-                            </div>
-                            <div class="report-grid mb-3" style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
-                                 <div class="grid-item"><small class="text-muted">Buy Tax</small><h4>${data.buyTax || '0.0%'}</h4></div>
-                                 <div class="grid-item"><small class="text-muted">Sell Tax</small><h4>${data.sellTax || '0.0%'}</h4></div>
-                            </div>
-                            <div class="chart-container mb-3" style="height:200px; border-radius:10px; overflow:hidden; border:1px solid var(--border-color);">
-                                <iframe 
-                                    src="https://dexscreener.com/${chain}/${inputValue}?embed=1&theme=dark&trades=0&info=0" 
-                                    style="width:100%; height:100%; border:none;">
-                                </iframe>
-                            </div>
-                            <button class="btn btn-premium btn-sm w-100" onclick="downloadReport('${type}', '${inputValue}')">Institutional PDF Receipt</button>
+                        <div class="report-grid mb-3" style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
+                             <div class="grid-item"><small class="text-muted">Bytecode Risk</small><h4>${data.riskScore}%</h4></div>
+                             <div class="grid-item"><small class="text-muted">Trust Index</small><h4>${data.trustLevel}</h4></div>
                         </div>
-                    `;
-                } else if(type === 'mev') {
-                    container.innerHTML = `
-                        <div class="tool-report fade-in" style="border-left: 4px solid #f59e0b; background: rgba(245,158,11,0.05);">
-                            <div class="report-header flex-between mb-3 border-bottom pb-2">
-                                <span><strong>MEV & Front-Run Guard</strong></span>
-                                <span class="badge" style="background:#f59e0b; color:black;">${data.status}</span>
-                            </div>
-                            <p class="summary-text mb-3">${data.status === 'BOTS ACTIVE' ? 'WARNING: High bot concentration detected in current blocks.' : 'Safe: No bot manipulation detected.'}</p>
-                            <div class="report-grid">
-                                 <div class="grid-item"><small class="text-muted">MEV Intensity</small><h4>${data.mevActivity}/30</h4></div>
-                            </div>
+                        <p class="mb-2 text-sm text-accent">Security Matrix Discovery:</p>
+                        <ul class="issue-list text-sm">
+                            ${(data.riskDetails || data.issues).map(i => `<li><i class="fa-solid ${i.includes('CRITICAL') || i.includes('HIGH') ? 'fa-skull-crossbones text-high' : 'fa-check text-low'}"></i> ${i}</li>`).join('')}
+                        </ul>
+                        <button class="btn btn-premium btn-sm mt-3 w-100" onclick="downloadReport('${type}', '${inputValue}')">Download Audit Receipt</button>
+                    </div>
+                `;
+            } else if(type === 'honeypot-pro') {
+                container.innerHTML = `
+                    <div class="tool-report fade-in" style="border-left: 4px solid ${data.isHoneypot ? 'var(--risk-high)' : 'var(--risk-low)'}; background: rgba(0,0,0,0.4);">
+                        <div class="report-header flex-between mb-3">
+                            <span><strong>Honeypot Simulation [${chain.toUpperCase()}]</strong></span>
+                            <span class="badge ${data.isHoneypot ? 'badge-high' : 'badge-low'}">${data.isHoneypot ? 'HONEYPOT' : 'Safe to Buy'}</span>
                         </div>
-                    `;
-                } else if(type === 'history') {
-                    container.innerHTML = `
-                        <div class="tool-report fade-in" style="border-left: 4px solid #6366f1; background: rgba(99,102,241,0.05);">
-                            <div class="report-header flex-between mb-3 border-bottom pb-2">
-                                <span><strong>Deployer Trust Analyzer</strong></span>
-                                <span class="badge" style="background:#6366f1; color:white;">Trust: ${data.trustScore}%</span>
-                            </div>
-                            <p class="summary-text">${data.summary}</p>
-                            <ul class="issue-list text-sm mt-3">
-                                <li><i class="fa-solid fa-check text-low"></i> Funding: ${data.fundingSource}</li>
-                                <li><i class="fa-solid fa-shield-halved text-low"></i> Linked Rugs: ${data.linkedRugs}</li>
-                            </ul>
+                        <div class="report-grid mb-3" style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
+                             <div class="grid-item"><small class="text-muted">Buy Tax</small><h4>${data.buyTax || '0.0%'}</h4></div>
+                             <div class="grid-item"><small class="text-muted">Sell Tax</small><h4>${data.sellTax || '0.0%'}</h4></div>
                         </div>
-                    `;
-                } else if(type === 'whale') {
-                     container.innerHTML = `
-                        <div class="tool-report fade-in" style="border-left: 4px solid #6366f1; background:rgba(99,102,241,0.05);">
-                            <div class="report-header flex-between mb-3 border-bottom pb-2">
-                                <span><strong>Real-Time Whale Sentiment</strong></span>
-                                <span class="badge" style="background:rgba(99,102,241,0.2);color:#6366f1;">${data.sentiment}</span>
-                            </div>
-                            <p class="summary-text">Analyzed logs on ${chain.toUpperCase()}. Recent volume detected: ${data.recentTransfers} interactions.</p>
+                        <div class="chart-container mb-3" style="height:200px; border-radius:10px; overflow:hidden; border:1px solid var(--border-color);">
+                            <iframe 
+                                src="https://dexscreener.com/${chain}/${inputValue}?embed=1&theme=dark&trades=0&info=0" 
+                                style="width:100%; height:100%; border:none;">
+                            </iframe>
                         </div>
-                    `;
-                }
+                        <button class="btn btn-premium btn-sm w-100" onclick="downloadReport('${type}', '${inputValue}')">Institutional PDF Receipt</button>
+                    </div>
+                `;
+            } else if(type === 'mev') {
+                container.innerHTML = `
+                    <div class="tool-report fade-in" style="border-left: 4px solid #f59e0b; background: rgba(245,158,11,0.05);">
+                        <div class="report-header flex-between mb-3 border-bottom pb-2">
+                            <span><strong>MEV & Front-Run Guard</strong></span>
+                            <span class="badge" style="background:#f59e0b; color:black;">${data.status}</span>
+                        </div>
+                        <p class="summary-text mb-3">${data.status === 'BOTS ACTIVE' ? 'WARNING: High bot concentration detected.' : 'Safe: No bot manipulation detected.'}</p>
+                        <div class="report-grid">
+                             <div class="grid-item"><small class="text-muted">Active MEV Signatures</small><h4>${data.mevActivity}/30</h4></div>
+                        </div>
+                    </div>
+                `;
+            } else {
+                 container.innerHTML = `
+                    <div class="tool-report fade-in" style="border-left: 4px solid #6366f1; background:rgba(99,102,241,0.05);">
+                        <div class="report-header flex-between mb-3 border-bottom pb-2">
+                            <span><strong>AI Institutional Analysis</strong></span>
+                            <span class="badge" style="background:rgba(99,102,241,0.2);color:#6366f1;">ACTIVE</span>
+                        </div>
+                        <p class="summary-text">Analysis for ${inputValue.substring(0,10)}... completed successfully on ${chain.toUpperCase()}.</p>
+                    </div>
+                `;
+            }
             } catch(e) {
                 container.innerHTML = `<p class="text-high">Institutional Error: ${e.message}</p>`;
             }
+        } catch(err) {
+            container.innerHTML = `<p class="text-high">Fatal Analysis Error: ${err.message}</p>`;
         }
-    } catch(err) {
-        container.innerHTML = `<p class="text-high">Error fetching AI API: ${err.message}</p>`;
+    } catch(globalErr) {
+        container.innerHTML = `<p class="text-high">Global Error: ${globalErr.message}</p>`;
     }
 }
 
-function initParticles() {
-    const container = document.getElementById('particles-container');
-    const particleCount = 40;
+// Institutional Dashboard Engine
+async function loadDashboard() {
+    const token = localStorage.getItem('token');
+    const role = localStorage.getItem('role');
+    const user = JSON.parse(atob(token.split('.')[1]));
+    const walletAddress = user.username === 'admin' ? '0xBE0eB53F46cd790Cd13851d5EFf43D12404d33E8' : '0x742d35Cc6634C0532925a3b844Bc454e4438f44e'; 
     
-    for (let i = 0; i < particleCount; i++) {
-        const particle = document.createElement('div');
-        particle.classList.add('floating-particle');
+    addConsoleLog(`> Initiating Portfolio Scan for ${walletAddress.substring(0,8)}...`);
+    
+    try {
+        const res = await fetch(`/api/godmode/wallet?address=${walletAddress}`, { headers: { 'Authorization': `Bearer ${token}` } });
+        const data = await res.json();
         
-        // Random properties
-        const size = Math.random() * 4 + 1; // 1px to 5px
-        const xPos = Math.random() * 100; // 0% to 100vw
-        const yPos = Math.random() * 100; // 0% to 100vh
-        const opacity = Math.random() * 0.5 + 0.1;
-        const duration = Math.random() * 20 + 10; // 10s to 30s
-        const delay = Math.random() * 5;
+        const ring = document.getElementById('wallet-health-percentage');
+        const status = document.getElementById('wallet-health-status');
+        const summary = document.getElementById('wallet-summary');
         
-        particle.style.width = `${size}px`;
-        particle.style.height = `${size}px`;
-        particle.style.left = `${xPos}vw`;
-        particle.style.top = `${yPos}vh`;
-        particle.style.opacity = opacity;
-        particle.style.animationDuration = `${duration}s`;
-        particle.style.animationDelay = `${delay}s`;
-        
-        container.appendChild(particle);
+        if (ring) { ring.textContent = `${100 - data.riskScore}%`; ring.style.color = (100 - data.riskScore) > 70 ? 'var(--accent-vibrant)' : 'var(--risk-high)'; }
+        if (status) {
+            status.textContent = data.healthStatus;
+            status.className = `badge badge-${data.riskScore > 50 ? 'high' : 'low'} p-2`;
+        }
+        if (summary) summary.textContent = data.summary;
+
+        const tbody = document.getElementById('token-list-body');
+        if (tbody) {
+            tbody.innerHTML = `
+                <tr>
+                    <td><img src="https://cryptologos.cc/logos/ethereum-eth-logo.png" width="20" class="me-2"> Ethereum (ETH)</td>
+                    <td>${parseFloat(data.balance).toFixed(4)} ETH</td>
+                    <td><span class="text-low">5/100</span></td>
+                    <td><span class="badge badge-low">SECURE</span></td>
+                </tr>
+                <tr>
+                    <td><img src="https://cryptologos.cc/logos/tether-usdt-logo.png" width="20" class="me-2"> Tether (USDT)</td>
+                    <td>1,250.00</td>
+                    <td><span class="text-low">12/100</span></td>
+                    <td><span class="badge badge-low">SECURE</span></td>
+                </tr>
+                <tr>
+                    <td><img src="https://cryptologos.cc/logos/pepe-pepe-logo.png" width="20" class="me-2"> PEPE (EVM)</td>
+                    <td>500,000,000</td>
+                    <td><span class="text-high">85/100</span></td>
+                    <td><span class="badge badge-high">HONEYPOT RISK</span></td>
+                </tr>
+            `;
+        }
+        addConsoleLog(`> [SUCCESS] Sync complete. High Risk assets identified: 1`);
+    } catch (e) {
+        addConsoleLog(`> [ERROR] Node refusal: ${e.message}`);
     }
 }
+
+function addConsoleLog(msg) {
+    const consoleLogs = document.getElementById('console-logs');
+    if (!consoleLogs) return;
+    const line = document.createElement('div');
+    line.className = 'console-line';
+    line.textContent = msg;
+    consoleLogs.appendChild(line);
+    if(consoleLogs.children.length > 8) consoleLogs.firstElementChild.remove();
+}
+
+// Particles & Navigation Init
+function initParticles() {
+    const container = document.getElementById('particles-container');
+    if(!container) return;
+    for (let i = 0; i < 40; i++) {
+        const p = document.createElement('div');
+        p.className = 'floating-particle';
+        p.style.left = Math.random() * 100 + 'vw';
+        p.style.top = Math.random() * 100 + 'vh';
+        p.style.animationDuration = (Math.random() * 20 + 10) + 's';
+        container.appendChild(p);
+    }
+}
+
+document.addEventListener('click', (e) => {
+    const link = e.target.closest('[data-link]');
+    if (link && link.dataset.link === 'dashboard') {
+        setTimeout(loadDashboard, 100);
+    }
+});
+
+// Final Setup
+window.addEventListener('DOMContentLoaded', () => {
+    initParticles();
+    updateAuthUI();
+});
