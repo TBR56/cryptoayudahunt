@@ -155,44 +155,6 @@ window.views = {
                         <div class="tool-input-group mt-3">
                             <input type="text" class="custom-input tool-specific-input" placeholder="https://..." id="url-input" />
                             <button class="btn btn-outline tool-demo-btn" data-tool="phishing" data-input="#url-input">Check URL</button>
-                        </div>
-                        <div class="tool-result mt-4" style="display:none;"></div>
-                    </div>
-
-                    <!-- Tool 4 (Pro/Elite) -->
-                    <div class="tool-card">
-                        <i class="fa-solid fa-file-code tool-icon" style="color:var(--accent-vibrant);"></i>
-                        <h3>Smart Contract Audit AI</h3>
-                        <p>Deep static analysis of contract bytecode to detect reentrancy, overflows and logic flaws.</p>
-                        <div class="tool-input-group mt-3">
-                            <input type="text" class="custom-input tool-specific-input" placeholder="0x..." id="audit-input" />
-                            <button class="btn btn-accent tool-demo-btn" data-tool="audit" data-input="#audit-input">Start AI Audit</button>
-                        </div>
-                        <div class="tool-result mt-4" style="display:none;"></div>
-                    </div>
-
-                    <!-- Tool 5 (Pro/Elite) -->
-                    <div class="tool-card">
-                        <i class="fa-solid fa-fire-flame-curved tool-icon" style="color:var(--risk-high);"></i>
-                        <h3>HoneyPot Pro AI</h3>
-                        <p>Advanced real-time simulation of buy/sell calls to detect sophisticated honeypot logic.</p>
-                        <div class="tool-input-group mt-3">
-                            <input type="text" class="custom-input tool-specific-input" placeholder="0x..." id="honeypot-pro-input" />
-                            <button class="btn btn-accent tool-demo-btn" data-tool="honeypot-pro" data-input="#honeypot-pro-input">Deep Scan</button>
-                        </div>
-                        <div class="tool-result mt-4" style="display:none;"></div>
-                    </div>
-
-                    <!-- Tool 6 (Elite) -->
-                    <div class="tool-card">
-                        <i class="fa-solid fa-whale tool-icon" style="color:#6366f1;"></i>
-                        <h3>Whale Move AI</h3>
-                        <p>Track top 100 holders of any token and get AI-powered sentiment analysis of their movements.</p>
-                        <div class="tool-input-group mt-3">
-                            <input type="text" class="custom-input tool-specific-input" placeholder="0x..." id="whale-input" />
-                            <button class="btn btn-primary tool-demo-btn" data-tool="whale" data-input="#whale-input">Track Whales</button>
-                        </div>
-                        <div class="tool-result mt-4" style="display:none;"></div>
                     </div>
 
                     <!-- Tool 7 (Pro/Elite Only) -->

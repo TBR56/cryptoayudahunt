@@ -721,10 +721,13 @@ async function runRealToolScan(type, inputValue, container) {
             `;
             // Real on-chain data fetching
             try {
+                const chain = document.getElementById('chain-select')?.value || 'eth';
                 let endpoint = "";
-                if(type === 'audit') endpoint = `/api/godmode/audit?address=${inputValue}`;
-                else if(type === 'honeypot-pro') endpoint = `/api/godmode/honeypot?address=${inputValue}`;
-                else if(type === 'whale') endpoint = `/api/godmode/whale?address=${inputValue}`; // Placeholder if needed
+                if(type === 'audit') endpoint = `/api/godmode/audit?address=${inputValue}&chain=${chain}`;
+                else if(type === 'honeypot-pro') endpoint = `/api/godmode/honeypot?address=${inputValue}&chain=${chain}`;
+                else if(type === 'whale') endpoint = `/api/godmode/whale?address=${inputValue}&chain=${chain}`;
+                else if(type === 'mev') endpoint = `/api/godmode/mev?address=${inputValue}&chain=${chain}`;
+                else if(type === 'history') endpoint = `/api/godmode/history?address=${inputValue}&chain=${chain}`;
 
                 const res = await fetch(endpoint, { headers: { 'Authorization': `Bearer ${token}` } });
                 const data = await res.json();
@@ -734,42 +737,64 @@ async function runRealToolScan(type, inputValue, container) {
                     container.innerHTML = `
                         <div class="tool-report fade-in" style="border-left: 4px solid var(--accent-vibrant); background: rgba(0,20,30,0.6);">
                             <div class="report-header flex-between mb-3 border-bottom pb-2">
-                                <span><strong>Real-Time AI Bytecode Audit</strong></span>
+                                <span><strong>Real-Time Bytecode Audit [${chain.toUpperCase()}]</strong></span>
                                 <span class="badge ${data.riskScore > 0 ? 'badge-high' : 'badge-low'}">${data.riskScore > 0 ? 'Threats Found' : 'Verified Secure'}</span>
                             </div>
                             <div class="report-grid mb-3" style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
                                  <div class="grid-item"><small class="text-muted">Bytecode Size</small><h4>${data.bytecodeSize} bytes</h4></div>
                                  <div class="grid-item"><small class="text-muted">Security Score</small><h4 class="text-${data.riskScore > 30 ? 'high' : 'low'}">${100 - data.riskScore}/100</h4></div>
                             </div>
-                            <p class="mb-2"><strong>Detected Patterns:</strong></p>
-                            <ul class="issue-list text-sm mb-3">
+                            <ul class="issue-list text-sm">
                                 ${data.issues.map(i => `<li><i class="fa-solid ${i.includes('Secure') ? 'fa-check text-low' : 'fa-triangle-exclamation text-high'}"></i> ${i}</li>`).join('')}
                             </ul>
-                            <p class="summary-text" style="font-size:0.75rem; color:var(--secondary-color); font-family:var(--font-mono);">* Result based on live on-chain bytecode analysis.</p>
-                            <button class="btn btn-premium btn-sm mt-3 w-100" onclick="downloadReport('${type}', '${inputValue}')">
-                                <i class="fa-solid fa-file-pdf"></i> Generate Institutional PDF Report
-                            </button>
+                            <button class="btn btn-premium btn-sm mt-3 w-100" onclick="downloadReport('${type}', '${inputValue}')">Generate Institutional Report</button>
                         </div>
                     `;
                 } else if(type === 'honeypot-pro') {
                     container.innerHTML = `
                         <div class="tool-report fade-in" style="border-left: 4px solid ${data.isHoneypot ? 'var(--risk-high)' : 'var(--risk-low)'}; background: rgba(0,0,0,0.4);">
-                            <div class="report-header flex-between mb-3 border-bottom pb-2">
-                                <span><strong>Honeypot Real-Time Simulation</strong></span>
+                            <div class="report-header flex-between mb-3">
+                                <span><strong>Honeypot Simulation [${chain.toUpperCase()}]</strong></span>
                                 <span class="badge ${data.isHoneypot ? 'badge-high' : 'badge-low'}">${data.isHoneypot ? 'HONEYPOT' : 'Safe to Buy'}</span>
                             </div>
                             <div class="report-grid mb-3" style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
                                  <div class="grid-item"><small class="text-muted">Buy Tax</small><h4>${data.buyTax || '0.0%'}</h4></div>
                                  <div class="grid-item"><small class="text-muted">Sell Tax</small><h4>${data.sellTax || '0.0%'}</h4></div>
                             </div>
-                            <ul class="issue-list text-sm mb-3">
-                                <li><i class="fa-solid ${data.isHoneypot ? 'fa-skull-crossbones text-high' : 'fa-check text-low'}"></i> ${data.isHoneypot ? 'Simulation failed to sell' : 'Simulation successfully liquidated'}</li>
-                                <li><i class="fa-solid ${data.transferPausing ? 'fa-ban text-high' : 'fa-check text-low'}"></i> Transfer Pausing: ${data.transferPausing ? 'DETECTED' : 'Not found'}</li>
+                            <div class="chart-container mb-3" style="height:200px; border-radius:10px; overflow:hidden; border:1px solid var(--border-color);">
+                                <iframe 
+                                    src="https://dexscreener.com/${chain}/${inputValue}?embed=1&theme=dark&trades=0&info=0" 
+                                    style="width:100%; height:100%; border:none;">
+                                </iframe>
+                            </div>
+                            <button class="btn btn-premium btn-sm w-100" onclick="downloadReport('${type}', '${inputValue}')">Institutional PDF Receipt</button>
+                        </div>
+                    `;
+                } else if(type === 'mev') {
+                    container.innerHTML = `
+                        <div class="tool-report fade-in" style="border-left: 4px solid #f59e0b; background: rgba(245,158,11,0.05);">
+                            <div class="report-header flex-between mb-3 border-bottom pb-2">
+                                <span><strong>MEV & Front-Run Guard</strong></span>
+                                <span class="badge" style="background:#f59e0b; color:black;">${data.status}</span>
+                            </div>
+                            <p class="summary-text mb-3">${data.status === 'BOTS ACTIVE' ? 'WARNING: High bot concentration detected in current blocks.' : 'Safe: No bot manipulation detected.'}</p>
+                            <div class="report-grid">
+                                 <div class="grid-item"><small class="text-muted">MEV Intensity</small><h4>${data.mevActivity}/30</h4></div>
+                            </div>
+                        </div>
+                    `;
+                } else if(type === 'history') {
+                    container.innerHTML = `
+                        <div class="tool-report fade-in" style="border-left: 4px solid #6366f1; background: rgba(99,102,241,0.05);">
+                            <div class="report-header flex-between mb-3 border-bottom pb-2">
+                                <span><strong>Deployer Trust Analyzer</strong></span>
+                                <span class="badge" style="background:#6366f1; color:white;">Trust: ${data.trustScore}%</span>
+                            </div>
+                            <p class="summary-text">${data.summary}</p>
+                            <ul class="issue-list text-sm mt-3">
+                                <li><i class="fa-solid fa-check text-low"></i> Funding: ${data.fundingSource}</li>
+                                <li><i class="fa-solid fa-shield-halved text-low"></i> Linked Rugs: ${data.linkedRugs}</li>
                             </ul>
-                            <p class="summary-text" style="font-size:0.75rem;">Verified at: ${data.timestamp}</p>
-                            <button class="btn btn-premium btn-sm mt-3 w-100" onclick="downloadReport('${type}', '${inputValue}')">
-                                <i class="fa-solid fa-file-pdf"></i> Generate Institutional PDF Report
-                            </button>
                         </div>
                     `;
                 } else if(type === 'whale') {
@@ -779,19 +804,12 @@ async function runRealToolScan(type, inputValue, container) {
                                 <span><strong>Real-Time Whale Sentiment</strong></span>
                                 <span class="badge" style="background:rgba(99,102,241,0.2);color:#6366f1;">${data.sentiment}</span>
                             </div>
-                            <div class="report-grid mb-3" style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
-                                 <div class="grid-item"><small class="text-muted">Net Outflow/Inflow</small><h4 style="color:#6366f1;">DETECTED</h4></div>
-                                 <div class="grid-item"><small class="text-muted">Institutional Moves</small><h4>${data.largeMoves}</h4></div>
-                            </div>
-                            <ul class="issue-list text-sm mb-3">
-                                <li><i class="fa-solid fa-chart-line" style="color:#6366f1;"></i> ${data.summary}</li>
-                                <li><i class="fa-solid fa-database text-muted"></i> Analyzed logs: ${data.recentTransfers}</li>
-                            </ul>
+                            <p class="summary-text">Analyzed logs on ${chain.toUpperCase()}. Recent volume detected: ${data.recentTransfers} interactions.</p>
                         </div>
                     `;
                 }
             } catch(e) {
-                container.innerHTML = `<p class="text-high">Error fetching professional data: ${e.message}</p>`;
+                container.innerHTML = `<p class="text-high">Institutional Error: ${e.message}</p>`;
             }
         }
     } catch(err) {
