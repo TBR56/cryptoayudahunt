@@ -1,25 +1,40 @@
 /* CSS Reset and Variables - Million Dollar SaaS Aesthetic */
 :root {
-    --bg-color: #050505;
-    --surface-color: rgba(15, 15, 20, 0.65);
-    --surface-overlay: rgba(255, 255, 255, 0.05);
-    --border-color: rgba(255, 255, 255, 0.08);
-    --border-glow: rgba(0, 240, 255, 0.2);
-    --primary-color: #ffffff;
+    --bg-color: #020617;
+    --surface-color: rgba(15, 23, 42, 0.8);
+    --surface-overlay: rgba(30, 41, 59, 0.5);
+    --border-color: rgba(56, 189, 248, 0.2);
+    --border-glow: rgba(14, 165, 233, 0.3);
+    --primary-color: #f8fafc;
     --secondary-color: #94a3b8;
-    --accent-color: #0ea5e9;
-    --accent-vibrant: #38bdf8;
-    --accent-glow: rgba(14, 165, 233, 0.4);
-    --risk-high: #f43f5e;
+    --accent-color: #38bdf8;
+    --accent-vibrant: #0ea5e9;
+    --accent-glow: rgba(14, 165, 233, 0.2);
+    --risk-high: #ef4444;
     --risk-medium: #f59e0b;
     --risk-low: #10b981;
     
     --font-main: 'Inter', system-ui, -apple-system, sans-serif;
     --font-mono: 'JetBrains Mono', Consolas, monospace;
 
-    --transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-    --glass-blur: blur(24px);
-    --shadow-premium: 0 20px 40px -10px rgba(0,0,0,0.7), 0 0 20px inset rgba(255,255,255,0.02);
+    --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    --glass-blur: blur(20px);
+    --shadow-premium: 0 0 40px rgba(0,0,0,0.8), 0 0 20px inset rgba(56, 189, 248, 0.05);
+}
+
+/* Tactical Scanline Effect */
+body::after {
+    content: " ";
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.1) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.03), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.03));
+    background-size: 100% 3px, 3px 100%;
+    z-index: 9999;
+    pointer-events: none;
+    opacity: 0.3;
 }
 
 * {
@@ -141,6 +156,9 @@ a {
 .text-high { color: var(--risk-high) !important; font-weight: 600; }
 .text-medium { color: var(--risk-medium) !important; font-weight: 600; }
 .text-low { color: var(--risk-low) !important; font-weight: 600; }
+
+.badge-low { background: rgba(16, 185, 129, 0.1); color: var(--risk-low); border-color: rgba(16, 185, 129, 0.2); }
+.badge-high { background: rgba(244, 63, 94, 0.1); color: var(--risk-high); border-color: rgba(244, 63, 94, 0.2); }
 
 /* Premium Buttons */
 .btn {
@@ -274,6 +292,107 @@ a {
     color: var(--primary-color);
     font-size: 1.5rem;
     cursor: pointer;
+    z-index: 101;
+}
+
+/* Mobile Navigation Styles */
+@media (max-width: 968px) {
+    .nav-links {
+        position: fixed;
+        top: 0;
+        right: -100%;
+        width: 80%;
+        height: 100vh;
+        background: rgba(5, 5, 5, 0.95);
+        backdrop-filter: var(--glass-blur);
+        flex-direction: column;
+        justify-content: center;
+        transition: var(--transition);
+        z-index: -1;
+    }
+
+    .nav-links.active {
+        right: 0;
+    }
+
+    .mobile-menu-btn {
+        display: block;
+    }
+
+    .nav-link {
+        font-size: 1.2rem;
+    }
+
+    .hero-container {
+        grid-template-columns: 1fr;
+        text-align: center;
+        gap: 40px;
+    }
+
+    .hero-content h1 {
+        font-size: 3rem;
+    }
+
+    .hero-sub {
+        margin: 0 auto 40px;
+    }
+
+    .hero-interactive {
+        max-width: 500px;
+        margin: 0 auto;
+    }
+
+    .tools-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .pricing-grid {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+
+    .about-grid {
+        grid-template-columns: 1fr;
+        text-align: center;
+    }
+
+    .about-image {
+        order: -1;
+        margin-bottom: 40px;
+    }
+
+    .footer-container {
+        grid-template-columns: 1fr;
+        text-align: center;
+        gap: 40px;
+    }
+
+    .footer-col {
+        align-items: center;
+    }
+
+    .social-links {
+        justify-content: center;
+    }
+}
+
+@media (max-width: 480px) {
+    .hero-content h1 {
+        font-size: 2.2rem;
+    }
+
+    .btn {
+        width: 100%;
+    }
+
+    .hero-buttons {
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    .auth-box {
+        padding: 30px 20px;
+    }
 }
 
 /* Animations Utility */
@@ -714,13 +833,66 @@ section {
     margin-top: 40px;
 }
 
-/* ========================================= */
-/* AI Tools Page */
-/* ========================================= */
-.tools-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 30px;
+/* Global Threat Map Styles */
+.threat-map-container {
+    background: var(--surface-color);
+    border: 1px solid var(--border-color);
+    border-radius: 20px;
+    padding: 30px;
+    margin-top: 60px;
+    position: relative;
+    overflow: hidden;
+    box-shadow: var(--shadow-premium);
+}
+
+.map-visual {
+    width: 100%;
+    height: 300px;
+    background: radial-gradient(circle at 50% 50%, rgba(56, 189, 248, 0.1) 0%, transparent 70%);
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.map-dot {
+    position: absolute;
+    width: 8px;
+    height: 8px;
+    background: var(--risk-high);
+    border-radius: 50%;
+    box-shadow: 0 0 15px var(--risk-high);
+    animation: ping 2s cubic-bezier(0, 0, 0.2, 1) infinite;
+}
+
+@keyframes ping {
+    75%, 100% {
+        transform: scale(3);
+        opacity: 0;
+    }
+}
+
+.threat-feed {
+    list-style: none;
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    color: var(--secondary-color);
+    max-height: 150px;
+    overflow-y: hidden;
+    margin-top: 20px;
+}
+
+.threat-item {
+    padding: 5px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+    display: flex;
+    justify-content: space-between;
+    animation: slideUp 0.5s ease-out;
+}
+
+@keyframes slideUp {
+    from { transform: translateY(100%); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
 }
 
 .tool-card {

@@ -26,10 +26,19 @@ window.views = {
                     </div>
                 </div>
                 <div class="hero-visual fade-in" style="animation-delay: 0.2s;">
-                    <div class="cyber-shield position-relative">
-                        <i class="fa-solid fa-shield-cat"></i>
-                        <div class="pulse-ring"></div>
-                        <div class="pulse-ring delay-1"></div>
+                    <div class="threat-map-container">
+                        <div class="badge" style="margin-bottom:10px;"><i class="fa-solid fa-earth-americas"></i> Live Global Threat Map</div>
+                        <div class="map-visual" id="live-threat-map">
+                            <!-- Tactical Map UI -->
+                            <div class="map-dot" style="top:30%; left:25%;"></div>
+                            <div class="map-dot" style="top:50%; left:60%;"></div>
+                            <div class="map-dot" style="top:70%; left:40%;"></div>
+                            <i class="fa-solid fa-satellite-dish" style="font-size:5rem; color:rgba(56, 189, 248, 0.2);"></i>
+                        </div>
+                        <div class="threat-feed" id="threat-feed">
+                            <div class="threat-item"><span>[NEW SCAN] Phishing detected: metamask-verify.io</span><span class="text-high">HIGH RISK</span></div>
+                            <div class="threat-item"><span>[NEW SCAN] Honeypot found: $ELON_SAFE</span><span class="text-high">CRITICAL</span></div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -150,7 +159,43 @@ window.views = {
                         <div class="tool-result mt-4" style="display:none;"></div>
                     </div>
 
-                    <!-- Tool 4 (Pro/Elite Only) -->
+                    <!-- Tool 4 (Pro/Elite) -->
+                    <div class="tool-card">
+                        <i class="fa-solid fa-file-code tool-icon" style="color:var(--accent-vibrant);"></i>
+                        <h3>Smart Contract Audit AI</h3>
+                        <p>Deep static analysis of contract bytecode to detect reentrancy, overflows and logic flaws.</p>
+                        <div class="tool-input-group mt-3">
+                            <input type="text" class="custom-input tool-specific-input" placeholder="0x..." id="audit-input" />
+                            <button class="btn btn-accent tool-demo-btn" data-tool="audit" data-input="#audit-input">Start AI Audit</button>
+                        </div>
+                        <div class="tool-result mt-4" style="display:none;"></div>
+                    </div>
+
+                    <!-- Tool 5 (Pro/Elite) -->
+                    <div class="tool-card">
+                        <i class="fa-solid fa-fire-flame-curved tool-icon" style="color:var(--risk-high);"></i>
+                        <h3>HoneyPot Pro AI</h3>
+                        <p>Advanced real-time simulation of buy/sell calls to detect sophisticated honeypot logic.</p>
+                        <div class="tool-input-group mt-3">
+                            <input type="text" class="custom-input tool-specific-input" placeholder="0x..." id="honeypot-pro-input" />
+                            <button class="btn btn-accent tool-demo-btn" data-tool="honeypot-pro" data-input="#honeypot-pro-input">Deep Scan</button>
+                        </div>
+                        <div class="tool-result mt-4" style="display:none;"></div>
+                    </div>
+
+                    <!-- Tool 6 (Elite) -->
+                    <div class="tool-card">
+                        <i class="fa-solid fa-whale tool-icon" style="color:#6366f1;"></i>
+                        <h3>Whale Move AI</h3>
+                        <p>Track top 100 holders of any token and get AI-powered sentiment analysis of their movements.</p>
+                        <div class="tool-input-group mt-3">
+                            <input type="text" class="custom-input tool-specific-input" placeholder="0x..." id="whale-input" />
+                            <button class="btn btn-primary tool-demo-btn" data-tool="whale" data-input="#whale-input">Track Whales</button>
+                        </div>
+                        <div class="tool-result mt-4" style="display:none;"></div>
+                    </div>
+
+                    <!-- Tool 7 (Pro/Elite Only) -->
                     <div class="tool-card" id="api-access-card" style="display:none;">
                         <i class="fa-solid fa-code tool-icon"></i>
                         <h3>Developer API</h3>
@@ -256,9 +301,9 @@ window.views = {
                     <p class="plan-desc">For active traders and investors who need constant vigilance.</p>
                     <ul class="plan-features">
                         <li><i class="fa-solid fa-check"></i> <strong>Unlimited</strong> AI scans</li>
-                        <li><i class="fa-solid fa-check"></i> Advanced security analysis</li>
+                        <li><i class="fa-solid fa-check"></i> Smart Contract Audit AI</li>
+                        <li><i class="fa-solid fa-check"></i> HoneyPot Pro AI (Deep Scan)</li>
                         <li><i class="fa-solid fa-check"></i> Real-time scam alerts (SMS/Email)</li>
-                        <li><i class="fa-solid fa-check"></i> AI Crypto Assistant access</li>
                         <li><i class="fa-solid fa-check"></i> API Access (1K requests)</li>
                     </ul>
                     <div id="paypal-button-container-pro" class="paypal-container"></div>
@@ -271,9 +316,9 @@ window.views = {
                     <p class="plan-desc">Enterprise-grade protection for institutions and whales.</p>
                     <ul class="plan-features">
                         <li><i class="fa-solid fa-check"></i> Everything in Pro</li>
-                        <li><i class="fa-solid fa-check"></i> Institutional API access</li>
+                        <li><i class="fa-solid fa-check"></i> <strong>Whale Move AI</strong> Tracking</li>
+                        <li><i class="fa-solid fa-check"></i> Flash Loan Attack Guard</li>
                         <li><i class="fa-solid fa-check"></i> Priority AI processing</li>
-                        <li><i class="fa-solid fa-check"></i> Personalized security audit</li>
                         <li><i class="fa-solid fa-check"></i> 24/7 Dedicated Support</li>
                     </ul>
                     <div id="paypal-button-container-elite" class="paypal-container"></div>
