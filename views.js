@@ -423,5 +423,63 @@ window.views = {
 
             </div>
         </section>
-    `
+    `,
+    dashboard: () => `
+        <section class="dashboard-section page-padding">
+            <div class="container mt-5 pt-5">
+                <div class="section-header mb-5 fade-in">
+                    <h2 class="display-5 fw-bold"><i class="fa-solid fa-gauge-high text-accent"></i> Institutional <span class="highlight">Portfolio Monitor</span></h2>
+                    <p class="text-muted">Real-time deep-scan of your wallet assets across ETH, BSC, and Polygon.</p>
+                </div>
+
+                <div class="row g-4">
+                    <div class="col-lg-4">
+                        <div class="tool-card text-center p-4">
+                            <h3 style="font-size:1.2rem;opacity:0.8;">OVERALL WALLET HEALTH</h3>
+                            <div class="health-ring my-4">
+                                <span id="wallet-health-percentage" style="animation: matrixDecode 2s infinite;">--%</span>
+                            </div>
+                            <div id="wallet-health-status" class="badge badge-low p-2">Initializing...</div>
+                            <p class="mt-3 text-sm text-muted" id="wallet-summary">Analyzing transactions and linked risks...</p>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-8">
+                        <div class="tool-card p-4">
+                            <div class="flex-between mb-4">
+                                <h3 class="mb-0">Token Security Analysis</h3>
+                                <button class="btn btn-outline btn-sm" onclick="loadDashboard()"><i class="fa-solid fa-rotate"></i> Sync Portfolio</button>
+                            </div>
+                            <div class="table-responsive">
+                                <table class="table custom-table" style="color:white; font-size:0.9rem;">
+                                    <thead>
+                                        <tr>
+                                            <th>Asset</th>
+                                            <th>Balance</th>
+                                            <th>Risk Score</th>
+                                            <th>Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="token-list-body">
+                                        <tr><td colspan="4" class="text-center py-5"><i class="fa-solid fa-spinner fa-spin"></i> Synchronizing with Blockchain...</td></tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="tool-card mt-4 p-3 console-style" style="background:#000; border:1px solid #111;">
+                    <div class="console-header flex-between mb-2" style="font-size:0.75rem;">
+                         <span><i class="fa-solid fa-terminal"></i> AI GUARDIAN LIVE ENGINE v5.0</span>
+                         <span class="text-green">[ONLINE]</span>
+                    </div>
+                    <div class="console-body" id="console-logs" style="font-size:0.8rem; height:100px; overflow:hidden;">
+                        <div class="console-line">> Neural link established.</div>
+                        <div class="console-line">> Monitoring real-time mempool data.</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    `,
 };

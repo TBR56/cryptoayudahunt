@@ -84,6 +84,10 @@ function navigateTo(route) {
         appContent.innerHTML = window.views[route]();
         bindViewEvents(route);
 
+        if (route === 'dashboard') {
+            setTimeout(loadDashboard, 100);
+        }
+        
         if (route === 'auth') {
             const loginForm = document.getElementById('login-form');
             if (loginForm) loginForm.addEventListener('submit', handleLogin);
@@ -173,14 +177,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    chatbotSend.addEventListener('click', () => {
-        if (chatbotInput.value.trim() !== '') {
-            sendChatMessage(chatbotInput.value);
-            chatbotInput.value = '';
-        }
-    });
-
-    // Extended Chatbot: AI Chat-to-Scan Capability
+    // Handle Quick Questions
     async function processChatMessage(message) {
         const addressRegex = /0x[a-fA-F0-0]{40}/g;
         const matches = message.match(addressRegex);
@@ -328,6 +325,7 @@ function bindViewEvents(route) {
         const role = localStorage.getItem('role') || 'user';
         const isPro = plan === 'pro' || plan === 'elite' || role === 'admin';
         const isElite = plan === 'elite' || role === 'admin';
+        const hasAccess = isPro || isElite;
 
         if (!hasAccess) {
             // Show upgrade gate banner at top
@@ -608,6 +606,9 @@ async function performScan(input, type, container) {
         
         if (!res.ok) throw new Error(data.error || "Analysis failed");
         
+        const riskScore = data.riskScore || 0;
+        const riskLevelClass = riskScore > 70 ? 'high' : (riskScore > 30 ? 'medium' : 'low');
+
         // Build issue list HTML
         let issueHTML = '';
         if (data.riskFlags && data.riskFlags.length > 0) {
@@ -655,201 +656,96 @@ async function performScan(input, type, container) {
 async function runRealToolScan(type, inputValue, container) {
     const token = localStorage.getItem('token');
     if (!token) {
-         container.innerHTML = `<p class="text-medium"><i class="fa-solid fa-lock"></i> Please log in or register to use the advanced AI Scanners.</p>
-         <button class="btn btn-outline mt-3" onclick="navigateTo('auth')">Go to Login</button>`;
+         container.innerHTML = `<p class="text-medium"><i class="fa-solid fa-lock"></i> Please log in to use advanced AI Scanners.</p>`;
          container.style.display = 'block';
          return;
     }
 
-    container.innerHTML = `<div class="mini-loader"><div class="spinner"></div><p>AI Processing live blockchain data...</p></div>`;
     container.style.display = 'block';
     
-    const headers = { 'Authorization': `Bearer ${token}` };
+    // Matrix Decoder Animation during loading
+    container.innerHTML = `
+        <div class="text-center py-4">
+            <div class="matrix-text mb-3" style="font-size:1.1rem; letter-spacing:2px; font-family:var(--font-mono);">DECODING ON-CHAIN DATA...</div>
+            <div class="progress" style="height:2px; background:rgba(255,255,255,0.1); border-radius:10px; overflow:hidden;">
+                <div class="progress-bar" id="scan-progress-bar" style="width:0%; background:var(--accent-vibrant); transition: width 1.5s ease-in; height:100%;"></div>
+            </div>
+        </div>
+    `;
+    setTimeout(() => { 
+        const pb = document.getElementById('scan-progress-bar');
+        if(pb) pb.style.width = '100%'; 
+    }, 50);
 
     try {
-        let endpoint = '';
+        const chain = document.getElementById('chain-select')?.value || 'eth';
+        let endpoint = "";
+        
+        // Build Endpoint
         if(type === 'wallet') endpoint = `/api/analyze/wallet?address=${inputValue}`;
         else if(type === 'rug') endpoint = `/api/analyze/token?address=${inputValue}`;
         else if(type === 'phishing') endpoint = `/api/analyze/phishing?url=${inputValue}`;
+        else if(type === 'audit') endpoint = `/api/godmode/audit?address=${inputValue}&chain=${chain}`;
+        else if(type === 'honeypot-pro') endpoint = `/api/godmode/honeypot?address=${inputValue}&chain=${chain}`;
+        else if(type === 'whale') endpoint = `/api/godmode/whale?address=${inputValue}&chain=${chain}`;
+        else if(type === 'mev') endpoint = `/api/godmode/mev?address=${inputValue}&chain=${chain}`;
+        else if(type === 'history') endpoint = `/api/godmode/history?address=${inputValue}&chain=${chain}`;
 
-        const res = await fetch(endpoint, { headers });
+        const res = await fetch(endpoint, { headers: { 'Authorization': `Bearer ${token}` } });
         const data = await res.json();
-            
+        
         if(res.status === 403 && data.limitReached) {
-            container.innerHTML = `
-                <div class="scan-error-card" style="border:1px solid rgba(239,68,68,0.3);background:rgba(239,68,68,0.05);padding:20px;border-radius:15px;text-align:center;">
-                    <i class="fa-solid fa-circle-exclamation" style="color:#ef4444;font-size:1.5rem;margin-bottom:10px;"></i>
-                    <h4 style="color:#fff;">Limit Reached</h4>
-                    <p style="font-size:0.85rem;color:var(--secondary-color);margin-bottom:15px;">You've used your 3 daily scans. Upgrade to Pro for unlimited AI intelligence.</p>
-                    <button class="btn btn-primary btn-small" onclick="navigateTo('pricing')">View Plans</button>
-                </div>
-            `;
+            container.innerHTML = `<div class="scan-error-card text-center p-3"><h4>Limit Reached</h4><button class="btn btn-primary btn-sm" onclick="navigateTo('pricing')">Upgrade</button></div>`;
             return;
         }
-
         if(!res.ok) throw new Error(data.error || "Analysis failed");
 
-        if(type === 'wallet') {
-            let tagsHtml = data.tags.map(t => `<span class="badge ${t.includes('Spam') ? 'badge-high' : 'badge-low'}">${t}</span>`).join(' ');
+        // Render Results based on type
+        if(type === 'audit') {
             container.innerHTML = `
-                <div class="tool-report fade-in">
-                    <div class="report-header flex-between mb-3 border-bottom pb-2">
-                        <span><strong>Wallet Analyzed</strong></span>
-                        <span class="text-muted" title="${inputValue}">${inputValue.substring(0,6)}...${inputValue.slice(-4)}</span>
+                <div class="tool-report fade-in" style="border-left: 4px solid var(--accent-vibrant);">
+                    <div class="report-header flex-between mb-3">
+                        <span><strong>Deep Audit [${chain.toUpperCase()}]</strong></span>
+                        <span class="badge ${data.riskScore > 30 ? 'badge-high' : 'badge-low'}">${data.riskScore > 30 ? 'Risky' : 'Institutional Grade'}</span>
                     </div>
-                    <div class="report-grid mb-3">
-                        <div class="grid-item">
-                            <small class="text-muted">Global Risk Score</small>
-                            <h4 class="text-${data.riskLevel.toLowerCase()}">${data.riskScore}/100</h4>
-                        </div>
-                        <div class="grid-item">
-                            <small class="text-muted">Entity Tags</small>
-                            <div>${tagsHtml || '-'}</div>
-                        </div>
-                    </div>
-                    <div class="report-row mb-2"><strong class="text-medium">Detection History:</strong></div>
-                    <ul class="issue-list text-sm mb-3">
-                        ${data.riskFlags.map(f => `<li><i class="fa-solid fa-flag text-${f.includes('CRITICAL') || f.includes('HIGH') ? 'high' : (f.includes('MEDIUM') ? 'medium' : 'low')}"></i> ${f}</li>`).join('')}
+                    <p class="mb-2 text-sm text-accent">Security Matrix Discovery:</p>
+                    <ul class="issue-list text-sm">
+                        ${(data.riskDetails || data.issues).map(i => `<li><i class="fa-solid ${i.includes('CRITICAL') || i.includes('HIGH') ? 'fa-skull-crossbones text-high' : 'fa-check text-low'}"></i> ${i}</li>`).join('')}
                     </ul>
-                    <p class="summary-text ${data.riskScore > 50 ? 'warning' : ''}">${data.summary}</p>
+                    <button class="btn btn-premium btn-sm mt-3 w-100" onclick="downloadReport('${type}', '${inputValue}')">Receipt</button>
                 </div>
             `;
-        } else if(type === 'rug') {
-            if(!data.found) throw new Error(data.message);
+        } else if(type === 'honeypot-pro') {
+            container.innerHTML = `
+                <div class="tool-report fade-in" style="border-left: 4px solid ${data.isHoneypot ? 'var(--risk-high)' : 'var(--risk-low)'};">
+                    <div class="report-header flex-between mb-2">
+                        <span><strong>Honeypot Scan [${chain.toUpperCase()}]</strong></span>
+                        <span class="badge ${data.isHoneypot ? 'badge-high' : 'badge-low'}">${data.isHoneypot ? 'DANGER' : 'SAFE'}</span>
+                    </div>
+                    <div class="chart-container" style="height:150px; border-radius:10px; overflow:hidden; margin:10px 0;">
+                        <iframe src="https://dexscreener.com/${chain}/${inputValue}?embed=1&theme=dark&trades=0&info=0" style="width:100%; height:100%; border:none;"></iframe>
+                    </div>
+                </div>
+            `;
+        } else if(type === 'wallet') {
+             container.innerHTML = `
+                <div class="tool-report fade-in">
+                    <div class="report-header flex-between mb-2"><strong>Wallet Health</strong> <h4 class="text-${data.riskLevel.toLowerCase()}">${data.riskScore}/100</h4></div>
+                    <p class="summary-text text-sm">${data.summary}</p>
+                </div>
+            `;
+        } else {
+            // General structure for others
             container.innerHTML = `
                 <div class="tool-report fade-in">
-                    <div class="report-header flex-between mb-3 border-bottom pb-2">
-                        <span><strong>Token Analyzed:</strong> ${data.raw.name} (${data.raw.symbol})</span>
-                        <span class="text-muted" title="${inputValue}">${inputValue.substring(0,6)}...${inputValue.slice(-4)}</span>
-                    </div>
-                    <div class="report-grid mb-3" style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
-                         <div class="grid-item"><small class="text-muted">Rug Pull Risk</small><h4 class="text-${data.riskLevel.toLowerCase()}">${data.riskScore}/100</h4></div>
-                         <div class="grid-item"><small class="text-muted">Taxes (Buy/Sell)</small><h4>${data.raw.buyTax} / ${data.raw.sellTax}</h4></div>
-                         <div class="grid-item"><small class="text-muted">Holders</small><h4>${data.raw.holders}</h4></div>
-                         <div class="grid-item"><small class="text-muted">Traded On</small><h4>${data.raw.dex}</h4></div>
-                    </div>
-                    ${data.riskFlags.length > 0 && data.riskScore > 0 ? `
-                    <div class="report-row mb-2"><strong class="text-high">Security Warnings:</strong></div>
-                    <ul class="issue-list text-sm mb-3">
-                        ${data.riskFlags.map(f => `<li><i class="fa-solid fa-triangle-exclamation text-${f.includes('CRITICAL') || f.includes('HIGH') ? 'high' : 'medium'}"></i> ${f}</li>`).join('')}
-                    </ul>` : ''}
-                    <p class="summary-text ${data.riskScore > 50 ? 'warning' : ''}">AI Summary: Risk is evaluated at <b>${data.riskLevel}</b> based on contract logic heuristics.</p>
+                    <div class="report-header mb-2"><strong>AI Analysis Complete</strong></div>
+                    <p class="text-sm">${data.summary || 'Analysis successful. No immediate high-risk signals detected.'}</p>
+                    ${data.status ? `<div class="badge badge-accent">${data.status}</div>` : ''}
                 </div>
             `;
-        } else if(type === 'phishing') {
-            container.innerHTML = `
-                <div class="tool-report fade-in">
-                    <div class="report-header flex-between mb-3 border-bottom pb-2">
-                        <span><strong>Domain Checked</strong></span>
-                        <span class="text-muted" title="${data.cleanUrl}">${data.cleanUrl.substring(0,30)}</span>
-                    </div>
-                    <div class="report-grid mb-3">
-                        <div class="grid-item"><small class="text-muted">Phishing Probability</small><h4 class="text-${data.riskLevel.toLowerCase()}">${data.riskScore}%</h4></div>
-                        <div class="grid-item"><small class="text-muted">Status</small><h4 class="text-${data.isMalicious ? 'high' : 'low'}">${data.isMalicious ? 'Flagged Malicious' : 'Clean'}</h4></div>
-                    </div>
-                    <div class="report-row mb-2"><strong class="text-medium">Details:</strong></div>
-                    <ul class="issue-list text-sm mb-3">
-                        ${data.riskFlags.map(f => `<li><i class="fa-solid ${data.isMalicious ? 'fa-skull-crossbones text-high' : 'fa-info-circle text-muted'}"></i> ${f}</li>`).join('')}
-                    </ul>
-                    <p class="summary-text ${data.riskScore > 50 ? 'warning' : ''}">${data.summary}</p>
-                </div>
-            `;
-        // Real on-chain data fetching
-        try {
-            const chain = document.getElementById('chain-select')?.value || 'eth';
-            
-            // Matrix Decoder Animation during loading
-            container.innerHTML = `
-                <div class="text-center py-4">
-                    <div class="matrix-text mb-3" style="font-size:1.5rem; letter-spacing:2px;">DECODING ON-CHAIN DATA...</div>
-                    <div class="progress" style="height:2px; background:rgba(255,255,255,0.1);">
-                        <div class="progress-bar" style="width:0%; background:var(--accent-vibrant); transition: width 1.5s ease-in;"></div>
-                    </div>
-                </div>
-            `;
-            setTimeout(() => { if(container.querySelector('.progress-bar')) container.querySelector('.progress-bar').style.width = '100%'; }, 50);
-
-            let endpoint = "";
-            if(type === 'audit') endpoint = `/api/godmode/audit?address=${inputValue}&chain=${chain}`;
-            else if(type === 'honeypot-pro') endpoint = `/api/godmode/honeypot?address=${inputValue}&chain=${chain}`;
-            else if(type === 'whale') endpoint = `/api/godmode/whale?address=${inputValue}&chain=${chain}`;
-            else if(type === 'mev') endpoint = `/api/godmode/mev?address=${inputValue}&chain=${chain}`;
-            else if(type === 'history') endpoint = `/api/godmode/history?address=${inputValue}&chain=${chain}`;
-
-            const res = await fetch(endpoint, { headers: { 'Authorization': `Bearer ${token}` } });
-            const data = await res.json();
-            if(!res.ok) throw new Error(data.error || "Analysis failed");
-
-            if(type === 'audit') {
-                container.innerHTML = `
-                    <div class="tool-report fade-in" style="border-left: 4px solid var(--accent-vibrant); background: rgba(0,20,30,0.6);">
-                        <div class="report-header flex-between mb-3 border-bottom pb-2">
-                            <span><strong>Institutional Deep Audit [${chain.toUpperCase()}]</strong></span>
-                            <span class="badge ${data.riskScore > 0 ? 'badge-high' : 'badge-low'}">${data.riskScore > 0 ? 'Threats Found' : 'Verified Secure'}</span>
-                        </div>
-                        <div class="report-grid mb-3" style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
-                             <div class="grid-item"><small class="text-muted">Bytecode Risk</small><h4>${data.riskScore}%</h4></div>
-                             <div class="grid-item"><small class="text-muted">Trust Index</small><h4>${data.trustLevel}</h4></div>
-                        </div>
-                        <p class="mb-2 text-sm text-accent">Security Matrix Discovery:</p>
-                        <ul class="issue-list text-sm">
-                            ${(data.riskDetails || data.issues).map(i => `<li><i class="fa-solid ${i.includes('CRITICAL') || i.includes('HIGH') ? 'fa-skull-crossbones text-high' : 'fa-check text-low'}"></i> ${i}</li>`).join('')}
-                        </ul>
-                        <button class="btn btn-premium btn-sm mt-3 w-100" onclick="downloadReport('${type}', '${inputValue}')">Download Audit Receipt</button>
-                    </div>
-                `;
-            } else if(type === 'honeypot-pro') {
-                container.innerHTML = `
-                    <div class="tool-report fade-in" style="border-left: 4px solid ${data.isHoneypot ? 'var(--risk-high)' : 'var(--risk-low)'}; background: rgba(0,0,0,0.4);">
-                        <div class="report-header flex-between mb-3">
-                            <span><strong>Honeypot Simulation [${chain.toUpperCase()}]</strong></span>
-                            <span class="badge ${data.isHoneypot ? 'badge-high' : 'badge-low'}">${data.isHoneypot ? 'HONEYPOT' : 'Safe to Buy'}</span>
-                        </div>
-                        <div class="report-grid mb-3" style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
-                             <div class="grid-item"><small class="text-muted">Buy Tax</small><h4>${data.buyTax || '0.0%'}</h4></div>
-                             <div class="grid-item"><small class="text-muted">Sell Tax</small><h4>${data.sellTax || '0.0%'}</h4></div>
-                        </div>
-                        <div class="chart-container mb-3" style="height:200px; border-radius:10px; overflow:hidden; border:1px solid var(--border-color);">
-                            <iframe 
-                                src="https://dexscreener.com/${chain}/${inputValue}?embed=1&theme=dark&trades=0&info=0" 
-                                style="width:100%; height:100%; border:none;">
-                            </iframe>
-                        </div>
-                        <button class="btn btn-premium btn-sm w-100" onclick="downloadReport('${type}', '${inputValue}')">Institutional PDF Receipt</button>
-                    </div>
-                `;
-            } else if(type === 'mev') {
-                container.innerHTML = `
-                    <div class="tool-report fade-in" style="border-left: 4px solid #f59e0b; background: rgba(245,158,11,0.05);">
-                        <div class="report-header flex-between mb-3 border-bottom pb-2">
-                            <span><strong>MEV & Front-Run Guard</strong></span>
-                            <span class="badge" style="background:#f59e0b; color:black;">${data.status}</span>
-                        </div>
-                        <p class="summary-text mb-3">${data.status === 'BOTS ACTIVE' ? 'WARNING: High bot concentration detected.' : 'Safe: No bot manipulation detected.'}</p>
-                        <div class="report-grid">
-                             <div class="grid-item"><small class="text-muted">Active MEV Signatures</small><h4>${data.mevActivity}/30</h4></div>
-                        </div>
-                    </div>
-                `;
-            } else {
-                 container.innerHTML = `
-                    <div class="tool-report fade-in" style="border-left: 4px solid #6366f1; background:rgba(99,102,241,0.05);">
-                        <div class="report-header flex-between mb-3 border-bottom pb-2">
-                            <span><strong>AI Institutional Analysis</strong></span>
-                            <span class="badge" style="background:rgba(99,102,241,0.2);color:#6366f1;">ACTIVE</span>
-                        </div>
-                        <p class="summary-text">Analysis for ${inputValue.substring(0,10)}... completed successfully on ${chain.toUpperCase()}.</p>
-                    </div>
-                `;
-            }
-            } catch(e) {
-                container.innerHTML = `<p class="text-high">Institutional Error: ${e.message}</p>`;
-            }
-        } catch(err) {
-            container.innerHTML = `<p class="text-high">Fatal Analysis Error: ${err.message}</p>`;
         }
-    } catch(globalErr) {
-        container.innerHTML = `<p class="text-high">Global Error: ${globalErr.message}</p>`;
+    } catch(err) {
+        container.innerHTML = `<div class="p-3 text-high"><i class="fa-solid fa-triangle-exclamation"></i> Analysis Failure: ${err.message}</div>`;
     }
 }
 
