@@ -103,10 +103,24 @@ seedAdmin(db);
 function authenticateToken(req, res, next) {
     const authHeader = req.headers['authorization'];
     const token = authHeader && authHeader.split(' ')[1];
-    if (!token) return res.status(401).json({ error: "Access Denied. Please Login." });
+    if (!token || token === "null") return res.status(401).json({ error: "Access Denied. Please Login." });
     jwt.verify(token, JWT_SECRET, (err, user) => {
         if (err) return res.status(403).json({ error: "Invalid Token. Please log in again." });
         req.user = user;
+        next();
+    });
+}
+
+function optionalAuth(req, res, next) {
+    const authHeader = req.headers['authorization'];
+    const token = authHeader && authHeader.split(' ')[1];
+    if (!token || token === "null") {
+        req.user = null;
+        return next();
+    }
+    jwt.verify(token, JWT_SECRET, (err, user) => {
+        if (!err) req.user = user;
+        else req.user = null;
         next();
     });
 }
@@ -209,57 +223,45 @@ app.delete('/api/admin/users/:id', authenticateToken, isAdmin, (req, res) => {
     res.json({ message: 'User deleted' });
 });
 
-// === PayPal Payment Routes ===
-app.post('/api/orders', authenticateToken, async (req, res) => {
+// === Premium Upgrade Routes (Simulated Stripe Flow) ===
+app.post('/api/upgrade', authenticateToken, async (req, res) => {
     const { planType } = req.body;
-    let price = '0.00';
-    if (planType === 'pro') price = '29.00';
-    if (planType === 'elite') price = '99.00';
-    if (price === '0.00') return res.status(400).json({ error: "Invalid plan" });
+    if (planType !== 'pro' && planType !== 'elite') return res.status(400).json({ error: "Invalid plan" });
 
-    const request = new paypal.orders.OrdersCreateRequest();
-    request.prefer("return=representation");
-    request.requestBody({
-        intent: 'CAPTURE',
-        purchase_units: [{
-            amount: { currency_code: 'USD', value: price },
-            description: `CryptoAyuda AI Guardian - ${planType.toUpperCase()} Plan`,
-            payee: { email_address: "tbrcarabelli@gmail.com" }
-        }]
-    });
-
-    try {
-        const order = await paypalClient.execute(request);
-        res.status(200).json({ id: order.result.id });
-    } catch (e) {
-        console.error(e);
-        res.status(500).json({ error: e.message });
-    }
-});
-
-app.post('/api/orders/capture', authenticateToken, async (req, res) => {
-    const { orderID, planType } = req.body;
-    try {
-        const request = new paypal.orders.OrdersCaptureRequest(orderID);
-        request.requestBody({});
-        const capture = await paypalClient.execute(request);
-
-        if (capture.result.status === 'COMPLETED') {
-            const db = readDB();
-            const user = db.users.find(u => u.id === req.user.id);
-            if (user) { user.plan = planType; writeDB(db); }
+    // Simulate secure payment processing delay (1.5s)
+    setTimeout(() => {
+        const db = readDB();
+        const user = db.users.find(u => u.id === req.user.id);
+        if (user) { 
+            user.plan = planType; 
+            writeDB(db); 
             res.status(200).json({ message: "Plan upgraded successfully", plan: planType });
         } else {
-            res.status(400).json({ error: "Payment not completed" });
+            res.status(404).json({ error: "User not found" });
         }
-    } catch (e) {
-        console.error(e);
-        res.status(500).json({ error: e.message });
-    }
+    }, 1500);
 });
 
 // === Scan Limit Helper ===
+const ipScans = new Map(); // Simple in-memory rate limit for anons
+
 function checkScanLimit(req, res, next) {
+    if (!req.user) {
+        const ip = req.ip || req.connection.remoteAddress;
+        const scans = ipScans.get(ip) || 0;
+        if (scans >= 1) { // 1 free anonymous scan
+            return res.status(403).json({ 
+                error: "Demo limit reached.", 
+                limitReached: true,
+                suggestUpgrade: true,
+                isDemo: true
+            });
+        }
+        req.isAnonymous = true;
+        req.clientIp = ip;
+        return next();
+    }
+
     const db = readDB();
     const user = db.users.find(u => u.id === req.user.id);
     if (!user) return res.status(404).json({ error: "User not found" });
@@ -279,18 +281,17 @@ function checkScanLimit(req, res, next) {
         return res.status(403).json({ 
             error: "Daily scan limit reached (3/3).", 
             limitReached: true,
-            suggestUpgrade: true 
+            suggestUpgrade: true,
+            isDemo: false
         });
     }
 
-    // Increment scan count but DON'T write to DB yet (next() will handle the actual scan)
-    // We'll increment and write inside the actual analysis routes to be safe
     req.dbUser = user;
     next();
 }
 
 // === AI Analysis Routes ===
-app.get('/api/analyze/token', authenticateToken, checkScanLimit, async (req, res) => {
+app.get('/api/analyze/token', optionalAuth, checkScanLimit, async (req, res) => {
     try {
         const { address, chain_id = '1' } = req.query;
         if (!address) return res.status(400).json({ error: 'Token address is required' });
@@ -298,12 +299,16 @@ app.get('/api/analyze/token', authenticateToken, checkScanLimit, async (req, res
         const response = await axios.get(`https://api.gopluslabs.io/api/v1/token_security/${chain_id}?contract_addresses=${address}`);
         const data = response.data.result[address.toLowerCase()];
 
-        // Increment scan count if successful
-        const db = readDB();
-        const user = db.users.find(u => u.id === req.user.id);
-        if (user && user.plan === 'free') {
-            user.dailyScans += 1;
-            writeDB(db);
+        // Increment scan count
+        if (req.isAnonymous) {
+            ipScans.set(req.clientIp, (ipScans.get(req.clientIp) || 0) + 1);
+        } else {
+            const db = readDB();
+            const user = db.users.find(u => u.id === req.user.id);
+            if (user && user.plan === 'free') {
+                user.dailyScans += 1;
+                writeDB(db);
+            }
         }
 
         if (!data) return res.json({ found: false, message: "No security data found for this contract address." });
@@ -356,7 +361,7 @@ app.get('/api/analyze/token', authenticateToken, checkScanLimit, async (req, res
     }
 });
 
-app.get('/api/analyze/wallet', authenticateToken, checkScanLimit, async (req, res) => {
+app.get('/api/analyze/wallet', optionalAuth, checkScanLimit, async (req, res) => {
     try {
         const { address } = req.query;
         if (!address) return res.status(400).json({ error: 'Wallet address is required' });
@@ -365,11 +370,15 @@ app.get('/api/analyze/wallet', authenticateToken, checkScanLimit, async (req, re
         const data = response.data.result;
 
         // Increment scan count
-        const db = readDB();
-        const user = db.users.find(u => u.id === req.user.id);
-        if (user && user.plan === 'free') {
-            user.dailyScans += 1;
-            writeDB(db);
+        if (req.isAnonymous) {
+            ipScans.set(req.clientIp, (ipScans.get(req.clientIp) || 0) + 1);
+        } else {
+            const db = readDB();
+            const user = db.users.find(u => u.id === req.user.id);
+            if (user && user.plan === 'free') {
+                user.dailyScans += 1;
+                writeDB(db);
+            }
         }
 
         let riskScore = 0;
@@ -405,7 +414,7 @@ app.get('/api/analyze/wallet', authenticateToken, checkScanLimit, async (req, re
     }
 });
 
-app.get('/api/analyze/phishing', authenticateToken, checkScanLimit, async (req, res) => {
+app.get('/api/analyze/phishing', optionalAuth, checkScanLimit, async (req, res) => {
     try {
         let { url } = req.query;
         if (!url) return res.status(400).json({ error: 'URL is required' });
@@ -415,11 +424,15 @@ app.get('/api/analyze/phishing', authenticateToken, checkScanLimit, async (req, 
         const data = response.data.result;
 
         // Increment scan count
-        const db = readDB();
-        const user = db.users.find(u => u.id === req.user.id);
-        if (user && user.plan === 'free') {
-            user.dailyScans += 1;
-            writeDB(db);
+        if (req.isAnonymous) {
+            ipScans.set(req.clientIp, (ipScans.get(req.clientIp) || 0) + 1);
+        } else {
+            const db = readDB();
+            const user = db.users.find(u => u.id === req.user.id);
+            if (user && user.plan === 'free') {
+                user.dailyScans += 1;
+                writeDB(db);
+            }
         }
 
         let riskScore = 0;

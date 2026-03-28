@@ -495,64 +495,54 @@ function bindViewEvents(route) {
                     return;
                 }
 
-                // If logged in, show PayPal buttons for this plan
                 const plan = btn.getAttribute('data-plan');
-                const containerId = `paypal-button-container-${plan}`;
-                const containerEl = document.getElementById(containerId);
                 
-                if (containerEl && window.paypal) {
-                    btn.style.display = 'none'; // Hide the "Upgrade" button
-                    containerEl.style.display = 'block';
-                    
-                    // Render PayPal buttons only when clicked
-                    paypal.Buttons({
-                        style: {
-                            layout: 'vertical',
-                            color:  'gold',
-                            shape:  'pill',
-                            label:  'checkout'
-                        },
-                        createOrder: function(data, actions) {
-                            return fetch('/api/orders', {
-                                method: 'post',
-                                headers: { 
-                                    'Content-Type': 'application/json',
-                                    'Authorization': `Bearer ${token}`
-                                },
-                                body: JSON.stringify({ planType: plan })
-                            }).then(res => res.json()).then(orderData => orderData.id);
-                        },
-                        onApprove: function(data, actions) {
-                            // Cinematic "Access Granted" Animation
-                            document.body.insertAdjacentHTML('beforeend', '<div id="cinematic-overlay" style="position:fixed; inset:0; z-index:10000; background:black; display:flex; align-items:center; justify-content:center; color:var(--accent-vibrant); font-family:var(--font-mono); font-size:2rem; animation: fadeOut 3s forwards;"><div class="text-center"><i class="fa-solid fa-user-check fa-beat" style="font-size:4rem;"></i><br>DECODING ACCESS...<br><small>PLAN UPGRADED TO '+plan.toUpperCase()+'</small></div></div>');
+                // Cinematic Checkout Mock Outline
+                document.body.insertAdjacentHTML('beforeend', `
+                    <div id="checkout-overlay" style="position:fixed; inset:0; z-index:10000; background:rgba(0,0,0,0.85); backdrop-filter:blur(10px); display:flex; align-items:center; justify-content:center; color:white; font-family:var(--font-main);">
+                        <div class="text-center fade-in" style="background:#0f172a; padding:40px; border-radius:20px; border:1px solid rgba(56, 189, 248, 0.3); width:100%; max-width:400px; box-shadow: 0 0 40px rgba(56, 189, 248, 0.1);">
+                            <i class="fa-solid fa-credit-card fa-beat" style="font-size:3rem; color:var(--accent-vibrant); margin-bottom:20px;"></i>
+                            <h3>Secure Checkout</h3>
+                            <p class="text-secondary mb-4">Processing upgrade to <strong style="color:var(--accent-vibrant)">${plan.toUpperCase()}</strong>...</p>
+                            <div class="progress" style="height:4px; background:rgba(255,255,255,0.1); border-radius:10px; overflow:hidden;">
+                                <div class="progress-bar" style="width:100%; background:var(--accent-vibrant); animation: progress 1.5s ease-in-out;"></div>
+                            </div>
+                            <p class="text-sm mt-3" style="color:var(--risk-low); opacity:0.7;"><i class="fa-solid fa-lock"></i> 256-bit Encryption Mock</p>
+                        </div>
+                    </div>
+                `);
 
-                            return fetch('/api/orders/capture', {
-                                method: 'post',
-                                headers: { 
-                                    'Content-Type': 'application/json',
-                                    'Authorization': `Bearer ${token}`
-                                },
-                                body: JSON.stringify({ orderID: data.orderID, planType: plan })
-                            }).then(res => res.json())
-                            .then(orderData => {
-                                if (orderData.error) {
-                                     document.getElementById('cinematic-overlay').remove();
-                                     alert("Payment failed: " + orderData.error);
-                                } else {
-                                    localStorage.setItem('plan', orderData.plan);
-                                    setTimeout(() => {
-                                        document.getElementById('cinematic-overlay').remove();
-                                        location.reload(); // Hard reload to update plan globally
-                                    }, 2500);
-                                }
-                            });
-                        },
-                        onError: function(err) {
-                            console.error('PayPal Error:', err);
-                            alert("There was an error with PayPal. Please try again or use another card.");
-                        }
-                    }).render(`#${containerId}`);
-                }
+                fetch('/api/upgrade', {
+                    method: 'POST',
+                    headers: { 
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ planType: plan })
+                }).then(res => res.json())
+                .then(data => {
+                    const overlay = document.getElementById('checkout-overlay');
+                    if (data.error) {
+                         overlay.remove();
+                         alert("Payment failed: " + data.error);
+                    } else {
+                         overlay.innerHTML = `
+                             <div class="text-center fade-in" style="background:#0f172a; padding:40px; border-radius:20px; border:1px solid var(--risk-low); width:100%; max-width:400px; box-shadow: 0 0 40px rgba(16, 185, 129, 0.2);">
+                                 <i class="fa-solid fa-circle-check" style="font-size:4rem; color:var(--risk-low); margin-bottom:20px;"></i>
+                                 <h3>Payment Successful</h3>
+                                 <p class="text-secondary mb-0">Welcome to ${plan.toUpperCase()}. Accelerating your workflow...</p>
+                             </div>
+                         `;
+                         localStorage.setItem('plan', data.plan);
+                         setTimeout(() => {
+                             overlay.remove();
+                             location.reload(); 
+                         }, 2000);
+                    }
+                }).catch(err => {
+                    document.getElementById('checkout-overlay').remove();
+                    alert("Network error.");
+                });
             });
         });
     }
@@ -593,14 +583,28 @@ async function performScan(input, type, container) {
         const data = await res.json();
 
         if (res.status === 403 && data.limitReached) {
-            container.innerHTML = `
-                <div class="scan-error-card" style="border:1px solid rgba(239,68,68,0.3);background:rgba(239,68,68,0.05);padding:20px;border-radius:15px;text-align:center;">
-                    <i class="fa-solid fa-circle-exclamation" style="color:#ef4444;font-size:1.5rem;margin-bottom:10px;"></i>
-                    <h4 style="color:#fff;">Limit Reached</h4>
-                    <p style="font-size:0.85rem;color:var(--secondary-color);margin-bottom:15px;">You've used your 3 daily scans. Upgrade to Pro for unlimited AI intelligence.</p>
-                    <button class="btn btn-primary btn-small" onclick="navigateTo('pricing')">View Plans</button>
-                </div>
-            `;
+            if (data.isDemo) {
+                container.innerHTML = `
+                    <div class="scan-error-card" style="border:1px solid rgba(14, 165, 233, 0.3);background:rgba(14, 165, 233, 0.05);padding:20px;border-radius:15px;text-align:center;">
+                        <i class="fa-solid fa-lock" style="color:var(--accent-vibrant);font-size:1.5rem;margin-bottom:10px;"></i>
+                        <h4 style="color:#fff;">Demo Limit Reached</h4>
+                        <p style="font-size:0.85rem;color:var(--secondary-color);margin-bottom:15px;">You've used your free anonymous scan. Create a free account to unlock 3 more daily scans, or upgrade to Pro for unlimited access.</p>
+                        <div style="display:flex; justify-content:center; gap:10px;">
+                            <button class="btn btn-primary btn-small" onclick="navigateTo('auth')" style="padding:8px 16px;">Create Free Account</button>
+                            <button class="btn btn-outline btn-small" onclick="navigateTo('pricing')" style="padding:8px 16px;">View Plans</button>
+                        </div>
+                    </div>
+                `;
+            } else {
+                container.innerHTML = `
+                    <div class="scan-error-card" style="border:1px solid rgba(239,68,68,0.3);background:rgba(239,68,68,0.05);padding:20px;border-radius:15px;text-align:center;">
+                        <i class="fa-solid fa-circle-exclamation" style="color:#ef4444;font-size:1.5rem;margin-bottom:10px;"></i>
+                        <h4 style="color:#fff;">Limit Reached</h4>
+                        <p style="font-size:0.85rem;color:var(--secondary-color);margin-bottom:15px;">You've used your 3 daily scans. Upgrade to Pro for unlimited AI intelligence.</p>
+                        <button class="btn btn-primary btn-small" onclick="navigateTo('pricing')">View Plans</button>
+                    </div>
+                `;
+            }
             return;
         }
         
@@ -655,7 +659,9 @@ async function performScan(input, type, container) {
 // Tool Card Scanning Logic
 async function runRealToolScan(type, inputValue, container) {
     const token = localStorage.getItem('token');
-    if (!token) {
+    const isFreeTool = (type === 'wallet' || type === 'rug' || type === 'phishing');
+    
+    if (!token && !isFreeTool) {
          container.innerHTML = `<p class="text-medium"><i class="fa-solid fa-lock"></i> Please log in to use advanced AI Scanners.</p>`;
          container.style.display = 'block';
          return;
@@ -695,7 +701,11 @@ async function runRealToolScan(type, inputValue, container) {
         const data = await res.json();
         
         if(res.status === 403 && data.limitReached) {
-            container.innerHTML = `<div class="scan-error-card text-center p-3"><h4>Limit Reached</h4><button class="btn btn-primary btn-sm" onclick="navigateTo('pricing')">Upgrade</button></div>`;
+            if (data.isDemo) {
+                container.innerHTML = `<div class="scan-error-card text-center p-3"><h4>Demo Limit Reached</h4><p class="text-sm">Create a free account or login to continue.</p><button class="btn btn-outline btn-sm mt-2" onclick="navigateTo('auth')">Login / Register</button></div>`;
+            } else {
+                container.innerHTML = `<div class="scan-error-card text-center p-3"><h4>Limit Reached</h4><p class="text-sm">Upgrade to Pro for unlimited scans.</p><button class="btn btn-primary btn-sm mt-2" onclick="navigateTo('pricing')">Upgrade</button></div>`;
+            }
             return;
         }
         if(!res.ok) throw new Error(data.error || "Analysis failed");

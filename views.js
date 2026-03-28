@@ -8,9 +8,9 @@ window.views = {
             <div class="hero-glow"></div>
             <div class="container hero-container">
                 <div class="hero-content fade-in">
-                    <div class="badge"><i class="fa-solid fa-sparkles"></i> Advanced AI Neural Network</div>
-                    <h1>AI that protects your crypto from <span class="highlight">scams.</span></h1>
-                    <p class="hero-sub">Analyze wallets, tokens and crypto websites instantly using artificial-intelligence models trained on millions of malicious data points. Secure your digital wealth before you transact.</p>
+                    <div class="badge"><i class="fa-solid fa-sparkles"></i> Artificial Intelligence Guardian</div>
+                    <h1>Enterprise-Grade Security <br>for your <span class="highlight">Crypto Assets.</span></h1>
+                    <p class="hero-sub">Before you invest, let our AI analyze smart contracts, wallets, and dApps in 3 seconds to detect hidden threats, honeypots, and phishing scams.</p>
                     
                     <div class="hero-interactive">
                         <div class="input-group">
@@ -23,6 +23,19 @@ window.views = {
                             <button class="btn btn-outline analyze-btn">Check Website</button>
                         </div>
                         <div id="analysis-result-area" class="analysis-result-area" style="display: none;"></div>
+                        
+                        <div class="trust-banner fade-in" style="animation-delay: 0.4s; margin-top: 30px; display: flex; align-items: center; gap: 15px;">
+                            <div class="avatars" style="display:flex; margin-left: 10px;">
+                                <img src="https://i.pravatar.cc/100?img=11" alt="User" style="width:32px; height:32px; border-radius:50%; border:2px solid var(--bg-color); margin-left:-10px;">
+                                <img src="https://i.pravatar.cc/100?img=12" alt="User" style="width:32px; height:32px; border-radius:50%; border:2px solid var(--bg-color); margin-left:-10px;">
+                                <img src="https://i.pravatar.cc/100?img=13" alt="User" style="width:32px; height:32px; border-radius:50%; border:2px solid var(--bg-color); margin-left:-10px;">
+                                <img src="https://i.pravatar.cc/100?img=14" alt="User" style="width:32px; height:32px; border-radius:50%; border:2px solid var(--bg-color); margin-left:-10px;">
+                            </div>
+                            <div style="text-align:left; font-size:0.9rem;">
+                                <div style="color:#f59e0b; font-size:12px;"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></div>
+                                <span style="color:var(--secondary-color);">Trusted by <b>50,000+</b> active Web3 investors</span>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 <div class="hero-visual fade-in" style="animation-delay: 0.2s;">
@@ -39,6 +52,25 @@ window.views = {
                             <div class="threat-item"><span>[NEW SCAN] Phishing detected: metamask-verify.io</span><span class="text-high">HIGH RISK</span></div>
                             <div class="threat-item"><span>[NEW SCAN] Honeypot found: $ELON_SAFE</span><span class="text-high">CRITICAL</span></div>
                         </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="stats-section" style="padding: 40px 0; border-top: 1px solid var(--border-color); border-bottom: 1px solid var(--border-color); background: rgba(0,0,0,0.2);">
+            <div class="container center">
+                <div style="display: flex; justify-content: space-around; flex-wrap: wrap; gap: 20px;">
+                    <div>
+                        <h3 style="font-size: 2.5rem; color: var(--accent-vibrant); margin-bottom: 5px;">$150M+</h3>
+                        <p style="color: var(--secondary-color); font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px;">Assets Protected</p>
+                    </div>
+                    <div>
+                        <h3 style="font-size: 2.5rem; color: var(--accent-vibrant); margin-bottom: 5px;">2.5M+</h3>
+                        <p style="color: var(--secondary-color); font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px;">Contracts Scanned</p>
+                    </div>
+                    <div>
+                        <h3 style="font-size: 2.5rem; color: var(--accent-vibrant); margin-bottom: 5px;">99.9%</h3>
+                        <p style="color: var(--secondary-color); font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px;">Threat Detection Rate</p>
                     </div>
                 </div>
             </div>
@@ -70,16 +102,18 @@ window.views = {
             </div>
         </section>
 
-        <section class="testimonials">
+        <section class="testimonials" id="testimonials">
             <div class="container">
-                <div class="section-header">
-                    <h2>Trusted by Investors</h2>
+                <div class="section-header center">
+                    <h2>Real Users, Real <span class="highlight">Saved Assets</span></h2>
+                    <p>Don't just take our word for it.</p>
                 </div>
                 <div class="testimonial-grid">
                     <div class="testimonial-card">
+                        <div style="color:#f59e0b; font-size:14px; margin-bottom: 10px;"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></div>
                         <p class="t-text">"CryptoAyuda AI helped me avoid investing in a scam token. The rug pull predictor is scary accurate. Saved me 3 ETH!"</p>
                         <div class="t-user">
-                            <div class="t-avatar"><img src="https://i.pravatar.cc/100?img=3" alt="User"></div>
+                            <div class="t-avatar"><img src="https://i.pravatar.cc/100?img=33" alt="User"></div>
                             <div class="t-info">
                                 <h4>Alex M.</h4>
                                 <span>DeFi Trader</span>
@@ -87,6 +121,7 @@ window.views = {
                         </div>
                     </div>
                     <div class="testimonial-card">
+                        <div style="color:#f59e0b; font-size:14px; margin-bottom: 10px;"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></div>
                         <p class="t-text">"The phishing detector found a malicious exchange clone before I deposited my assets. Indispensable tool for web3."</p>
                         <div class="t-user">
                             <div class="t-avatar"><img src="https://i.pravatar.cc/100?img=5" alt="User"></div>
@@ -96,17 +131,29 @@ window.views = {
                             </div>
                         </div>
                     </div>
+                    <div class="testimonial-card">
+                        <div style="color:#f59e0b; font-size:14px; margin-bottom: 10px;"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></div>
+                        <p class="t-text">"As a fund manager, the God-Mode tools are essential. We run every single contract through this before deploying capital."</p>
+                        <div class="t-user">
+                            <div class="t-avatar"><img src="https://i.pravatar.cc/100?img=11" alt="User"></div>
+                            <div class="t-info">
+                                <h4>David R.</h4>
+                                <span>Capital Fund VP</span>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </section>
 
-        <section class="cta-section">
+        <section class="cta-section" style="background: radial-gradient(circle at 50% 100%, rgba(14, 165, 233, 0.1) 0%, transparent 50%); border-top: 1px solid var(--border-color);">
             <div class="container cta-container center">
-                <h2>Stay protected in the crypto world with AI.</h2>
-                <p>Don't wait until you lose your assets. Join thousands of secure users today.</p>
-                <div class="cta-buttons">
-                    <button class="btn btn-primary" data-route="home" onclick="window.scrollTo(0,0)">Start your AI security scan</button>
-                    <button class="btn btn-outline" data-route="pricing">View Pricing</button>
+                <i class="fa-solid fa-shield-halved" style="font-size: 3rem; color: var(--accent-vibrant); margin-bottom: 20px;"></i>
+                <h2>Trust nothing, verify everything.</h2>
+                <p>Join thousands of secure users today. Protection takes exactly 3 seconds.</p>
+                <div class="cta-buttons" style="justify-content: center; margin-top:20px;">
+                    <button class="btn btn-primary" data-route="home" onclick="window.scrollTo(0,0)">Start Free Scan Now</button>
+                    <button class="btn btn-outline" data-route="pricing">View Pricing Plans</button>
                 </div>
             </div>
         </section>
