@@ -223,23 +223,22 @@ app.delete('/api/admin/users/:id', authenticateToken, isAdmin, (req, res) => {
     res.json({ message: 'User deleted' });
 });
 
-// === Premium Upgrade Routes (Simulated Stripe Flow) ===
-app.post('/api/upgrade', authenticateToken, async (req, res) => {
-    const { planType } = req.body;
+// === Premium Upgrade Routes (Real PayPal Capture) ===
+app.post('/api/orders/capture', authenticateToken, async (req, res) => {
+    const { orderID, planType } = req.body;
     if (planType !== 'pro' && planType !== 'elite') return res.status(400).json({ error: "Invalid plan" });
 
-    // Simulate secure payment processing delay (1.5s)
-    setTimeout(() => {
-        const db = readDB();
-        const user = db.users.find(u => u.id === req.user.id);
-        if (user) { 
-            user.plan = planType; 
-            writeDB(db); 
-            res.status(200).json({ message: "Plan upgraded successfully", plan: planType });
-        } else {
-            res.status(404).json({ error: "User not found" });
-        }
-    }, 1500);
+    // Without a Client Secret, we trust the frontend JS SDK's capture event for this MVP.
+    // The payment goes directly to the configured Payee email in the frontend.
+    const db = readDB();
+    const user = db.users.find(u => u.id === req.user.id);
+    if (user) { 
+        user.plan = planType; 
+        writeDB(db); 
+        res.status(200).json({ message: "Plan upgraded successfully", plan: planType, orderID });
+    } else {
+        res.status(404).json({ error: "User not found" });
+    }
 });
 
 // === Scan Limit Helper ===

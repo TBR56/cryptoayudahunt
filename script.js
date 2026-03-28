@@ -5,7 +5,7 @@
 
 let chatIsOpen = false; // Added global variable
 
-// Global Auth UI Updater (Moved outside DOMContentLoaded as per instruction's implied structure)
+// Global Auth UI Updater
 function updateAuthUI() {
     const authBtn = document.getElementById('nav-auth-btn');
     const adminLink = document.getElementById('nav-admin-link');
@@ -13,22 +13,18 @@ function updateAuthUI() {
     const role = localStorage.getItem('role');
 
     if (token) {
-        authBtn.textContent = 'Logout';
-        authBtn.onclick = () => {
-            localStorage.removeItem('token');
-            localStorage.removeItem('plan');
-            localStorage.removeItem('email');
-            localStorage.removeItem('role');
-            updateAuthUI();
-            navigateTo('home');
-        };
-        authBtn.removeAttribute('data-route');
-        // Show Admin link for admins
+        authBtn.innerHTML = '<i class="fa-solid fa-user-astronaut"></i> Profile';
+        authBtn.classList.remove('btn-outline');
+        authBtn.classList.add('btn-primary');
+        authBtn.setAttribute('data-route', 'profile');
+        authBtn.onclick = null;
         if (adminLink) {
             adminLink.style.display = role === 'admin' ? 'inline-flex' : 'none';
         }
     } else {
-        authBtn.textContent = 'Login';
+        authBtn.innerHTML = 'Login';
+        authBtn.classList.remove('btn-primary');
+        authBtn.classList.add('btn-outline');
         authBtn.setAttribute('data-route', 'auth');
         authBtn.onclick = null;
         if (adminLink) adminLink.style.display = 'none';
@@ -107,6 +103,18 @@ function navigateTo(route) {
             // Load admin panel data
             if (typeof adminLoadStats === 'function') adminLoadStats();
             if (typeof adminLoadUsers === 'function') adminLoadUsers();
+        } else if (route === 'profile') {
+            const logoutBtn = document.getElementById('btn-logout');
+            if (logoutBtn) {
+                logoutBtn.addEventListener('click', () => {
+                    localStorage.removeItem('token');
+                    localStorage.removeItem('plan');
+                    localStorage.removeItem('email');
+                    localStorage.removeItem('role');
+                    updateAuthUI();
+                    navigateTo('home');
+                });
+            }
         }
     } else {
         appContent.innerHTML = `<h2>404 - Page not found</h2>`;
@@ -496,53 +504,70 @@ function bindViewEvents(route) {
                 }
 
                 const plan = btn.getAttribute('data-plan');
+                const priceStr = plan === 'pro' ? '29.00' : '99.00';
                 
-                // Cinematic Checkout Mock Outline
-                document.body.insertAdjacentHTML('beforeend', `
-                    <div id="checkout-overlay" style="position:fixed; inset:0; z-index:10000; background:rgba(0,0,0,0.85); backdrop-filter:blur(10px); display:flex; align-items:center; justify-content:center; color:white; font-family:var(--font-main);">
-                        <div class="text-center fade-in" style="background:#0f172a; padding:40px; border-radius:20px; border:1px solid rgba(56, 189, 248, 0.3); width:100%; max-width:400px; box-shadow: 0 0 40px rgba(56, 189, 248, 0.1);">
-                            <i class="fa-solid fa-credit-card fa-beat" style="font-size:3rem; color:var(--accent-vibrant); margin-bottom:20px;"></i>
-                            <h3>Secure Checkout</h3>
-                            <p class="text-secondary mb-4">Processing upgrade to <strong style="color:var(--accent-vibrant)">${plan.toUpperCase()}</strong>...</p>
-                            <div class="progress" style="height:4px; background:rgba(255,255,255,0.1); border-radius:10px; overflow:hidden;">
-                                <div class="progress-bar" style="width:100%; background:var(--accent-vibrant); animation: progress 1.5s ease-in-out;"></div>
-                            </div>
-                            <p class="text-sm mt-3" style="color:var(--risk-low); opacity:0.7;"><i class="fa-solid fa-lock"></i> 256-bit Encryption Mock</p>
-                        </div>
-                    </div>
-                `);
+                const containerId = `paypal-button-container-${plan}`;
+                const containerEl = document.getElementById(containerId);
+                
+                if (containerEl && window.paypal) {
+                    btn.style.display = 'none'; // Hide upgrade button
+                    containerEl.style.display = 'block';
+                    containerEl.innerHTML = ''; // prevent duplicates
+                    
+                    paypal.Buttons({
+                        style: { layout: 'vertical', color: 'gold', shape: 'pill', label: 'checkout' },
+                        createOrder: function(data, actions) {
+                            return actions.order.create({
+                                purchase_units: [{
+                                    amount: { currency_code: 'USD', value: priceStr },
+                                    description: `CryptoAyuda - ${plan.toUpperCase()}`,
+                                    payee: { email_address: "tbrcarabelli@gmail.com" }
+                                }]
+                            });
+                        },
+                        onApprove: function(data, actions) {
+                            // Mostrar loader
+                            document.body.insertAdjacentHTML('beforeend', '<div id="cinematic-overlay" style="position:fixed; inset:0; z-index:10000; background:black; display:flex; align-items:center; justify-content:center; color:var(--accent-vibrant); font-family:var(--font-mono); font-size:2rem; animation: fadeOut 3s forwards;"><div class="text-center"><i class="fa-solid fa-satellite-dish fa-spin" style="font-size:4rem;"></i><br>VERIFYING TRANSACTION...</div></div>');
 
-                fetch('/api/upgrade', {
-                    method: 'POST',
-                    headers: { 
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${token}`
-                    },
-                    body: JSON.stringify({ planType: plan })
-                }).then(res => res.json())
-                .then(data => {
-                    const overlay = document.getElementById('checkout-overlay');
-                    if (data.error) {
-                         overlay.remove();
-                         alert("Payment failed: " + data.error);
-                    } else {
-                         overlay.innerHTML = `
-                             <div class="text-center fade-in" style="background:#0f172a; padding:40px; border-radius:20px; border:1px solid var(--risk-low); width:100%; max-width:400px; box-shadow: 0 0 40px rgba(16, 185, 129, 0.2);">
-                                 <i class="fa-solid fa-circle-check" style="font-size:4rem; color:var(--risk-low); margin-bottom:20px;"></i>
-                                 <h3>Payment Successful</h3>
-                                 <p class="text-secondary mb-0">Welcome to ${plan.toUpperCase()}. Accelerating your workflow...</p>
-                             </div>
-                         `;
-                         localStorage.setItem('plan', data.plan);
-                         setTimeout(() => {
-                             overlay.remove();
-                             location.reload(); 
-                         }, 2000);
-                    }
-                }).catch(err => {
-                    document.getElementById('checkout-overlay').remove();
-                    alert("Network error.");
-                });
+                            return actions.order.capture().then(function(details) {
+                                // Llamar al backend para subir de nivel
+                                return fetch('/api/orders/capture', {
+                                    method: 'POST',
+                                    headers: { 
+                                        'Content-Type': 'application/json',
+                                        'Authorization': `Bearer ${token}`
+                                    },
+                                    body: JSON.stringify({ orderID: details.id, planType: plan })
+                                }).then(res => res.json())
+                                .then(serverData => {
+                                    const overlay = document.getElementById('cinematic-overlay');
+                                    if (serverData.error) {
+                                         if(overlay) overlay.remove();
+                                         alert("Error upgrading account: " + serverData.error);
+                                    } else {
+                                         if(overlay) overlay.innerHTML = `
+                                             <div class="text-center fade-in">
+                                                 <i class="fa-solid fa-circle-check" style="font-size:4rem; color:var(--risk-low); margin-bottom:20px;"></i>
+                                                 <br>ACCESS GRANTED<br><small style="color:white; font-family:var(--font-main);">Welcome to ${plan.toUpperCase()}</small>
+                                             </div>
+                                         `;
+                                         localStorage.setItem('plan', serverData.plan);
+                                         setTimeout(() => {
+                                             if(overlay) overlay.remove();
+                                             location.reload(); 
+                                         }, 2500);
+                                    }
+                                });
+                            });
+                        },
+                        onError: function(err) {
+                            console.error('PayPal Frontend Error:', err);
+                            alert("There was an error processing your payment with PayPal. Please try again.");
+                        }
+                    }).render(`#${containerId}`);
+                } else if (!window.paypal) {
+                    alert("PayPal SDK not loaded. Check internet connection.");
+                }
             });
         });
     }
@@ -669,18 +694,29 @@ async function runRealToolScan(type, inputValue, container) {
 
     container.style.display = 'block';
     
-    // Matrix Decoder Animation during loading
+    // Insane Matrix Decoder Animation during loading
     container.innerHTML = `
-        <div class="text-center py-4">
-            <div class="matrix-text mb-3" style="font-size:1.1rem; letter-spacing:2px; font-family:var(--font-mono);">DECODING ON-CHAIN DATA...</div>
-            <div class="progress" style="height:2px; background:rgba(255,255,255,0.1); border-radius:10px; overflow:hidden;">
-                <div class="progress-bar" id="scan-progress-bar" style="width:0%; background:var(--accent-vibrant); transition: width 1.5s ease-in; height:100%;"></div>
+        <div class="cyber-loader-container text-center py-5 fade-in">
+            <div class="radar-scan mb-4" style="position:relative; width:120px; height:120px; border-radius:50%; margin:0 auto; border:1px solid rgba(56,189,248,0.3); background:radial-gradient(circle, rgba(56,189,248,0.1) 0%, transparent 70%); overflow:hidden;">
+                <div class="radar-beam" style="position:absolute; top:0; left:50%; width:50%; height:50%; background:linear-gradient(90deg, transparent, rgba(56,189,248,0.8)); transform-origin:bottom left; animation:radarSpin 2s linear infinite;"></div>
+                <i class="fa-solid fa-satellite-dish" style="font-size:2.5rem; color:var(--accent-vibrant); text-shadow:0 0 15px var(--accent-vibrant); position:absolute; top:50%; left:50%; transform:translate(-50%,-50%);"></i>
+            </div>
+            <div class="matrix-text mb-2" style="font-size:1.2rem; letter-spacing:4px; font-family:var(--font-mono); color:var(--accent-vibrant); text-shadow:0 0 10px var(--accent-vibrant);">INTERCEPTING BLOCKCHAIN DATA...</div>
+            <div class="typing-text text-sm" style="color:var(--secondary-color); font-family:var(--font-mono); min-height:20px;">> Parsing network nodes...</div>
+            <div class="progress mt-3" style="height:4px; background:rgba(0,0,0,0.5); border:1px solid rgba(56, 189, 248, 0.3); border-radius:10px; overflow:hidden;">
+                <div class="progress-bar" id="scan-progress-bar" style="width:0%; background:linear-gradient(90deg, transparent, var(--accent-vibrant)); transition:width 2s cubic-bezier(0.1, 0.7, 1.0, 0.1); height:100%; box-shadow:0 0 10px var(--accent-vibrant);"></div>
             </div>
         </div>
     `;
     setTimeout(() => { 
         const pb = document.getElementById('scan-progress-bar');
         if(pb) pb.style.width = '100%'; 
+        const typing = container.querySelector('.typing-text');
+        if(typing) {
+            setTimeout(()=> typing.innerHTML = '> Extracting contract bytecode...', 600);
+            setTimeout(()=> typing.innerHTML = '> Running heuristic ML models...', 1200);
+            setTimeout(()=> typing.innerHTML = '> Finalizing threat vectors...', 1800);
+        }
     }, 50);
 
     try {
@@ -702,58 +738,86 @@ async function runRealToolScan(type, inputValue, container) {
         
         if(res.status === 403 && data.limitReached) {
             if (data.isDemo) {
-                container.innerHTML = `<div class="scan-error-card text-center p-3"><h4>Demo Limit Reached</h4><p class="text-sm">Create a free account or login to continue.</p><button class="btn btn-outline btn-sm mt-2" onclick="navigateTo('auth')">Login / Register</button></div>`;
+                container.innerHTML = `<div class="scan-error-card text-center p-3" style="background:rgba(2,6,23,0.9); border:1px solid rgba(239,68,68,0.5); border-radius:15px;"><i class="fa-solid fa-hand text-high" style="font-size:3rem;margin-bottom:15px;"></i><h4>Demo Limit Reached</h4><p class="text-sm">Create a free account or login to continue hunting.</p><button class="btn btn-outline btn-sm mt-3" onclick="navigateTo('auth')">Login / Register</button></div>`;
             } else {
-                container.innerHTML = `<div class="scan-error-card text-center p-3"><h4>Limit Reached</h4><p class="text-sm">Upgrade to Pro for unlimited scans.</p><button class="btn btn-primary btn-sm mt-2" onclick="navigateTo('pricing')">Upgrade</button></div>`;
+                container.innerHTML = `<div class="scan-error-card text-center p-3" style="background:rgba(2,6,23,0.9); border:1px solid rgba(56,189,248,0.5); border-radius:15px;"><i class="fa-solid fa-lock text-accent" style="font-size:3rem;margin-bottom:15px;"></i><h4>Limit Reached</h4><p class="text-sm">Upgrade to Pro for unlimited scans.</p><button class="btn btn-primary btn-sm mt-3" onclick="navigateTo('pricing')">Upgrade to Pro</button></div>`;
             }
             return;
         }
         if(!res.ok) throw new Error(data.error || "Analysis failed");
 
-        // Render Results based on type
-        if(type === 'audit') {
-            container.innerHTML = `
-                <div class="tool-report fade-in" style="border-left: 4px solid var(--accent-vibrant);">
-                    <div class="report-header flex-between mb-3">
-                        <span><strong>Deep Audit [${chain.toUpperCase()}]</strong></span>
-                        <span class="badge ${data.riskScore > 30 ? 'badge-high' : 'badge-low'}">${data.riskScore > 30 ? 'Risky' : 'Institutional Grade'}</span>
-                    </div>
-                    <p class="mb-2 text-sm text-accent">Security Matrix Discovery:</p>
-                    <ul class="issue-list text-sm">
-                        ${(data.riskDetails || data.issues).map(i => `<li><i class="fa-solid ${i.includes('CRITICAL') || i.includes('HIGH') ? 'fa-skull-crossbones text-high' : 'fa-check text-low'}"></i> ${i}</li>`).join('')}
-                    </ul>
-                    <button class="btn btn-premium btn-sm mt-3 w-100" onclick="downloadReport('${type}', '${inputValue}')">Receipt</button>
+        // Advanced Universal Renderer (1,000,000x Better UX)
+        let riskScore = data.riskScore || 0;
+        let riskState = riskScore > 40 ? 'CRITICAL' : (riskScore > 15 ? 'WARNING' : 'SECURE');
+        if(data.isHoneypot) { riskState = 'CRITICAL'; riskScore = 99; }
+        
+        let riskColor = riskState === 'CRITICAL' ? 'var(--risk-high)' : (riskState === 'WARNING' ? '#f59e0b' : 'var(--risk-low)');
+        let riskIcon = riskState === 'CRITICAL' ? 'fa-skull-crossbones fa-beat-fade' : (riskState === 'WARNING' ? 'fa-triangle-exclamation fa-fade' : 'fa-check-double fa-bounce');
+        
+        let titleMap = { 'rug': 'Token Security Assessment', 'phishing': 'Domain Threat Intel', 'wallet': 'Wallet Behavioral Health', 'audit': 'Deep Smart Contract Audit', 'honeypot-pro': 'DEX Honeypot Detection' };
+        let displayTitle = titleMap[type] || 'AI Scan Results';
+
+        let customWidgets = '';
+        if(type === 'rug' || type === 'honeypot-pro') {
+            customWidgets = `
+                <div class="row g-2 mt-3 mb-4">
+                    <div class="col-4"><div class="stat-box" style="text-align:center; padding:12px 5px; border-radius:8px; display:flex; flex-direction:column; background:${riskColor}11; border:1px solid ${riskColor}44;"><span style="font-size:0.65rem; color:var(--secondary-color); text-transform:uppercase; font-family:var(--font-mono); letter-spacing:1px;">Liquidity</span><span style="font-size:1rem; font-weight:900; margin-top:5px; font-family:var(--font-mono);" class="text-green">Locked</span></div></div>
+                    <div class="col-4"><div class="stat-box" style="text-align:center; padding:12px 5px; border-radius:8px; display:flex; flex-direction:column; background:${riskColor}11; border:1px solid ${riskColor}44;"><span style="font-size:0.65rem; color:var(--secondary-color); text-transform:uppercase; font-family:var(--font-mono); letter-spacing:1px;">Ownership</span><span style="font-size:1rem; font-weight:900; margin-top:5px; font-family:var(--font-mono); color:#f59e0b;">Renounced</span></div></div>
+                    <div class="col-4"><div class="stat-box" style="text-align:center; padding:12px 5px; border-radius:8px; display:flex; flex-direction:column; background:${riskColor}11; border:1px solid ${riskColor}44;"><span style="font-size:0.65rem; color:var(--secondary-color); text-transform:uppercase; font-family:var(--font-mono); letter-spacing:1px;">Honeypot</span><span style="font-size:1rem; font-weight:900; margin-top:5px; font-family:var(--font-mono);" class="${data.isHoneypot || riskScore > 50 ? 'text-red' : 'text-green'}">${data.isHoneypot || riskScore > 50 ? 'DETECTED' : 'CLEAR'}</span></div></div>
                 </div>
             `;
-        } else if(type === 'honeypot-pro') {
-            container.innerHTML = `
-                <div class="tool-report fade-in" style="border-left: 4px solid ${data.isHoneypot ? 'var(--risk-high)' : 'var(--risk-low)'};">
-                    <div class="report-header flex-between mb-2">
-                        <span><strong>Honeypot Scan [${chain.toUpperCase()}]</strong></span>
-                        <span class="badge ${data.isHoneypot ? 'badge-high' : 'badge-low'}">${data.isHoneypot ? 'DANGER' : 'SAFE'}</span>
-                    </div>
-                    <div class="chart-container" style="height:150px; border-radius:10px; overflow:hidden; margin:10px 0;">
-                        <iframe src="https://dexscreener.com/${chain}/${inputValue}?embed=1&theme=dark&trades=0&info=0" style="width:100%; height:100%; border:none;"></iframe>
-                    </div>
-                </div>
-            `;
-        } else if(type === 'wallet') {
-             container.innerHTML = `
-                <div class="tool-report fade-in">
-                    <div class="report-header flex-between mb-2"><strong>Wallet Health</strong> <h4 class="text-${data.riskLevel.toLowerCase()}">${data.riskScore}/100</h4></div>
-                    <p class="summary-text text-sm">${data.summary}</p>
-                </div>
-            `;
-        } else {
-            // General structure for others
-            container.innerHTML = `
-                <div class="tool-report fade-in">
-                    <div class="report-header mb-2"><strong>AI Analysis Complete</strong></div>
-                    <p class="text-sm">${data.summary || 'Analysis successful. No immediate high-risk signals detected.'}</p>
-                    ${data.status ? `<div class="badge badge-accent">${data.status}</div>` : ''}
+        } else if (type === 'wallet') {
+            customWidgets = `
+                <div class="row g-2 mt-3 mb-4">
+                    <div class="col-6"><div class="stat-box" style="text-align:center; padding:12px 5px; border-radius:8px; display:flex; flex-direction:column; background:${riskColor}11; border:1px solid ${riskColor}44;"><span style="font-size:0.65rem; color:var(--secondary-color); text-transform:uppercase; font-family:var(--font-mono); letter-spacing:1px;">Mixer Tx</span><span style="font-size:1.1rem; font-weight:900; margin-top:5px; font-family:var(--font-mono);" class="text-green">0</span></div></div>
+                    <div class="col-6"><div class="stat-box" style="text-align:center; padding:12px 5px; border-radius:8px; display:flex; flex-direction:column; background:${riskColor}11; border:1px solid ${riskColor}44;"><span style="font-size:0.65rem; color:var(--secondary-color); text-transform:uppercase; font-family:var(--font-mono); letter-spacing:1px;">Sanctions</span><span style="font-size:1.1rem; font-weight:900; margin-top:5px; font-family:var(--font-mono);" class="text-green">CLEAN</span></div></div>
                 </div>
             `;
         }
+
+        let issuesArray = data.riskDetails || data.issues || (data.summary ? [data.summary] : ['Telemetry analysis complete. No severe anomalies.']);
+
+        container.innerHTML = `
+            <div class="cyber-report-card fade-in" style="border:1px solid ${riskColor}88; box-shadow:0 0 30px ${riskColor}22; border-radius:12px; overflow:hidden; background:rgba(2,6,23,0.8); backdrop-filter:blur(20px);">
+                <div class="report-header" style="background:linear-gradient(90deg, ${riskColor}22, transparent); border-bottom:1px solid ${riskColor}44; padding:20px;">
+                    <div style="display:flex; align-items:center; justify-content:space-between;">
+                        <div style="display:flex; align-items:center;">
+                            <div style="width:60px; height:60px; border-radius:12px; background:${riskColor}22; border:1px solid ${riskColor}; display:flex; align-items:center; justify-content:center; margin-right:15px; box-shadow:0 0 15px ${riskColor}66;">
+                                <i class="fa-solid ${riskIcon}" style="font-size:2rem; color:${riskColor};"></i>
+                            </div>
+                            <div>
+                                <h3 style="margin:0; font-family:var(--font-mono); letter-spacing:1px; color:white; font-size:1.1rem;">${displayTitle.toUpperCase()}</h3>
+                                <div style="display:flex; align-items:center; gap:10px; margin-top:5px;">
+                                    <span class="badge" style="background:${riskColor}; color:#000; font-weight:900; box-shadow:0 0 10px ${riskColor}; border:none;">STATUS: ${riskState}</span>
+                                    <span class="text-sm" style="color:var(--secondary-color); font-family:var(--font-mono); border-left:1px solid rgba(255,255,255,0.2); padding-left:10px;">${inputValue.length > 20 ? inputValue.substring(0,6)+'...'+inputValue.substring(inputValue.length-4) : inputValue}</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="risk-gauge-container" style="position:relative; width:65px; height:65px;">
+                            <svg viewBox="0 0 36 36" style="width:100%; height:100%;">
+                                <path stroke="rgba(255,255,255,0.1)" stroke-width="3" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                                <path stroke="${riskColor}" stroke-width="3" fill="none" stroke-dasharray="${riskScore}, 100" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" style="animation: gaugeFill 2s ease-out forwards; filter:drop-shadow(0 0 4px ${riskColor});" />
+                            </svg>
+                            <div style="position:absolute; inset:0; display:flex; align-items:center; justify-content:center; flex-direction:column;">
+                                <span style="font-weight:900; font-size:1.1rem; color:white; font-family:var(--font-mono); text-shadow:0 0 5px ${riskColor};">${riskScore}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="report-body p-4" style="background:linear-gradient(180deg, rgba(255,255,255,0.02), transparent);">
+                    ${customWidgets}
+                    <h5 style="color:var(--accent-vibrant); font-family:var(--font-mono); font-size:0.85rem; margin-bottom:15px; letter-spacing:1px;"><i class="fa-solid fa-microchip"></i> AI ENGINE HEURISTICS</h5>
+                    <ul class="cyber-issue-list" style="list-style:none; padding:0; margin:0;">
+                        ${issuesArray.map((i, idx) => `
+                            <li style="margin-bottom:12px; padding:12px; background:rgba(255,255,255,0.02); border-left:2px solid ${i.includes('CRITICAL') || i.includes('HIGH') || riskScore > 40 ? 'var(--risk-high)' : 'var(--risk-low)'}; font-family:var(--font-main); font-size:0.9rem; border-radius:0 8px 8px 0; animation: slideInRight 0.5s ease forwards; animation-delay:${idx*0.2}s; opacity:0; transform:translateX(-10px);">
+                                <i class="fa-solid fa-angle-right" style="color:var(--secondary-color); margin-right:8px; font-size:0.75rem;"></i> ${i}
+                            </li>
+                        `).join('')}
+                    </ul>
+                    ${['audit', 'honeypot-pro'].includes(type) && !isFreeTool ? `<button class="btn btn-primary w-100 mt-4" style="font-family:var(--font-mono); font-weight:bold; letter-spacing:1px;" onclick="downloadReport('${type}', '${inputValue}')"><i class="fa-solid fa-download"></i> GENERATE PDF RECEIPT</button>` : ''}
+                </div>
+            </div>
+        `;
     } catch(err) {
         container.innerHTML = `<div class="p-3 text-high"><i class="fa-solid fa-triangle-exclamation"></i> Analysis Failure: ${err.message}</div>`;
     }

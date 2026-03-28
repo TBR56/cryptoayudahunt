@@ -529,4 +529,57 @@ window.views = {
             </div>
         </section>
     `,
+    profile: () => {
+        const email = localStorage.getItem('email') || 'User';
+        const plan = localStorage.getItem('plan') || 'free';
+        const isPro = plan === 'pro' || plan === 'elite';
+        
+        return `
+        <section class="profile-section" style="padding: 120px 0 60px; min-height: 80vh;">
+            <div class="container">
+                <div class="row justify-content-center">
+                    <div class="col-md-8">
+                        <div class="tool-card p-5" style="border-top: 4px solid var(--accent-vibrant); position: relative; overflow: hidden; background: rgba(2, 6, 23, 0.7); backdrop-filter: blur(20px);">
+                            <div style="position: absolute; top: -50px; right: -50px; width: 150px; height: 150px; background: var(--accent-vibrant); filter: blur(80px); opacity: 0.2; border-radius: 50%;"></div>
+                            
+                            <div class="d-flex align-items-center mb-4 pb-4" style="border-bottom: 1px solid rgba(255,255,255,0.05);">
+                                <div style="width: 80px; height: 80px; background: rgba(56, 189, 248, 0.1); border: 2px solid var(--accent-vibrant); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 2.5rem; color: var(--accent-vibrant); margin-right: 20px;">
+                                    <i class="fa-solid fa-user-astronaut"></i>
+                                </div>
+                                <div style="text-align: left;">
+                                    <h2 style="margin-bottom: 5px;">${email}</h2>
+                                    <span class="badge ${isPro ? 'badge-low' : 'badge-high'}" style="font-size: 0.9rem; padding: 6px 12px; background: rgba(255,255,255,0.1);">
+                                        <i class="fa-solid ${isPro ? 'fa-crown' : 'fa-seedling'}"></i> Plan: ${plan.toUpperCase()}
+                                    </span>
+                                </div>
+                            </div>
+                            
+                            <div class="row g-4 mb-5" style="display:flex; gap:20px;">
+                                <div class="col" style="flex:1;">
+                                    <div style="background: rgba(0,0,0,0.3); padding: 20px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.05); text-align: left;">
+                                        <h4 style="font-size: 0.9rem; color: var(--secondary-color); text-transform: uppercase; letter-spacing: 1px;"><i class="fa-solid fa-bolt"></i> API Limits</h4>
+                                        <h3 style="font-size: 1.8rem; margin: 10px 0;">${isPro ? 'Unlimited' : '3 / 3 Daily'}</h3>
+                                        <p style="font-size: 0.8rem; color: var(--secondary-color); margin: 0;">${isPro ? 'God-Mode Active.' : 'Upgrade for unlimited scans.'}</p>
+                                    </div>
+                                </div>
+                                <div class="col" style="flex:1;">
+                                    <div style="background: rgba(0,0,0,0.3); padding: 20px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.05); text-align: left;">
+                                        <h4 style="font-size: 0.9rem; color: var(--secondary-color); text-transform: uppercase; letter-spacing: 1px;"><i class="fa-solid fa-clock-rotate-left"></i> Security Status</h4>
+                                        <h3 style="font-size: 1.8rem; margin: 10px 0; color: var(--risk-low);">Active</h3>
+                                        <p style="font-size: 0.8rem; color: var(--secondary-color); margin: 0;">Real-time protection enabled.</p>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                                ${!isPro ? '<button class="btn btn-primary" data-route="pricing"><i class="fa-solid fa-arrow-up-right-dots"></i> Upgrade to Pro</button>' : '<button class="btn btn-outline" data-route="tools"><i class="fa-solid fa-shield-halved"></i> Access Arsenal</button>'}
+                                <button class="btn btn-outline" style="color: #ef4444; border-color: rgba(239,68,68,0.3);" id="btn-logout"><i class="fa-solid fa-right-from-bracket"></i> Logout</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        `;
+    }
 };

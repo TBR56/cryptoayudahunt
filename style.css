@@ -1638,3 +1638,58 @@ section {
     #admin-stats { grid-template-columns: 1fr 1fr !important; }
 }
 
+/* ========================================================================= */
+/* V2.0 INSANE AI TOOL ANIMATIONS & GLASMORPHISM DASHBOARDS                  */
+/* ========================================================================= */
+
+@keyframes radarSpin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+@keyframes gaugeFill {
+    from { stroke-dasharray: 0, 100; opacity: 0; }
+}
+
+@keyframes slideInRight {
+    to { opacity: 1; transform: translateX(0); }
+}
+
+.stat-box {
+    text-align: center;
+    padding: 12px 5px;
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 0 10px rgba(0,0,0,0.5) inset;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.stat-box:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 0 15px rgba(56, 189, 248, 0.2);
+}
+
+.tool-report, .cyber-report-card {
+    transition: all 0.5s ease;
+}
+
+.cyber-issue-list li {
+    position: relative;
+    overflow: hidden;
+}
+
+.cyber-issue-list li::before {
+    content: '';
+    position: absolute;
+    top: 0; left: -100%;
+    width: 20%; height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.05), transparent);
+    animation: sweep 3s infinite linear;
+}
+
+@keyframes sweep {
+    0% { left: -100%; }
+    20% { left: 200%; }
+    100% { left: 200%; }
+}
