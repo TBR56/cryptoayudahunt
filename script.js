@@ -115,6 +115,10 @@ function navigateTo(route) {
                     navigateTo('home');
                 });
             }
+            // Load XP data from server
+            setTimeout(loadProfileXP, 100);
+        } else if (route === 'leaderboard') {
+            setTimeout(loadLeaderboard, 100);
         }
     } else {
         appContent.innerHTML = `<h2>404 - Page not found</h2>`;
@@ -405,7 +409,12 @@ function bindViewEvents(route) {
                     return;
                 }
 
-                runRealToolScan(btnType, inputValue, resultArea);
+                // Route to the correct endpoint based on tool type
+                if (btnType === 'smart-money' || btnType === 'arbitrage' || btnType === 'alpha') {
+                    runTradingToolScan(btnType, inputValue, resultArea);
+                } else {
+                    runRealToolScan(btnType, inputValue, resultArea);
+                }
             });
         });
     }
@@ -677,7 +686,7 @@ async function performScan(input, type, container) {
         `;
     } catch (err) {
         console.error("Scan error: ", err);
-        container.innerHTML = `<div class="ai-result-card fade-in"><h4 class="text-high">Error fetching analysis. Is the Node.js backend running?</h4></div>`;
+        container.innerHTML = `<div class="ai-result-card fade-in" style="border: 1px solid var(--risk-high); text-align:center;"><h4 class="text-high"><i class="fa-solid fa-triangle-exclamation"></i> Analysis Failure</h4><p class="text-secondary">${err.message}</p></div>`;
     }
 }
 
@@ -912,3 +921,297 @@ window.addEventListener('DOMContentLoaded', () => {
     initParticles();
     updateAuthUI();
 });
+
+// =============================================
+// XP GAMIFICATION ENGINE
+// =============================================
+
+// Floating XP toast animation
+function showXPToast(xpGained, rankData) {
+    const existing = document.getElementById('xp-toast');
+    if (existing) existing.remove();
+
+    const rankColor = rankData?.color || '#a855f7';
+    const toast = document.createElement('div');
+    toast.id = 'xp-toast';
+    toast.innerHTML = `
+        <div style="display:flex; align-items:center; gap:12px;">
+            <span style="font-size:1.8rem; animation: bounceIn 0.5s ease;">${rankData?.icon || '⭐'}</span>
+            <div>
+                <div style="font-weight:900; font-size:1.1rem; color:${rankColor}; font-family:var(--font-mono); text-shadow:0 0 10px ${rankColor};">+${xpGained} XP</div>
+                ${rankData?.name ? `<div style="font-size:0.75rem; color:rgba(255,255,255,0.7);">Rank: ${rankData.name}</div>` : ''}
+            </div>
+        </div>
+    `;
+    toast.style.cssText = `
+        position: fixed; bottom: 20px; right: 20px; z-index: 99999;
+        background: rgba(2,6,23,0.95); backdrop-filter: blur(20px);
+        border: 1px solid ${rankColor}88; border-radius: 16px; padding: 16px 24px;
+        box-shadow: 0 0 30px ${rankColor}44; animation: slideInRight 0.4s ease, fadeOut 0.6s ease 2.4s forwards;
+        pointer-events: none;
+    `;
+    document.body.appendChild(toast);
+    setTimeout(() => toast?.remove(), 3100);
+}
+
+// Fetch user XP from server and populate profile XP bar
+async function loadProfileXP() {
+    const token = localStorage.getItem('token');
+    if (!token) return;
+
+    const RANKS = [
+        { name: 'Rookie', minXP: 0, icon: '🔰', color: '#6b7280' },
+        { name: 'Hunter', minXP: 100, icon: '🏹', color: '#10b981' },
+        { name: 'Silver Wolf', minXP: 300, icon: '🐺', color: '#94a3b8' },
+        { name: 'Gold Shark', minXP: 700, icon: '🦈', color: '#f59e0b' },
+        { name: 'Diamond Whale', minXP: 1500, icon: '💎', color: '#38bdf8' },
+        { name: 'Grandmaster', minXP: 3000, icon: '👑', color: '#a855f7' }
+    ];
+
+    try {
+        const res = await fetch('/api/auth/me', { headers: { 'Authorization': `Bearer ${token}` } });
+        const user = await res.json();
+        const xp = user.xp || 0;
+
+        // Find current and next rank
+        let currentRank = RANKS[0];
+        let nextRank = RANKS[1];
+        for (let i = RANKS.length - 1; i >= 0; i--) {
+            if (xp >= RANKS[i].minXP) { currentRank = RANKS[i]; nextRank = RANKS[i + 1] || null; break; }
+        }
+
+        const pct = nextRank ? Math.min(((xp - currentRank.minXP) / (nextRank.minXP - currentRank.minXP)) * 100, 100) : 100;
+
+        // Update DOM elements
+        const iconEl = document.getElementById('rank-icon-display');
+        const nameEl = document.getElementById('rank-name-display');
+        const xpEl = document.getElementById('xp-display');
+        const barEl = document.getElementById('xp-progress-bar');
+        const nextLabel = document.getElementById('xp-next-label');
+
+        if (iconEl) iconEl.textContent = currentRank.icon;
+        if (nameEl) { nameEl.textContent = currentRank.name.toUpperCase(); nameEl.style.color = currentRank.color; }
+        if (xpEl) xpEl.textContent = `${xp} XP Total`;
+        if (nextLabel) nextLabel.textContent = nextRank ? `${nextRank.minXP - xp} XP to ${nextRank.name}` : 'MAX RANK ACHIEVED 👑';
+        if (barEl) setTimeout(() => { barEl.style.width = pct + '%'; }, 200);
+    } catch (e) { console.warn('loadProfileXP failed:', e); }
+}
+
+// Fetch and render leaderboard
+async function loadLeaderboard() {
+    const bodyEl = document.getElementById('leaderboard-body');
+    if (!bodyEl) return;
+
+    const RANK_ICONS = { 'Rookie': '🔰', 'Hunter': '🏹', 'Silver Wolf': '🐺', 'Gold Shark': '🦈', 'Diamond Whale': '💎', 'Grandmaster': '👑' };
+    const RANK_COLORS = { 'Rookie': '#6b7280', 'Hunter': '#10b981', 'Silver Wolf': '#94a3b8', 'Gold Shark': '#f59e0b', 'Diamond Whale': '#38bdf8', 'Grandmaster': '#a855f7' };
+    const MEDALS = ['🥇', '🥈', '🥉'];
+
+    try {
+        const res = await fetch('/api/leaderboard');
+        const users = await res.json();
+
+        if (!users.length) { bodyEl.innerHTML = '<div class="text-center py-5" style="color:var(--secondary-color);">No hunters yet. Be the first!</div>'; return; }
+
+        bodyEl.innerHTML = users.map((u, i) => {
+            const icon = RANK_ICONS[u.rank] || '🔰';
+            const color = RANK_COLORS[u.rank] || '#6b7280';
+            const medal = MEDALS[i] || `#${i + 1}`;
+            const isTop3 = i < 3;
+            return `
+                <div style="display:flex; align-items:center; justify-content:space-between; padding:16px 25px; border-bottom:1px solid rgba(255,255,255,0.03); ${isTop3 ? `background:${color}08;` : ''} animation: slideInRight 0.4s ease forwards; animation-delay:${i * 0.07}s; opacity:0; transform:translateX(-10px);">
+                    <span style="font-size:${isTop3 ? '1.4rem' : '0.95rem'}; width:40px; text-align:center;">${medal}</span>
+                    <div style="flex:1; margin-left:15px;">
+                        <span style="font-family:var(--font-mono); color:white; font-size:0.9rem;">${u.email}</span>
+                        <span style="margin-left:10px; font-size:0.65rem; padding:2px 8px; border-radius:10px; background:${color}22; border:1px solid ${color}44; color:${color};">${icon} ${u.rank}</span>
+                    </div>
+                    <div style="font-family:var(--font-mono); font-weight:900; color:${color}; text-shadow:0 0 8px ${color}66;">${u.xp.toLocaleString()} XP</div>
+                </div>
+            `;
+        }).join('');
+    } catch (e) { bodyEl.innerHTML = `<div class="text-center py-5" style="color:var(--risk-high);">Error loading leaderboard.</div>`; }
+}
+
+// Trading Tools Scan Engine
+async function runTradingToolScan(type, inputValue, container) {
+    const token = localStorage.getItem('token');
+    if (!token) {
+        container.style.display = 'block';
+        container.innerHTML = `<div class="text-center p-4" style="background:rgba(2,6,23,0.9); border:1px solid rgba(239,68,68,0.5); border-radius:15px;"><i class="fa-solid fa-lock text-high" style="font-size:2rem;margin-bottom:10px;"></i><h4>Login Required</h4><button class="btn btn-outline mt-2" onclick="navigateTo('auth')">Login / Register</button></div>`;
+        return;
+    }
+    if (!inputValue) {
+        container.style.display = 'block';
+        container.innerHTML = `<p class="text-high"><i class="fa-solid fa-triangle-exclamation"></i> Please enter a valid address.</p>`;
+        return;
+    }
+
+    container.style.display = 'block';
+    container.innerHTML = `
+        <div class="cyber-loader-container text-center py-4 fade-in">
+            <div style="position:relative; width:90px; height:90px; border-radius:50%; margin:0 auto 15px; border:1px solid rgba(168,85,247,0.3); background:radial-gradient(circle, rgba(168,85,247,0.1) 0%, transparent 70%); overflow:hidden;">
+                <div style="position:absolute; top:0; left:50%; width:50%; height:50%; background:linear-gradient(90deg, transparent, rgba(168,85,247,0.8)); transform-origin:bottom left; animation:radarSpin 1.5s linear infinite;"></div>
+                <i class="fa-solid fa-brain" style="font-size:2rem; color:#a855f7; text-shadow:0 0 15px #a855f7; position:absolute; top:50%; left:50%; transform:translate(-50%,-50%);"></i>
+            </div>
+            <div style="font-size:1rem; letter-spacing:3px; font-family:var(--font-mono); color:#a855f7; text-shadow:0 0 10px #a855f7;">RUNNING AI MODELS...</div>
+            <div style="height:3px; background:rgba(0,0,0,0.5); border-radius:10px; overflow:hidden; margin-top:15px; border:1px solid rgba(168,85,247,0.3);">
+                <div style="width:0%; background:linear-gradient(90deg, #a855f7, #38bdf8); height:100%; transition:width 2s ease; box-shadow:0 0 10px #a855f7;" id="trade-progress-bar"></div>
+            </div>
+        </div>
+    `;
+    setTimeout(() => { const pb = document.getElementById('trade-progress-bar'); if(pb) pb.style.width = '100%'; }, 50);
+
+    const endpointMap = { 'smart-money': 'smart-money', 'arbitrage': 'arbitrage', 'alpha': 'alpha' };
+    try {
+        const res = await fetch(`/api/trading/${endpointMap[type]}?address=${inputValue}`, {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+        const data = await res.json();
+
+        if (res.status === 403 && data.planGate) {
+            const plan = type === 'alpha' ? 'Elite' : 'Pro';
+            const price = type === 'alpha' ? '99' : '29';
+            container.innerHTML = `
+                <div class="text-center p-4" style="background:rgba(2,6,23,0.9); border:1px solid rgba(168,85,247,0.5); border-radius:15px;">
+                    <i class="fa-solid fa-crown" style="font-size:2.5rem; color:#a855f7; margin-bottom:15px;"></i>
+                    <h4>${plan} Plan Required</h4>
+                    <p class="text-secondary" style="font-size:0.9rem;">Unlock this tool for <strong style="color:#a855f7;">$${price}/mo</strong> with the ${plan} plan.</p>
+                    <button class="btn btn-primary mt-3" onclick="navigateTo('pricing')">Upgrade to ${plan}</button>
+                </div>
+            `;
+            return;
+        }
+        if (!res.ok) throw new Error(data.error || 'Analysis failed');
+
+        // Show XP toast
+        if (data.xpReward) showXPToast(data.xpReward.xpGained, data.xpReward.rank);
+
+        // === RENDER: Smart Money Tracker ===
+        if (type === 'smart-money') {
+            const sentimentColor = data.overall === 'BULLISH' ? 'var(--risk-low)' : '#ef4444';
+            container.innerHTML = `
+                <div class="cyber-report-card fade-in" style="border:1px solid ${sentimentColor}88; border-radius:12px; overflow:hidden; background:rgba(2,6,23,0.8);">
+                    <div style="padding:20px; background:linear-gradient(90deg,${sentimentColor}22,transparent); border-bottom:1px solid ${sentimentColor}33;">
+                        <div style="display:flex; justify-content:space-between; align-items:center;">
+                            <div>
+                                <h3 style="margin:0; font-family:var(--font-mono); font-size:1rem; letter-spacing:1px;">SMART MONEY ANALYSIS</h3>
+                                <p style="margin:5px 0 0; font-size:0.8rem; color:var(--secondary-color); font-family:var(--font-mono);">${inputValue.substring(0,6)}...${inputValue.substring(inputValue.length-4)}</p>
+                            </div>
+                            <span style="padding:8px 18px; border-radius:20px; font-weight:900; font-size:1rem; background:${sentimentColor}; color:#000; box-shadow:0 0 15px ${sentimentColor};">${data.overall}</span>
+                        </div>
+                    </div>
+                    <div class="p-4">
+                        <p style="font-family:var(--font-mono); font-size:0.75rem; color:var(--accent-vibrant); letter-spacing:1px; margin-bottom:15px;"><i class="fa-solid fa-signal"></i> SIGNAL BREAKDOWN</p>
+                        ${(data.signals || []).map((s, i) => {
+                            const sc = s.sentiment === 'BULLISH' ? 'var(--risk-low)' : s.sentiment === 'BEARISH' ? '#ef4444' : '#f59e0b';
+                            return `<div style="margin-bottom:12px; padding:14px; background:rgba(255,255,255,0.02); border-left:3px solid ${sc}; border-radius:0 8px 8px 0; animation: slideInRight 0.5s ease forwards; animation-delay:${i*0.15}s; opacity:0; transform:translateX(-8px);">
+                                <div style="display:flex; justify-content:space-between; margin-bottom:5px;">
+                                    <strong style="font-family:var(--font-mono); font-size:0.85rem; color:white;">${s.label}</strong>
+                                    <span style="font-size:0.7rem; padding:2px 8px; border-radius:10px; background:${sc}22; color:${sc}; border:1px solid ${sc}44;">${s.sentiment} ${s.confidence}%</span>
+                                </div>
+                                <p style="margin:0; font-size:0.8rem; color:var(--secondary-color);">${s.detail}</p>
+                            </div>`;
+                        }).join('')}
+                        <div style="display:flex; gap:15px; margin-top:15px; padding-top:15px; border-top:1px solid rgba(255,255,255,0.05);">
+                            <div style="flex:1; text-align:center;">
+                                <div style="font-size:0.7rem; color:var(--secondary-color); font-family:var(--font-mono);">ETH FLOW</div>
+                                <div style="font-size:1.3rem; font-weight:900; color:var(--accent-vibrant);">${data.totalFlow} ETH</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // === RENDER: Arbitrage Scanner ===
+        else if (type === 'arbitrage') {
+            const profitColor = data.isProfit ? 'var(--risk-low)' : '#f59e0b';
+            container.innerHTML = `
+                <div class="cyber-report-card fade-in" style="border:1px solid ${profitColor}88; border-radius:12px; overflow:hidden; background:rgba(2,6,23,0.8);">
+                    <div style="padding:20px; background:linear-gradient(90deg,${profitColor}22,transparent); border-bottom:1px solid ${profitColor}33; display:flex; justify-content:space-between; align-items:center;">
+                        <div>
+                            <h3 style="margin:0; font-family:var(--font-mono); font-size:1rem; letter-spacing:1px;">ARBITRAGE SCANNER</h3>
+                            <p style="margin:3px 0 0; font-size:0.8rem; color:var(--secondary-color); font-family:var(--font-mono);">Spread: <strong style="color:${profitColor};">${data.spreadPct}</strong></p>
+                        </div>
+                        <span style="padding:8px 18px; border-radius:20px; font-weight:900; font-size:0.8rem; background:${profitColor}; color:#000; box-shadow:0 0 15px ${profitColor};">${data.status}</span>
+                    </div>
+                    <div class="p-4">
+                        <p style="font-family:var(--font-mono); font-size:0.75rem; color:var(--accent-vibrant); letter-spacing:1px; margin-bottom:15px;"><i class="fa-solid fa-table"></i> DEX PRICE MATRIX</p>
+                        <div style="overflow-x:auto;">
+                            <table style="width:100%; border-collapse:collapse; font-size:0.8rem; font-family:var(--font-mono);">
+                                <thead><tr style="border-bottom:1px solid rgba(255,255,255,0.1);">
+                                    <th style="padding:8px; text-align:left; color:var(--secondary-color);">Exchange</th>
+                                    <th style="padding:8px; text-align:right; color:var(--secondary-color);">Price</th>
+                                    <th style="padding:8px; text-align:right; color:var(--secondary-color);">Liquidity</th>
+                                    <th style="padding:8px; text-align:right; color:var(--secondary-color);">Gas</th>
+                                </tr></thead>
+                                <tbody>
+                                    ${(data.opportunities || []).map((o, i) => {
+                                        const isBest = o.dex === data.bestSell.dex;
+                                        const isBuy = o.dex === data.bestBuy.dex;
+                                        return `<tr style="border-bottom:1px solid rgba(255,255,255,0.03); ${isBest ? 'background:rgba(16,185,129,0.08);' : isBuy ? 'background:rgba(239,68,68,0.05);' : ''} animation:slideInRight 0.4s ease forwards; animation-delay:${i*0.1}s; opacity:0; transform:translateX(-5px);">
+                                            <td style="padding:10px 8px; color:white;">${isBest ? '📈 ' : isBuy ? '📉 ' : ''}${o.dex}</td>
+                                            <td style="padding:10px 8px; text-align:right; color:${isBest ? 'var(--risk-low)' : 'var(--secondary-color)'}; font-weight:${isBest ? '900' : '400'};">\$${o.price}</td>
+                                            <td style="padding:10px 8px; text-align:right; color:var(--secondary-color);">\$${parseInt(o.liquidity).toLocaleString()}</td>
+                                            <td style="padding:10px 8px; text-align:right; color:var(--secondary-color);">${o.gasCost}</td>
+                                        </tr>`;
+                                    }).join('')}
+                                </tbody>
+                            </table>
+                        </div>
+                        ${data.isProfit ? `<div style="margin-top:15px; padding:12px; background:rgba(16,185,129,0.1); border:1px solid rgba(16,185,129,0.3); border-radius:8px; font-family:var(--font-mono); font-size:0.8rem; color:var(--risk-low);">💰 PROFIT WINDOW: Buy on <strong>${data.bestBuy.dex}</strong> @ \$${data.bestBuy.price} → Sell on <strong>${data.bestSell.dex}</strong> @ \$${data.bestSell.price}</div>` : ''}
+                    </div>
+                </div>
+            `;
+        }
+
+        // === RENDER: AI Alpha Finder ===
+        else if (type === 'alpha') {
+            const sigColor = data.overallSignal?.includes('BUY') ? 'var(--risk-low)' : data.overallSignal?.includes('SELL') ? '#ef4444' : '#f59e0b';
+            container.innerHTML = `
+                <div class="cyber-report-card fade-in" style="border:1px solid #a855f788; border-radius:12px; overflow:hidden; background:rgba(2,6,23,0.8);">
+                    <div style="padding:20px; background:linear-gradient(90deg,rgba(168,85,247,0.15),transparent); border-bottom:1px solid rgba(168,85,247,0.3);">
+                        <div style="display:flex; justify-content:space-between; align-items:center;">
+                            <div>
+                                <h3 style="margin:0; font-family:var(--font-mono); font-size:1rem; letter-spacing:1px; color:#a855f7;">AI ALPHA FINDER 👑</h3>
+                                <p style="margin:3px 0 0; font-size:0.8rem; color:var(--secondary-color);">Confidence: <strong style="color:${sigColor};">${data.confidence}</strong></p>
+                            </div>
+                            <span style="padding:10px 18px; border-radius:20px; font-weight:900; font-size:1.1rem; background:${sigColor}; color:#000; box-shadow:0 0 20px ${sigColor};">${data.overallSignal}</span>
+                        </div>
+                    </div>
+                    <div class="p-4">
+                        <p style="font-family:var(--font-mono); font-size:0.75rem; color:var(--accent-vibrant); letter-spacing:1px; margin-bottom:15px;"><i class="fa-solid fa-network-wired"></i> 5-MODEL SIGNAL MATRIX</p>
+                        ${(data.factors || []).map((f, i) => {
+                            const fColor = f.trend === 'UP' ? 'var(--risk-low)' : f.trend === 'DOWN' ? '#ef4444' : '#f59e0b';
+                            return `<div style="margin-bottom:12px; animation: slideInRight 0.5s ease forwards; animation-delay:${i*0.15}s; opacity:0; transform:translateX(-8px);">
+                                <div style="display:flex; justify-content:space-between; margin-bottom:5px;">
+                                    <span style="font-size:0.8rem; color:white; font-family:var(--font-mono);">${f.name}</span>
+                                    <span style="font-size:0.7rem; color:${fColor}; font-family:var(--font-mono); font-weight:900;">${f.signal} ▲${f.score}</span>
+                                </div>
+                                <div style="height:5px; background:rgba(255,255,255,0.05); border-radius:10px; overflow:hidden;">
+                                    <div style="width:${f.score}%; height:100%; background:linear-gradient(90deg, ${fColor}88, ${fColor}); border-radius:10px; transition:width 1s ease; box-shadow:0 0 5px ${fColor};"></div>
+                                </div>
+                            </div>`;
+                        }).join('')}
+                        <div style="margin-top:20px; padding:15px; background:rgba(168,85,247,0.1); border:1px solid rgba(168,85,247,0.3); border-radius:10px;">
+                            <p style="margin:0; font-size:0.85rem; color:rgba(255,255,255,0.8);">🤖 ${data.recommendation}</p>
+                        </div>
+                        ${data.onchain ? `<div style="display:flex; gap:12px; margin-top:15px;">
+                            <div style="flex:1; text-align:center; padding:12px; background:rgba(0,0,0,0.3); border-radius:8px; border:1px solid rgba(255,255,255,0.05);">
+                                <div style="font-size:0.65rem; color:var(--secondary-color); font-family:var(--font-mono);">ON-CHAIN BALANCE</div>
+                                <div style="font-size:1.1rem; font-weight:900; color:var(--accent-vibrant); margin-top:5px;">${data.onchain.balance} ETH</div>
+                            </div>
+                            <div style="flex:1; text-align:center; padding:12px; background:rgba(0,0,0,0.3); border-radius:8px; border:1px solid rgba(255,255,255,0.05);">
+                                <div style="font-size:0.65rem; color:var(--secondary-color); font-family:var(--font-mono);">TX COUNT</div>
+                                <div style="font-size:1.1rem; font-weight:900; color:var(--accent-vibrant); margin-top:5px;">${data.onchain.txCount?.toLocaleString()}</div>
+                            </div>
+                        </div>` : ''}
+                    </div>
+                </div>
+            `;
+        }
+
+    } catch(err) {
+        container.innerHTML = `<div class="p-3" style="border:1px solid rgba(239,68,68,0.5); border-radius:10px; color:#ef4444;"><i class="fa-solid fa-triangle-exclamation"></i> ${err.message}</div>`;
+    }
+}
+

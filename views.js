@@ -194,7 +194,7 @@ window.views = {
                         <div class="tool-result mt-4" style="display:none;"></div>
                     </div>
 
-                    <!-- Tool 3 -->
+                    <!-- Tool 3: Phishing Detector -->
                     <div class="tool-card">
                         <i class="fa-solid fa-spider tool-icon"></i>
                         <h3>Phishing Detector</h3>
@@ -202,9 +202,81 @@ window.views = {
                         <div class="tool-input-group mt-3">
                             <input type="text" class="custom-input tool-specific-input" placeholder="https://..." id="url-input" />
                             <button class="btn btn-outline tool-demo-btn" data-tool="phishing" data-input="#url-input">Check URL</button>
+                        </div>
+                        <div class="tool-result mt-4" style="display:none;"></div>
                     </div>
 
-                    <!-- Tool 7 (Pro/Elite Only) -->
+                    <!-- TRADING TOOLS DIVIDER -->
+                    <div style="grid-column: 1/-1; border-top: 1px solid rgba(56,189,248,0.15); padding-top: 30px; margin-top: 10px;">
+                        <div style="display:flex; align-items:center; gap:12px; margin-bottom:5px;">
+                            <i class="fa-solid fa-chart-line" style="color:var(--accent-vibrant); font-size:1.5rem;"></i>
+                            <h3 style="margin:0; font-family:var(--font-mono);">TRADING INTELLIGENCE SUITE</h3>
+                            <span class="badge" style="background:linear-gradient(135deg,#f59e0b,#ef4444); color:#000;">PRO / ELITE</span>
+                        </div>
+                        <p style="color:var(--secondary-color); font-size:0.9rem; margin:0;">Institutional-grade tools to find alpha, track smart money, and discover arbitrage opportunities.</p>
+                    </div>
+
+                    <!-- Tool: Smart Money Tracker -->
+                    <div class="tool-card" style="border-color: rgba(245,158,11,0.3); background: linear-gradient(135deg, rgba(245,158,11,0.05), rgba(2,6,23,0.8));">
+                        <div style="display:flex; justify-content:space-between; align-items:start;">
+                            <i class="fa-solid fa-whale tool-icon" style="color:#f59e0b;"></i>
+                            <span class="badge" style="background:rgba(245,158,11,0.2); color:#f59e0b; border:1px solid rgba(245,158,11,0.4);">PRO+</span>
+                        </div>
+                        <h3>Smart Money Tracker</h3>
+                        <p>Analyze whale wallets for accumulation / distribution signals. Track what institutions are doing in real-time.</p>
+                        <div style="display:flex; gap:8px; flex-wrap:wrap; margin:10px 0;">
+                            <span style="font-size:0.7rem; padding:4px 10px; border-radius:20px; background:rgba(16,185,129,0.1); border:1px solid rgba(16,185,129,0.3); color:#10b981;">On-Chain</span>
+                            <span style="font-size:0.7rem; padding:4px 10px; border-radius:20px; background:rgba(56,189,248,0.1); border:1px solid rgba(56,189,248,0.3); color:#38bdf8;">Real-Time</span>
+                            <span style="font-size:0.7rem; padding:4px 10px; border-radius:20px; background:rgba(168,85,247,0.1); border:1px solid rgba(168,85,247,0.3); color:#a855f7;">+30 XP</span>
+                        </div>
+                        <div class="tool-input-group mt-3">
+                            <input type="text" class="custom-input tool-specific-input" placeholder="Wallet address (0x...)" id="smart-money-input" />
+                            <button class="btn btn-outline tool-demo-btn" data-tool="smart-money" data-input="#smart-money-input" style="border-color:rgba(245,158,11,0.5); color:#f59e0b;">Track Whale</button>
+                        </div>
+                        <div class="tool-result mt-4" style="display:none;"></div>
+                    </div>
+
+                    <!-- Tool: Arbitrage Scanner -->
+                    <div class="tool-card" style="border-color: rgba(16,185,129,0.3); background: linear-gradient(135deg, rgba(16,185,129,0.05), rgba(2,6,23,0.8));">
+                        <div style="display:flex; justify-content:space-between; align-items:start;">
+                            <i class="fa-solid fa-arrows-left-right tool-icon" style="color:#10b981;"></i>
+                            <span class="badge" style="background:rgba(16,185,129,0.2); color:#10b981; border:1px solid rgba(16,185,129,0.4);">PRO+</span>
+                        </div>
+                        <h3>Arbitrage Scanner</h3>
+                        <p>Scan 5 DEXes simultaneously for price discrepancies. Detect profit windows before the bots close them.</p>
+                        <div style="display:flex; gap:8px; flex-wrap:wrap; margin:10px 0;">
+                            <span style="font-size:0.7rem; padding:4px 10px; border-radius:20px; background:rgba(16,185,129,0.1); border:1px solid rgba(16,185,129,0.3); color:#10b981;">5 DEXes</span>
+                            <span style="font-size:0.7rem; padding:4px 10px; border-radius:20px; background:rgba(56,189,248,0.1); border:1px solid rgba(56,189,248,0.3); color:#38bdf8;">Spread Analysis</span>
+                            <span style="font-size:0.7rem; padding:4px 10px; border-radius:20px; background:rgba(168,85,247,0.1); border:1px solid rgba(168,85,247,0.3); color:#a855f7;">+20 XP</span>
+                        </div>
+                        <div class="tool-input-group mt-3">
+                            <input type="text" class="custom-input tool-specific-input" placeholder="Token contract (0x...)" id="arb-input" />
+                            <button class="btn btn-outline tool-demo-btn" data-tool="arbitrage" data-input="#arb-input" style="border-color:rgba(16,185,129,0.5); color:#10b981;">Scan Arb</button>
+                        </div>
+                        <div class="tool-result mt-4" style="display:none;"></div>
+                    </div>
+
+                    <!-- Tool: AI Alpha Finder -->
+                    <div class="tool-card" style="border-color: rgba(168,85,247,0.4); background: linear-gradient(135deg, rgba(168,85,247,0.07), rgba(2,6,23,0.9)); grid-column: span 1;">
+                        <div style="display:flex; justify-content:space-between; align-items:start;">
+                            <i class="fa-solid fa-brain tool-icon" style="color:#a855f7;"></i>
+                            <span class="badge" style="background:linear-gradient(135deg,#a855f7,#38bdf8); color:#000; font-weight:900;">ELITE ONLY 👑</span>
+                        </div>
+                        <h3>AI Alpha Finder</h3>
+                        <p>Our most advanced AI model. Combines 5 deep signals: whale sentiment, liquidity depth, social velocity, on-chain momentum and smart contract risk into one unified score.</p>
+                        <div style="display:flex; gap:8px; flex-wrap:wrap; margin:10px 0;">
+                            <span style="font-size:0.7rem; padding:4px 10px; border-radius:20px; background:rgba(168,85,247,0.1); border:1px solid rgba(168,85,247,0.3); color:#a855f7;">5 AI Models</span>
+                            <span style="font-size:0.7rem; padding:4px 10px; border-radius:20px; background:rgba(245,158,11,0.1); border:1px solid rgba(245,158,11,0.3); color:#f59e0b;">Deep Alpha</span>
+                            <span style="font-size:0.7rem; padding:4px 10px; border-radius:20px; background:rgba(168,85,247,0.1); border:1px solid rgba(168,85,247,0.3); color:#a855f7;">+50 XP</span>
+                        </div>
+                        <div class="tool-input-group mt-3">
+                            <input type="text" class="custom-input tool-specific-input" placeholder="Token or wallet (0x...)" id="alpha-input" />
+                            <button class="btn btn-outline tool-demo-btn" data-tool="alpha" data-input="#alpha-input" style="border-color:rgba(168,85,247,0.5); color:#a855f7;">Find Alpha</button>
+                        </div>
+                        <div class="tool-result mt-4" style="display:none;"></div>
+                    </div>
+
+                    <!-- Tool: Developer API (Pro/Elite Only) -->
                     <div class="tool-card" id="api-access-card" style="display:none;">
                         <i class="fa-solid fa-code tool-icon"></i>
                         <h3>Developer API</h3>
@@ -537,49 +609,110 @@ window.views = {
         return `
         <section class="profile-section" style="padding: 120px 0 60px; min-height: 80vh;">
             <div class="container">
-                <div class="row justify-content-center">
-                    <div class="col-md-8">
-                        <div class="tool-card p-5" style="border-top: 4px solid var(--accent-vibrant); position: relative; overflow: hidden; background: rgba(2, 6, 23, 0.7); backdrop-filter: blur(20px);">
-                            <div style="position: absolute; top: -50px; right: -50px; width: 150px; height: 150px; background: var(--accent-vibrant); filter: blur(80px); opacity: 0.2; border-radius: 50%;"></div>
-                            
-                            <div class="d-flex align-items-center mb-4 pb-4" style="border-bottom: 1px solid rgba(255,255,255,0.05);">
-                                <div style="width: 80px; height: 80px; background: rgba(56, 189, 248, 0.1); border: 2px solid var(--accent-vibrant); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 2.5rem; color: var(--accent-vibrant); margin-right: 20px;">
-                                    <i class="fa-solid fa-user-astronaut"></i>
-                                </div>
-                                <div style="text-align: left;">
-                                    <h2 style="margin-bottom: 5px;">${email}</h2>
-                                    <span class="badge ${isPro ? 'badge-low' : 'badge-high'}" style="font-size: 0.9rem; padding: 6px 12px; background: rgba(255,255,255,0.1);">
-                                        <i class="fa-solid ${isPro ? 'fa-crown' : 'fa-seedling'}"></i> Plan: ${plan.toUpperCase()}
-                                    </span>
+                <div style="max-width:800px; margin:0 auto;">
+
+                    <!-- XP / Rank Card -->
+                    <div class="tool-card mb-4" id="xp-card" style="border-top: 4px solid #a855f7; background: linear-gradient(135deg, rgba(168,85,247,0.07), rgba(2,6,23,0.9)); position:relative; overflow:hidden;">
+                        <div style="position:absolute; top:-40px; right:-40px; width:120px; height:120px; background:#a855f7; filter:blur(60px); opacity:0.2; border-radius:50%;"></div>
+                        <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:20px;">
+                            <div style="display:flex; align-items:center; gap:20px;">
+                                <div id="rank-icon-display" style="font-size:3rem; width:70px; height:70px; border-radius:50%; background:rgba(168,85,247,0.15); border:2px solid rgba(168,85,247,0.5); display:flex; align-items:center; justify-content:center;">🔰</div>
+                                <div>
+                                    <p style="margin:0; color:var(--secondary-color); font-size:0.8rem; font-family:var(--font-mono); letter-spacing:1px;">CURRENT RANK</p>
+                                    <h2 id="rank-name-display" style="margin:5px 0; font-family:var(--font-mono); color:#a855f7;">LOADING...</h2>
+                                    <p id="xp-display" style="margin:0; font-size:0.85rem; color:var(--secondary-color);">0 XP Total</p>
                                 </div>
                             </div>
-                            
-                            <div class="row g-4 mb-5" style="display:flex; gap:20px;">
-                                <div class="col" style="flex:1;">
-                                    <div style="background: rgba(0,0,0,0.3); padding: 20px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.05); text-align: left;">
-                                        <h4 style="font-size: 0.9rem; color: var(--secondary-color); text-transform: uppercase; letter-spacing: 1px;"><i class="fa-solid fa-bolt"></i> API Limits</h4>
-                                        <h3 style="font-size: 1.8rem; margin: 10px 0;">${isPro ? 'Unlimited' : '3 / 3 Daily'}</h3>
-                                        <p style="font-size: 0.8rem; color: var(--secondary-color); margin: 0;">${isPro ? 'God-Mode Active.' : 'Upgrade for unlimited scans.'}</p>
-                                    </div>
-                                </div>
-                                <div class="col" style="flex:1;">
-                                    <div style="background: rgba(0,0,0,0.3); padding: 20px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.05); text-align: left;">
-                                        <h4 style="font-size: 0.9rem; color: var(--secondary-color); text-transform: uppercase; letter-spacing: 1px;"><i class="fa-solid fa-clock-rotate-left"></i> Security Status</h4>
-                                        <h3 style="font-size: 1.8rem; margin: 10px 0; color: var(--risk-low);">Active</h3>
-                                        <p style="font-size: 0.8rem; color: var(--secondary-color); margin: 0;">Real-time protection enabled.</p>
-                                    </div>
+                            <button class="btn btn-outline" onclick="navigateTo('leaderboard')" style="border-color:rgba(168,85,247,0.5); color:#a855f7;"><i class="fa-solid fa-trophy"></i> View Leaderboard</button>
+                        </div>
+                        <div style="margin-top:20px;">
+                            <div style="display:flex; justify-content:space-between; margin-bottom:6px;">
+                                <span style="font-size:0.75rem; color:var(--secondary-color); font-family:var(--font-mono);">XP to next rank</span>
+                                <span id="xp-next-label" style="font-size:0.75rem; color:#a855f7; font-family:var(--font-mono);">— XP</span>
+                            </div>
+                            <div style="height:8px; background:rgba(255,255,255,0.05); border-radius:10px; overflow:hidden; border:1px solid rgba(168,85,247,0.2);">
+                                <div id="xp-progress-bar" style="height:100%; width:0%; background:linear-gradient(90deg,#a855f7,#38bdf8); border-radius:10px; transition:width 1.5s cubic-bezier(0.4,0,0.2,1); box-shadow:0 0 10px #a855f7;"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Profile Info Card -->
+                    <div class="tool-card p-5" style="border-top: 4px solid var(--accent-vibrant); position: relative; overflow: hidden; background: rgba(2, 6, 23, 0.7); backdrop-filter: blur(20px);">
+                        <div style="position: absolute; top: -50px; right: -50px; width: 150px; height: 150px; background: var(--accent-vibrant); filter: blur(80px); opacity: 0.2; border-radius: 50%;"></div>
+                        
+                        <div class="d-flex align-items-center mb-4 pb-4" style="border-bottom: 1px solid rgba(255,255,255,0.05);">
+                            <div style="width: 80px; height: 80px; background: rgba(56, 189, 248, 0.1); border: 2px solid var(--accent-vibrant); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 2.5rem; color: var(--accent-vibrant); margin-right: 20px;">
+                                <i class="fa-solid fa-user-astronaut"></i>
+                            </div>
+                            <div style="text-align: left;">
+                                <h2 style="margin-bottom: 5px;">${email}</h2>
+                                <span class="badge ${isPro ? 'badge-low' : 'badge-high'}" style="font-size: 0.9rem; padding: 6px 12px; background: rgba(255,255,255,0.1);">
+                                    <i class="fa-solid ${isPro ? 'fa-crown' : 'fa-seedling'}"></i> Plan: ${plan.toUpperCase()}
+                                </span>
+                            </div>
+                        </div>
+                        
+                        <div class="row g-4 mb-5" style="display:flex; gap:20px;">
+                            <div class="col" style="flex:1;">
+                                <div style="background: rgba(0,0,0,0.3); padding: 20px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.05); text-align: left;">
+                                    <h4 style="font-size: 0.9rem; color: var(--secondary-color); text-transform: uppercase; letter-spacing: 1px;"><i class="fa-solid fa-bolt"></i> API Limits</h4>
+                                    <h3 style="font-size: 1.8rem; margin: 10px 0;">${isPro ? 'Unlimited' : '3 / 3 Daily'}</h3>
+                                    <p style="font-size: 0.8rem; color: var(--secondary-color); margin: 0;">${isPro ? 'God-Mode Active.' : 'Upgrade for unlimited scans.'}</p>
                                 </div>
                             </div>
-                            
-                            <div style="display: flex; justify-content: space-between; align-items: center;">
-                                ${!isPro ? '<button class="btn btn-primary" data-route="pricing"><i class="fa-solid fa-arrow-up-right-dots"></i> Upgrade to Pro</button>' : '<button class="btn btn-outline" data-route="tools"><i class="fa-solid fa-shield-halved"></i> Access Arsenal</button>'}
-                                <button class="btn btn-outline" style="color: #ef4444; border-color: rgba(239,68,68,0.3);" id="btn-logout"><i class="fa-solid fa-right-from-bracket"></i> Logout</button>
+                            <div class="col" style="flex:1;">
+                                <div style="background: rgba(0,0,0,0.3); padding: 20px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.05); text-align: left;">
+                                    <h4 style="font-size: 0.9rem; color: var(--secondary-color); text-transform: uppercase; letter-spacing: 1px;"><i class="fa-solid fa-clock-rotate-left"></i> Security Status</h4>
+                                    <h3 style="font-size: 1.8rem; margin: 10px 0; color: var(--risk-low);">Active</h3>
+                                    <p style="font-size: 0.8rem; color: var(--secondary-color); margin: 0;">Real-time protection enabled.</p>
+                                </div>
                             </div>
+                        </div>
+                        
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            ${!isPro ? '<button class="btn btn-primary" data-route="pricing"><i class="fa-solid fa-arrow-up-right-dots"></i> Upgrade to Pro</button>' : '<button class="btn btn-outline" data-route="tools"><i class="fa-solid fa-shield-halved"></i> Access Arsenal</button>'}
+                            <button class="btn btn-outline" style="color: #ef4444; border-color: rgba(239,68,68,0.3);" id="btn-logout"><i class="fa-solid fa-right-from-bracket"></i> Logout</button>
                         </div>
                     </div>
                 </div>
             </div>
         </section>
         `;
-    }
+    },
+
+    leaderboard: () => `
+        <section class="page-header">
+            <div class="container center">
+                <i class="fa-solid fa-trophy" style="font-size:3rem; color:#f59e0b; margin-bottom:15px; display:block;"></i>
+                <h1>Hunter Leaderboard</h1>
+                <p style="color:var(--secondary-color);">Top analysts ranked by XP. Scan, trade, and earn your way to Grandmaster.</p>
+            </div>
+        </section>
+
+        <section style="padding: 60px 0; min-height:60vh;">
+            <div class="container" style="max-width:800px;">
+
+                <!-- Rank Legend -->
+                <div style="display:flex; flex-wrap:wrap; gap:10px; justify-content:center; margin-bottom:40px;">
+                    <div style="display:flex; align-items:center; gap:8px; padding:8px 16px; background:rgba(107,114,128,0.1); border:1px solid rgba(107,114,128,0.3); border-radius:20px;"><span>🔰</span><span style="font-size:0.8rem; color:#6b7280;">Rookie (0 XP)</span></div>
+                    <div style="display:flex; align-items:center; gap:8px; padding:8px 16px; background:rgba(16,185,129,0.1); border:1px solid rgba(16,185,129,0.3); border-radius:20px;"><span>🏹</span><span style="font-size:0.8rem; color:#10b981;">Hunter (100 XP)</span></div>
+                    <div style="display:flex; align-items:center; gap:8px; padding:8px 16px; background:rgba(148,163,184,0.1); border:1px solid rgba(148,163,184,0.3); border-radius:20px;"><span>🐺</span><span style="font-size:0.8rem; color:#94a3b8;">Silver Wolf (300 XP)</span></div>
+                    <div style="display:flex; align-items:center; gap:8px; padding:8px 16px; background:rgba(245,158,11,0.1); border:1px solid rgba(245,158,11,0.3); border-radius:20px;"><span>🦈</span><span style="font-size:0.8rem; color:#f59e0b;">Gold Shark (700 XP)</span></div>
+                    <div style="display:flex; align-items:center; gap:8px; padding:8px 16px; background:rgba(56,189,248,0.1); border:1px solid rgba(56,189,248,0.3); border-radius:20px;"><span>💎</span><span style="font-size:0.8rem; color:#38bdf8;">Diamond Whale (1500 XP)</span></div>
+                    <div style="display:flex; align-items:center; gap:8px; padding:8px 16px; background:rgba(168,85,247,0.1); border:1px solid rgba(168,85,247,0.3); border-radius:20px;"><span>👑</span><span style="font-size:0.8rem; color:#a855f7;">Grandmaster (3000 XP)</span></div>
+                </div>
+
+                <div id="leaderboard-container" style="background:rgba(2,6,23,0.8); border:1px solid rgba(255,255,255,0.07); border-radius:16px; overflow:hidden;">
+                    <div style="padding:20px 25px; border-bottom:1px solid rgba(255,255,255,0.05); display:flex; justify-content:space-between;">
+                        <span style="font-family:var(--font-mono); font-size:0.75rem; color:var(--secondary-color); letter-spacing:2px;">RANK</span>
+                        <span style="font-family:var(--font-mono); font-size:0.75rem; color:var(--secondary-color); letter-spacing:2px;">USER</span>
+                        <span style="font-family:var(--font-mono); font-size:0.75rem; color:var(--secondary-color); letter-spacing:2px;">XP</span>
+                    </div>
+                    <div id="leaderboard-body" style="min-height:250px;">
+                        <div class="text-center py-5" style="color:var(--secondary-color);"><i class="fa-solid fa-spinner fa-spin" style="font-size:2rem;"></i><br>Loading leaderboard...</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    `
 };
