@@ -1693,3 +1693,104 @@ section {
     20% { left: 200%; }
     100% { left: 200%; }
 }
+
+/* ========================================
+   ENTERPRISE TOOL PAGES — v3.0
+   ======================================== */
+
+/* Hub tool cards */
+.hub-tool-card {
+  background: rgba(2,6,23,0.8);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 16px;
+  padding: 24px;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(.4,0,.2,1);
+  position: relative;
+  overflow: hidden;
+}
+.hub-tool-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at 50% 0%, var(--card-color, #38bdf8)10 0%, transparent 70%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+}
+.hub-tool-card:hover { transform: translateY(-4px); border-color: var(--card-color, #38bdf8); box-shadow: 0 12px 40px color-mix(in srgb, var(--card-color, #38bdf8) 20%, transparent); }
+.hub-tool-card:hover::before { opacity: 1; }
+.hub-tool-card h3 { font-size: 1.05rem; font-weight: 700; margin: 12px 0 8px; color: white; }
+.hub-tool-card p { font-size: 0.82rem; color: var(--secondary-color); line-height: 1.6; margin: 0 0 15px; }
+.hub-tool-card-header { display: flex; justify-content: space-between; align-items: center; }
+.hub-tool-icon { width: 48px; height: 48px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.3rem; border: 1px solid rgba(255,255,255,0.1); }
+.hub-tool-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 15px; }
+.hub-tool-tags span { font-size: 0.68rem; padding: 3px 9px; border-radius: 20px; background: var(--tag-color, rgba(56,189,248,0.1)); border: 1px solid var(--tag-border, rgba(56,189,248,0.3)); color: var(--tag-text, #38bdf8); }
+.hub-tool-launch { display: flex; align-items: center; gap: 8px; font-size: 0.8rem; font-weight: 700; color: var(--card-color, #38bdf8); letter-spacing: 0.5px; transition: gap 0.2s ease; }
+.hub-tool-card:hover .hub-tool-launch { gap: 12px; }
+
+/* Plan pills */
+.plan-pill-free { font-size: 0.65rem; font-weight: 800; padding: 3px 10px; border-radius: 20px; background: rgba(16,185,129,0.15); border: 1px solid rgba(16,185,129,0.4); color: #10b981; letter-spacing: 1px; }
+.plan-pill-pro { font-size: 0.65rem; font-weight: 800; padding: 3px 10px; border-radius: 20px; background: rgba(245,158,11,0.15); border: 1px solid rgba(245,158,11,0.4); color: #f59e0b; letter-spacing: 1px; }
+.plan-pill-elite { font-size: 0.65rem; font-weight: 800; padding: 3px 10px; border-radius: 20px; background: rgba(168,85,247,0.15); border: 1px solid rgba(168,85,247,0.4); color: #a855f7; letter-spacing: 1px; }
+.xp-pill { font-size: 0.65rem; font-weight: 700; padding: 3px 10px; border-radius: 20px; background: rgba(56,189,248,0.1); border: 1px solid rgba(56,189,248,0.3); color: #38bdf8; }
+
+/* Individual tool page layout */
+.tool-page-layout { min-height: 100vh; }
+.tool-page-header { padding: 110px 0 35px; background: radial-gradient(ellipse at 50% 0%, var(--tool-color, #38bdf8)15 0%, transparent 65%); border-bottom: 1px solid rgba(255,255,255,0.05); }
+.tool-breadcrumb { font-size: 0.75rem; color: var(--secondary-color); margin-bottom: 15px; font-family: var(--font-mono); }
+.tool-breadcrumb a { color: var(--accent-vibrant); text-decoration: none; }
+.tool-breadcrumb a:hover { color: white; }
+.tool-page-title-row { display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 15px; margin-bottom: 30px; }
+.tool-page-title { font-size: 1.8rem; font-weight: 900; margin: 0 0 5px; display: flex; align-items: center; gap: 12px; }
+.tool-page-sub { color: var(--secondary-color); font-size: 0.88rem; margin: 0; max-width: 580px; }
+
+/* Scan bar */
+.scan-bar-wrapper { display: flex; flex-direction: column; gap: 12px; }
+.scan-bar { display: flex; align-items: center; gap: 12px; background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.1); border-radius: 14px; padding: 12px 18px; backdrop-filter: blur(10px); flex-wrap: wrap; }
+.scan-bar:focus-within { border-color: var(--accent-vibrant); box-shadow: 0 0 20px rgba(56,189,248,0.15); }
+.scan-bar-input { flex: 1; background: transparent; border: none; outline: none; color: white; font-family: var(--font-mono); font-size: 0.85rem; min-width: 200px; padding: 4px 0; }
+.scan-bar-input::placeholder { color: rgba(255,255,255,0.3); }
+.scan-bar-select { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; color: white; font-family: var(--font-mono); font-size: 0.8rem; padding: 6px 10px; outline: none; cursor: pointer; }
+.scan-bar-select option { background: #0f172a; }
+.scan-bar-btn { white-space: nowrap; }
+.scan-bar-examples { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; }
+.example-pill { background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.1); border-radius: 20px; color: var(--secondary-color); font-family: var(--font-mono); font-size: 0.72rem; padding: 4px 12px; cursor: pointer; transition: all 0.2s ease; }
+.example-pill:hover { background: rgba(56,189,248,0.1); border-color: rgba(56,189,248,0.4); color: #38bdf8; }
+
+/* Results area */
+.tool-results-container { padding: 35px 0 80px; }
+.tool-results-placeholder { border: 1px dashed rgba(255,255,255,0.1); border-radius: 20px; padding: 60px 30px; display: flex; align-items: center; justify-content: center; text-align: center; min-height: 280px; }
+.placeholder-content h3 { margin: 15px 0 8px; font-size: 1.2rem; }
+.placeholder-content p { color: var(--secondary-color); font-size: 0.85rem; max-width: 400px; margin: 0 auto 20px; }
+.placeholder-icon-ring { width: 80px; height: 80px; border-radius: 50%; border: 1px solid rgba(56,189,248,0.4); background: rgba(56,189,248,0.05); display: flex; align-items: center; justify-content: center; margin: 0 auto 15px; }
+.feature-chips { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; }
+.feature-chip { font-size: 0.72rem; padding: 4px 12px; border-radius: 20px; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); color: var(--secondary-color); display: flex; align-items: center; gap: 5px; }
+
+/* Tool results card */
+.tool-result-card { border-radius: 16px; overflow: hidden; background: rgba(2,6,23,0.85); animation: fadeIn 0.4s ease; }
+.risk-gauge { position: relative; width: 140px; height: 140px; margin: 0 auto; }
+.risk-gauge svg { width: 100%; height: 100%; transform: rotate(-90deg); }
+.risk-gauge .gauge-bg { fill: none; stroke: rgba(255,255,255,0.06); stroke-width: 10; }
+.risk-gauge .gauge-fill { fill: none; stroke-width: 10; stroke-linecap: round; transition: stroke-dasharray 1.5s cubic-bezier(.4,0,.2,1); }
+.risk-gauge-label { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+.risk-score-num { font-size: 2rem; font-weight: 900; font-family: var(--font-mono); line-height: 1; }
+.risk-score-label { font-size: 0.6rem; letter-spacing: 2px; color: var(--secondary-color); }
+
+/* Signal row */
+.signal-row { display: flex; align-items: center; gap: 12px; padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.04); }
+.signal-row:last-child { border-bottom: none; }
+.signal-icon { width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 0.8rem; flex-shrink: 0; }
+.signal-label { flex: 1; font-size: 0.82rem; color: white; }
+.signal-status { font-size: 0.7rem; font-weight: 700; font-family: var(--font-mono); }
+
+/* Radar polygon SVG */
+.radar-container { position: relative; width: 220px; height: 220px; margin: 0 auto; }
+
+/* Animations */
+@keyframes radarSpin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+@keyframes slideInRight { from { opacity: 0; transform: translateX(-12px); } to { opacity: 1; transform: translateX(0); } }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes fadeOut { from { opacity: 1; } to { opacity: 0; } }
+@keyframes bounceIn { 0% { transform: scale(0); } 50% { transform: scale(1.25); } 100% { transform: scale(1); } }
+@keyframes pulse { 0%,100% { box-shadow: 0 0 0 0 rgba(168,85,247,0.3); } 50% { box-shadow: 0 0 0 10px rgba(168,85,247,0); } }

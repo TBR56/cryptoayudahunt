@@ -160,132 +160,124 @@ window.views = {
     `,
 
     tools: () => `
-        <section class="page-header">
+        <section style="padding: 120px 0 40px; background: radial-gradient(ellipse at 50% 0%, rgba(56,189,248,0.08) 0%, transparent 60%);">
             <div class="container center">
-                <h1>AI Guardian Tools</h1>
-                <p>Our suite of artificial intelligence models trained to detect all forms of web3 fraud.</p>
+                <div class="badge" style="margin-bottom:15px;"><i class="fa-solid fa-satellite-dish"></i> AI Arsenal v3.0</div>
+                <h1>Intelligence Command Center</h1>
+                <p style="color:var(--secondary-color); max-width:600px; margin:0 auto;">Six enterprise-grade tools deployed across security and trading — each with its own dedicated interface, real data and XP rewards.</p>
+                <div style="display:flex; justify-content:center; gap:20px; margin-top:25px; flex-wrap:wrap;">
+                    <div style="display:flex;align-items:center;gap:8px;font-size:0.85rem;color:var(--secondary-color);"><span style="width:10px;height:10px;border-radius:50%;background:var(--risk-low);display:inline-block;"></span>Free</div>
+                    <div style="display:flex;align-items:center;gap:8px;font-size:0.85rem;color:var(--secondary-color);"><span style="width:10px;height:10px;border-radius:50%;background:#f59e0b;display:inline-block;"></span>Pro</div>
+                    <div style="display:flex;align-items:center;gap:8px;font-size:0.85rem;color:var(--secondary-color);"><span style="width:10px;height:10px;border-radius:50%;background:#a855f7;display:inline-block;"></span>Elite</div>
+                </div>
             </div>
         </section>
-        
-        <section class="tools-section">
+
+        <section style="padding: 20px 0 80px;">
             <div class="container">
-                <div class="tools-grid">
-                    <!-- Tool 1 -->
-                    <div class="tool-card">
-                        <i class="fa-solid fa-wallet tool-icon"></i>
-                        <h3>AI Wallet Guardian</h3>
-                        <p>Paste a wallet address to scan for exposure to mixers, phishing, and sanction lists.</p>
-                        <div class="tool-input-group mt-3">
-                            <input type="text" class="custom-input tool-specific-input" placeholder="0x..." id="wallet-input" />
-                            <button class="btn btn-outline tool-demo-btn" data-tool="wallet" data-input="#wallet-input">Analyze</button>
-                        </div>
-                        <div class="tool-result mt-4" style="display:none;"></div>
-                    </div>
 
-                    <!-- Tool 2 -->
-                    <div class="tool-card">
-                        <i class="fa-solid fa-parachute-box tool-icon"></i>
-                        <h3>Rug Pull Predictor</h3>
-                        <p>Paste a smart contract address. AI detects honeypots, hidden taxes, and mint functions.</p>
-                        <div class="tool-input-group mt-3">
-                            <input type="text" class="custom-input tool-specific-input" placeholder="0x..." id="token-input" />
-                            <button class="btn btn-outline tool-demo-btn" data-tool="rug" data-input="#token-input">Analyze</button>
-                        </div>
-                        <div class="tool-result mt-4" style="display:none;"></div>
+                <!-- SECURITY SUITE -->
+                <div style="margin-bottom:50px;">
+                    <div style="display:flex;align-items:center;gap:12px;margin-bottom:24px;padding-bottom:15px;border-bottom:1px solid rgba(56,189,248,0.15);">
+                        <i class="fa-solid fa-shield-halved" style="color:var(--accent-vibrant);font-size:1.3rem;"></i>
+                        <h3 style="margin:0;font-family:var(--font-mono);letter-spacing:2px;font-size:0.9rem;color:var(--secondary-color);">SECURITY SUITE</h3>
                     </div>
+                    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:20px;">
 
-                    <!-- Tool 3: Phishing Detector -->
-                    <div class="tool-card">
-                        <i class="fa-solid fa-spider tool-icon"></i>
-                        <h3>Phishing Detector</h3>
-                        <p>Check any URL or dApp link against our global registry of malicious domains.</p>
-                        <div class="tool-input-group mt-3">
-                            <input type="text" class="custom-input tool-specific-input" placeholder="https://..." id="url-input" />
-                            <button class="btn btn-outline tool-demo-btn" data-tool="phishing" data-input="#url-input">Check URL</button>
+                        <!-- Token Security Pro -->
+                        <div class="hub-tool-card" onclick="navigateTo('tool-token')" style="--card-color:#38bdf8;">
+                            <div class="hub-tool-card-header">
+                                <div class="hub-tool-icon" style="background:rgba(56,189,248,0.15);border-color:rgba(56,189,248,0.4);"><i class="fa-solid fa-coins" style="color:#38bdf8;"></i></div>
+                                <span class="plan-pill-free">FREE</span>
+                            </div>
+                            <h3>Token Security Pro</h3>
+                            <p>Honeypot detection, tax analysis, holder distribution, DEX liquidity & 15+ contract risk signals in one audit.</p>
+                            <div class="hub-tool-tags">
+                                <span>Honeypot</span><span>Tax Audit</span><span>Holders</span><span>+10–25 XP</span>
+                            </div>
+                            <div class="hub-tool-launch"><span>Launch Tool</span><i class="fa-solid fa-arrow-right"></i></div>
                         </div>
-                        <div class="tool-result mt-4" style="display:none;"></div>
+
+                        <!-- Wallet Intelligence -->
+                        <div class="hub-tool-card" onclick="navigateTo('tool-wallet')" style="--card-color:#a855f7;">
+                            <div class="hub-tool-card-header">
+                                <div class="hub-tool-icon" style="background:rgba(168,85,247,0.15);border-color:rgba(168,85,247,0.4);"><i class="fa-solid fa-wallet" style="color:#a855f7;"></i></div>
+                                <span class="plan-pill-free">FREE</span>
+                            </div>
+                            <h3>Wallet Intelligence</h3>
+                            <p>Chainalysis-grade profiling — phishing history, mixer detection, sanctions check & real on-chain balance.</p>
+                            <div class="hub-tool-tags">
+                                <span>Sanction Check</span><span>Mixer</span><span>On-Chain</span><span>+15 XP</span>
+                            </div>
+                            <div class="hub-tool-launch"><span>Launch Tool</span><i class="fa-solid fa-arrow-right"></i></div>
+                        </div>
+
+                        <!-- Phishing Scanner -->
+                        <div class="hub-tool-card" onclick="navigateTo('tool-phishing')" style="--card-color:#ef4444;">
+                            <div class="hub-tool-card-header">
+                                <div class="hub-tool-icon" style="background:rgba(239,68,68,0.15);border-color:rgba(239,68,68,0.4);"><i class="fa-solid fa-spider" style="color:#ef4444;"></i></div>
+                                <span class="plan-pill-free">FREE</span>
+                            </div>
+                            <h3>Phishing & URL Scanner</h3>
+                            <p>200+ blacklist registries, SSL validation, WHOIS data & contract associations — like VirusTotal for Web3.</p>
+                            <div class="hub-tool-tags">
+                                <span>URL Check</span><span>WHOIS</span><span>Registry</span><span>+10 XP</span>
+                            </div>
+                            <div class="hub-tool-launch"><span>Launch Tool</span><i class="fa-solid fa-arrow-right"></i></div>
+                        </div>
                     </div>
+                </div>
 
-                    <!-- TRADING TOOLS DIVIDER -->
-                    <div style="grid-column: 1/-1; border-top: 1px solid rgba(56,189,248,0.15); padding-top: 30px; margin-top: 10px;">
-                        <div style="display:flex; align-items:center; gap:12px; margin-bottom:5px;">
-                            <i class="fa-solid fa-chart-line" style="color:var(--accent-vibrant); font-size:1.5rem;"></i>
-                            <h3 style="margin:0; font-family:var(--font-mono);">TRADING INTELLIGENCE SUITE</h3>
-                            <span class="badge" style="background:linear-gradient(135deg,#f59e0b,#ef4444); color:#000;">PRO / ELITE</span>
-                        </div>
-                        <p style="color:var(--secondary-color); font-size:0.9rem; margin:0;">Institutional-grade tools to find alpha, track smart money, and discover arbitrage opportunities.</p>
+                <!-- TRADING SUITE -->
+                <div>
+                    <div style="display:flex;align-items:center;gap:12px;margin-bottom:24px;padding-bottom:15px;border-bottom:1px solid rgba(245,158,11,0.2);">
+                        <i class="fa-solid fa-chart-candlestick" style="color:#f59e0b;font-size:1.3rem;"></i>
+                        <h3 style="margin:0;font-family:var(--font-mono);letter-spacing:2px;font-size:0.9rem;color:var(--secondary-color);">TRADING INTELLIGENCE SUITE</h3>
+                        <span class="badge" style="background:linear-gradient(135deg,#f59e0b33,#ef444433);border:1px solid rgba(245,158,11,0.4);color:#f59e0b;font-size:0.7rem;">PRO / ELITE REQUIRED</span>
                     </div>
+                    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:20px;">
 
-                    <!-- Tool: Smart Money Tracker -->
-                    <div class="tool-card" style="border-color: rgba(245,158,11,0.3); background: linear-gradient(135deg, rgba(245,158,11,0.05), rgba(2,6,23,0.8));">
-                        <div style="display:flex; justify-content:space-between; align-items:start;">
-                            <i class="fa-solid fa-whale tool-icon" style="color:#f59e0b;"></i>
-                            <span class="badge" style="background:rgba(245,158,11,0.2); color:#f59e0b; border:1px solid rgba(245,158,11,0.4);">PRO+</span>
+                        <!-- Smart Money -->
+                        <div class="hub-tool-card" onclick="navigateTo('tool-smart-money')" style="--card-color:#f59e0b;background:linear-gradient(135deg,rgba(245,158,11,0.05),rgba(2,6,23,0.95));">
+                            <div class="hub-tool-card-header">
+                                <div class="hub-tool-icon" style="background:rgba(245,158,11,0.15);border-color:rgba(245,158,11,0.4);"><i class="fa-solid fa-fish-fins" style="color:#f59e0b;"></i></div>
+                                <span class="plan-pill-pro">PRO+</span>
+                            </div>
+                            <h3>Smart Money Tracker</h3>
+                            <p>Real on-chain profiling of whale wallets — classify wallet tier, detect accumulation/distribution & sentiment.</p>
+                            <div class="hub-tool-tags" style="--tag-color:rgba(245,158,11,0.2);--tag-border:rgba(245,158,11,0.4);--tag-text:#f59e0b;">
+                                <span>Whale Classification</span><span>Signal Feed</span><span>Sentiment</span><span>+30 XP</span>
+                            </div>
+                            <div class="hub-tool-launch" style="color:#f59e0b;"><span>Launch Tool</span><i class="fa-solid fa-arrow-right"></i></div>
                         </div>
-                        <h3>Smart Money Tracker</h3>
-                        <p>Analyze whale wallets for accumulation / distribution signals. Track what institutions are doing in real-time.</p>
-                        <div style="display:flex; gap:8px; flex-wrap:wrap; margin:10px 0;">
-                            <span style="font-size:0.7rem; padding:4px 10px; border-radius:20px; background:rgba(16,185,129,0.1); border:1px solid rgba(16,185,129,0.3); color:#10b981;">On-Chain</span>
-                            <span style="font-size:0.7rem; padding:4px 10px; border-radius:20px; background:rgba(56,189,248,0.1); border:1px solid rgba(56,189,248,0.3); color:#38bdf8;">Real-Time</span>
-                            <span style="font-size:0.7rem; padding:4px 10px; border-radius:20px; background:rgba(168,85,247,0.1); border:1px solid rgba(168,85,247,0.3); color:#a855f7;">+30 XP</span>
-                        </div>
-                        <div class="tool-input-group mt-3">
-                            <input type="text" class="custom-input tool-specific-input" placeholder="Wallet address (0x...)" id="smart-money-input" />
-                            <button class="btn btn-outline tool-demo-btn" data-tool="smart-money" data-input="#smart-money-input" style="border-color:rgba(245,158,11,0.5); color:#f59e0b;">Track Whale</button>
-                        </div>
-                        <div class="tool-result mt-4" style="display:none;"></div>
-                    </div>
 
-                    <!-- Tool: Arbitrage Scanner -->
-                    <div class="tool-card" style="border-color: rgba(16,185,129,0.3); background: linear-gradient(135deg, rgba(16,185,129,0.05), rgba(2,6,23,0.8));">
-                        <div style="display:flex; justify-content:space-between; align-items:start;">
-                            <i class="fa-solid fa-arrows-left-right tool-icon" style="color:#10b981;"></i>
-                            <span class="badge" style="background:rgba(16,185,129,0.2); color:#10b981; border:1px solid rgba(16,185,129,0.4);">PRO+</span>
+                        <!-- Arbitrage -->
+                        <div class="hub-tool-card" onclick="navigateTo('tool-arbitrage')" style="--card-color:#10b981;background:linear-gradient(135deg,rgba(16,185,129,0.05),rgba(2,6,23,0.95));">
+                            <div class="hub-tool-card-header">
+                                <div class="hub-tool-icon" style="background:rgba(16,185,129,0.15);border-color:rgba(16,185,129,0.4);"><i class="fa-solid fa-arrows-left-right" style="color:#10b981;"></i></div>
+                                <span class="plan-pill-pro">PRO+</span>
+                            </div>
+                            <h3>Arbitrage Command Center</h3>
+                            <p>Simultaneous scan of 5 DEXes — detect price spreads, calculate profit windows with gas cost included.</p>
+                            <div class="hub-tool-tags" style="--tag-color:rgba(16,185,129,0.2);--tag-border:rgba(16,185,129,0.4);--tag-text:#10b981;">
+                                <span>5 DEX Grid</span><span>Profit Calc</span><span>Gas Estimate</span><span>+20 XP</span>
+                            </div>
+                            <div class="hub-tool-launch" style="color:#10b981;"><span>Launch Tool</span><i class="fa-solid fa-arrow-right"></i></div>
                         </div>
-                        <h3>Arbitrage Scanner</h3>
-                        <p>Scan 5 DEXes simultaneously for price discrepancies. Detect profit windows before the bots close them.</p>
-                        <div style="display:flex; gap:8px; flex-wrap:wrap; margin:10px 0;">
-                            <span style="font-size:0.7rem; padding:4px 10px; border-radius:20px; background:rgba(16,185,129,0.1); border:1px solid rgba(16,185,129,0.3); color:#10b981;">5 DEXes</span>
-                            <span style="font-size:0.7rem; padding:4px 10px; border-radius:20px; background:rgba(56,189,248,0.1); border:1px solid rgba(56,189,248,0.3); color:#38bdf8;">Spread Analysis</span>
-                            <span style="font-size:0.7rem; padding:4px 10px; border-radius:20px; background:rgba(168,85,247,0.1); border:1px solid rgba(168,85,247,0.3); color:#a855f7;">+20 XP</span>
-                        </div>
-                        <div class="tool-input-group mt-3">
-                            <input type="text" class="custom-input tool-specific-input" placeholder="Token contract (0x...)" id="arb-input" />
-                            <button class="btn btn-outline tool-demo-btn" data-tool="arbitrage" data-input="#arb-input" style="border-color:rgba(16,185,129,0.5); color:#10b981;">Scan Arb</button>
-                        </div>
-                        <div class="tool-result mt-4" style="display:none;"></div>
-                    </div>
 
-                    <!-- Tool: AI Alpha Finder -->
-                    <div class="tool-card" style="border-color: rgba(168,85,247,0.4); background: linear-gradient(135deg, rgba(168,85,247,0.07), rgba(2,6,23,0.9)); grid-column: span 1;">
-                        <div style="display:flex; justify-content:space-between; align-items:start;">
-                            <i class="fa-solid fa-brain tool-icon" style="color:#a855f7;"></i>
-                            <span class="badge" style="background:linear-gradient(135deg,#a855f7,#38bdf8); color:#000; font-weight:900;">ELITE ONLY 👑</span>
+                        <!-- AI Alpha -->
+                        <div class="hub-tool-card" onclick="navigateTo('tool-alpha')" style="--card-color:#a855f7;background:linear-gradient(135deg,rgba(168,85,247,0.08),rgba(2,6,23,0.95));border-color:rgba(168,85,247,0.4);">
+                            <div class="hub-tool-card-header">
+                                <div class="hub-tool-icon" style="background:rgba(168,85,247,0.15);border-color:rgba(168,85,247,0.5);animation:pulse 2s ease-in-out infinite;"><i class="fa-solid fa-brain" style="color:#a855f7;"></i></div>
+                                <span class="plan-pill-elite">ELITE 👑</span>
+                            </div>
+                            <h3>AI Alpha Intelligence <span style="font-size:1rem;">✨</span></h3>
+                            <p>Our most powerful model: 5 converging AI signals combined into a single investment alpha score with narrative.</p>
+                            <div class="hub-tool-tags" style="--tag-color:rgba(168,85,247,0.2);--tag-border:rgba(168,85,247,0.4);--tag-text:#a855f7;">
+                                <span>5 AI Models</span><span>Radar Chart</span><span>Deep Alpha</span><span>+50 XP</span>
+                            </div>
+                            <div class="hub-tool-launch" style="color:#a855f7;"><span>Launch Tool</span><i class="fa-solid fa-arrow-right"></i></div>
                         </div>
-                        <h3>AI Alpha Finder</h3>
-                        <p>Our most advanced AI model. Combines 5 deep signals: whale sentiment, liquidity depth, social velocity, on-chain momentum and smart contract risk into one unified score.</p>
-                        <div style="display:flex; gap:8px; flex-wrap:wrap; margin:10px 0;">
-                            <span style="font-size:0.7rem; padding:4px 10px; border-radius:20px; background:rgba(168,85,247,0.1); border:1px solid rgba(168,85,247,0.3); color:#a855f7;">5 AI Models</span>
-                            <span style="font-size:0.7rem; padding:4px 10px; border-radius:20px; background:rgba(245,158,11,0.1); border:1px solid rgba(245,158,11,0.3); color:#f59e0b;">Deep Alpha</span>
-                            <span style="font-size:0.7rem; padding:4px 10px; border-radius:20px; background:rgba(168,85,247,0.1); border:1px solid rgba(168,85,247,0.3); color:#a855f7;">+50 XP</span>
-                        </div>
-                        <div class="tool-input-group mt-3">
-                            <input type="text" class="custom-input tool-specific-input" placeholder="Token or wallet (0x...)" id="alpha-input" />
-                            <button class="btn btn-outline tool-demo-btn" data-tool="alpha" data-input="#alpha-input" style="border-color:rgba(168,85,247,0.5); color:#a855f7;">Find Alpha</button>
-                        </div>
-                        <div class="tool-result mt-4" style="display:none;"></div>
-                    </div>
-
-                    <!-- Tool: Developer API (Pro/Elite Only) -->
-                    <div class="tool-card" id="api-access-card" style="display:none;">
-                        <i class="fa-solid fa-code tool-icon"></i>
-                        <h3>Developer API</h3>
-                        <p>Integrate our AI Guardian intelligence into your own dApps and bots.</p>
-                        <div class="api-key-box mt-3" style="background:rgba(0,0,0,0.3);padding:15px;border-radius:10px;border:1px dashed var(--accent-color);">
-                            <code id="display-api-key" style="color:var(--accent-color);font-size:0.8rem;">CA-EYE-XXXX-XXXX-XXXX</code>
-                            <button class="btn btn-icon-small" style="margin-left:10px;"><i class="fa-solid fa-copy"></i></button>
-                        </div>
-                        <p class="mt-2" style="font-size:0.75rem;color:var(--secondary-color);">* Premium API Documentation: <a href="#" style="color:var(--accent-color);">docs.cryptoayuda.ai</a></p>
                     </div>
                 </div>
             </div>
