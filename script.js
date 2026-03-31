@@ -76,15 +76,24 @@ function navigateTo(route) {
         }
     }
 
-    if (window.views && window.views[route]) {
-        appContent.innerHTML = window.views[route]();
+    // Load view from regular views or dedicated tool views
+    if ((window.views && window.views[route]) || (window.toolViews && window.toolViews[route])) {
+        const viewHtml = window.views[route] ? window.views[route]() : window.toolViews[route]();
+        appContent.innerHTML = viewHtml;
+        
+        // Handle common event binding
         bindViewEvents(route);
 
-        if (route === 'dashboard') {
-            setTimeout(loadDashboard, 100);
+        // Handle tool-specific route initialization
+        if (route.startsWith('tool-')) {
+            bindToolEvents(route);
         }
         
-        if (route === 'auth') {
+        if (route === 'dashboard') {
+            setTimeout(loadDashboard, 100);
+        } else if (route === 'tools') {
+            // No special init for tool hub yet
+        } else if (route === 'auth') {
             const loginForm = document.getElementById('login-form');
             if (loginForm) loginForm.addEventListener('submit', handleLogin);
             const registerForm = document.getElementById('register-form');
@@ -94,13 +103,13 @@ function navigateTo(route) {
             const paypalButtonsContainer = document.getElementById('paypal-buttons-container');
             if (paypalButtonsContainer) {
                 if (token) {
-                    paypalButtonsContainer.innerHTML = `<p>PayPal buttons would render here if logged in.</p>`;
+                    // Initialize PayPal for logged in users
+                    setTimeout(initPayPalButtons, 100);
                 } else {
-                    paypalButtonsContainer.innerHTML = `<p>Please log in to view pricing options.</p>`;
+                    paypalButtonsContainer.innerHTML = `<p class="center" style="color:var(--secondary-color);">Please <a href="#" data-route="auth" style="color:var(--accent-vibrant);">log in</a> to subscribe to a plan.</p>`;
                 }
             }
         } else if (route === 'admin') {
-            // Load admin panel data
             if (typeof adminLoadStats === 'function') adminLoadStats();
             if (typeof adminLoadUsers === 'function') adminLoadUsers();
         } else if (route === 'profile') {
@@ -115,15 +124,472 @@ function navigateTo(route) {
                     navigateTo('home');
                 });
             }
-            // Load XP data from server
             setTimeout(loadProfileXP, 100);
+            setTimeout(loadProfileHistory, 100);
         } else if (route === 'leaderboard') {
             setTimeout(loadLeaderboard, 100);
+        } else if (route === 'pricing') {
+            setTimeout(initPayPalButtons, 100);
         }
     } else {
-        appContent.innerHTML = `<h2>404 - Page not found</h2>`;
+        appContent.innerHTML = `
+            <div class="container center" style="padding:100px 20px;">
+                <h1 style="font-size:4rem; margin-bottom:10px;">404</h1>
+                <p style="color:var(--secondary-color); margin-bottom:30px;">This command does not exist in our AI registry.</p>
+                <button class="btn btn-primary" onclick="navigateTo('home')">Return Home</button>
+            </div>
+        `;
     }
 }
+
+// Bind events for dedicated tool pages
+function bindToolEvents(route) {
+    const toolType = route.replace('tool-', '');
+    const scanBtn = document.querySelector('.scan-bar-btn');
+    
+    if (scanBtn) {
+        scanBtn.addEventListener('click', () => runToolScan(toolType));
+    }
+
+    // Bind example pills
+    document.querySelectorAll('.example-pill').forEach(pill => {
+        pill.addEventListener('click', () => {
+            let inputId = '';
+            if (toolType === 'token') inputId = 'tt-address';
+            else if (toolType === 'wallet') inputId = 'tw-address';
+            else if (toolType === 'phishing') inputId = 'tp-url';
+            else if (toolType === 'smart-money') inputId = 'tsm-address';
+            else if (toolType === 'arbitrage') inputId = 'ta-address';
+            else if (toolType === 'alpha') inputId = 'tal-address';
+
+            const input = document.getElementById(inputId);
+            if (input) {
+                input.value = pill.getAttribute('data-addr') || pill.getAttribute('data-url') || pill.getAttribute('data-value') || pill.textContent;
+                
+                // Also set chain if available
+                const chainId = pill.getAttribute('data-chain');
+                if (chainId) {
+                    const selectId = toolType === 'token' ? 'tt-chain' : 'tw-chain';
+                    const select = document.getElementById(selectId);
+                    if (select) select.value = chainId;
+                }
+                
+                runToolScan(toolType);
+            }
+        });
+    });
+
+    // Enter key support
+    const inputId = toolType === 'token' ? 'tt-address' : 
+                    toolType === 'wallet' ? 'tw-address' : 
+                    toolType === 'phishing' ? 'tp-url' : 
+                    toolType === 'smart-money' ? 'tsm-address' : 
+                    toolType === 'arbitrage' ? 'ta-address' : 'tal-address';
+    const input = document.getElementById(inputId);
+    if (input) {
+        input.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') runToolScan(toolType);
+        });
+    }
+}
+
+// === ENTERPRISE SCAN ENGINE ===
+async function runToolScan(type) {
+    const token = localStorage.getItem('token');
+    const prefix = type === 'token' ? 'tt' : type === 'wallet' ? 'tw' : type === 'phishing' ? 'tp' : type === 'smart-money' ? 'tsm' : type === 'arbitrage' ? 'ta' : 'tal';
+    const resultsContainer = document.getElementById(`${prefix}-results`);
+    const addressInput = document.getElementById(`${prefix}-address`) || document.getElementById(`${prefix}-url`);
+    const chainSelect = document.getElementById(`${prefix}-chain`);
+    
+    if (!addressInput || !addressInput.value) {
+        showToast("Please enter an address or URL", "warning");
+        return;
+    }
+
+    const value = addressInput.value.trim();
+    const chain = chainSelect ? chainSelect.value : 'eth';
+
+    // Show Loading state
+    resultsContainer.innerHTML = `
+        <div class="tool-results-loading center" style="padding:40px; width:100%;">
+            <div class="placeholder-icon-ring" style="animation: pulse 1.5s infinite; border-color:var(--accent-vibrant);">
+                <i class="fa-solid fa-microchip fa-spin" style="color:var(--accent-vibrant); font-size:2.5rem;"></i>
+            </div>
+            <h3 style="margin-top:20px;">AI AGENT INITIALIZING...</h3>
+            <p style="color:var(--secondary-color); font-family:var(--font-mono); font-size:0.8rem;">Querying node clusters & security registries</p>
+            <div style="max-width:300px; margin:20px auto; height:4px; background:rgba(255,255,255,0.05); border-radius:10px; overflow:hidden;">
+                <div id="scan-progress" style="width:0%; height:100%; background:var(--accent-vibrant); transition:width 2s ease;"></div>
+            </div>
+        </div>
+    `;
+    setTimeout(() => { if(document.getElementById('scan-progress')) document.getElementById('scan-progress').style.width = '100%'; }, 50);
+
+    try {
+        let endpoint = '';
+        if (['token', 'wallet', 'phishing'].includes(type)) {
+            endpoint = `/api/analyze/${type}?${type === 'phishing' ? 'url' : 'address'}=${value}&chain_id=${chain}`;
+        } else {
+            endpoint = `/api/trading/${type}?address=${value}`;
+        }
+
+        const res = await fetch(endpoint, {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+        const data = await res.json();
+
+        if (res.status === 403 && data.planGate) {
+            const plan = type === 'alpha' ? 'Elite' : 'Pro';
+            resultsContainer.innerHTML = `
+                <div class="center p-5" style="background:rgba(15,23,42,0.6); border:1px solid rgba(245,158,11,0.3); border-radius:16px;">
+                    <i class="fa-solid fa-crown" style="font-size:3rem; color:#f59e0b; margin-bottom:20px;"></i>
+                    <h2 style="margin-bottom:10px;">${plan} Access Required</h2>
+                    <p style="color:var(--secondary-color); margin-bottom:25px; max-width:400px;">This institutional-grade tool is exclusive to <strong>${plan}</strong> plan holders. Upgrade to unlock Alpha signals.</p>
+                    <button class="btn btn-primary" onclick="navigateTo('pricing')">Explore Plans</button>
+                </div>
+            `;
+            return;
+        }
+
+        if (!res.ok) throw new Error(data.error || 'Scan failed');
+
+        // Award XP
+        if (data.xpReward) showXPToast(data.xpReward.xpGained, data.xpReward.rank);
+
+        // Map to specific renderers
+        if (type === 'token') renderTokenResult(data, resultsContainer);
+        else if (type === 'wallet') renderWalletResult(data, resultsContainer);
+        else if (type === 'phishing') renderPhishingResult(data, resultsContainer);
+        else if (type === 'smart-money') renderSmartMoneyResult(data, resultsContainer);
+        else if (type === 'arbitrage') renderArbitrageResult(data, resultsContainer);
+        else if (type === 'alpha') renderAlphaResult(data, resultsContainer);
+
+    } catch (err) {
+        resultsContainer.innerHTML = `
+            <div class="center p-5" style="border:1px solid rgba(239,68,68,0.2); border-radius:16px; background:rgba(239,68,68,0.05);">
+                <i class="fa-solid fa-triangle-exclamation" style="font-size:2.5rem; color:#ef4444; margin-bottom:15px;"></i>
+                <h3>Scan Interrupted</h3>
+                <p style="color:var(--secondary-color);">${err.message}</p>
+                <button class="btn btn-outline mt-3" onclick="runToolScan('${type}')">Retry Scan</button>
+            </div>
+        `;
+    }
+}
+
+// === SPECIFIC RENDERERS ===
+
+function renderTokenResult(data, container) {
+    const riskColor = data.riskLevel === 'Low' ? '#10b981' : data.riskLevel === 'Medium' ? '#f59e0b' : '#ef4444';
+    container.innerHTML = `
+        <div class="tool-result-card fade-in">
+            <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap:25px; padding:25px;">
+                <!-- Gauge & Overview -->
+                <div style="background:rgba(255,255,255,0.03); padding:25px; border-radius:16px; text-align:center; border:1px solid rgba(255,255,255,0.05);">
+                    <div class="risk-gauge">
+                        <svg viewBox="0 0 100 100">
+                            <circle class="gauge-bg" cx="50" cy="50" r="45"></circle>
+                            <circle class="gauge-fill" cx="50" cy="50" r="45" style="stroke:${riskColor}; stroke-dasharray: ${data.riskScore * 2.8}, 282;"></circle>
+                        </svg>
+                        <div class="risk-gauge-label">
+                            <span class="risk-score-num" style="color:${riskColor};">${data.riskScore}</span>
+                            <span class="risk-score-label">RISK SCORE</span>
+                        </div>
+                    </div>
+                    <h2 style="margin-top:20px; font-weight:900;">${data.raw.name} (${data.raw.symbol})</h2>
+                    <p style="color:var(--secondary-color); font-size:0.85rem;">Liquidity: <strong>${data.raw.dex || 'Detecting...'}</strong></p>
+                    <div style="display:flex; justify-content:center; gap:10px; margin-top:20px;">
+                        <span class="badge" style="background:${riskColor}22; color:${riskColor}; border:1px solid ${riskColor}44; padding:6px 15px;">${data.riskLevel.toUpperCase()} RISK</span>
+                    </div>
+                </div>
+
+                <!-- Signal Feed -->
+                <div style="background:rgba(255,255,255,0.03); padding:25px; border-radius:16px; border:1px solid rgba(255,255,255,0.05);">
+                    <p style="font-family:var(--font-mono); font-size:0.75rem; color:var(--accent-vibrant); margin-bottom:15px;"><i class="fa-solid fa-microchip"></i> AUDIT SIGNALS</p>
+                    <div class="signal-list">
+                        ${data.riskFlags.map(flag => `
+                            <div class="signal-row">
+                                <div class="signal-icon" style="background:rgba(239,68,68,0.1); color:#ef4444;"><i class="fa-solid fa-triangle-exclamation"></i></div>
+                                <span class="signal-label">${flag}</span>
+                                <span class="signal-status" style="color:#ef4444;">RISK</span>
+                            </div>
+                        `).join('')}
+                        ${data.positiveSignals.map(sig => `
+                            <div class="signal-row">
+                                <div class="signal-icon" style="background:rgba(16,185,129,0.1); color:#10b981;"><i class="fa-solid fa-check"></i></div>
+                                <span class="signal-label">${sig}</span>
+                                <span class="signal-status" style="color:#10b981;">SECURE</span>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            </div>
+            
+            <div style="padding:20px 25px; background:rgba(0,0,0,0.2); border-top:1px solid rgba(255,255,255,0.05); display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:15px;">
+                <div style="display:flex; gap:20px;">
+                    <div><span style="font-size:0.65rem; color:var(--secondary-color);">BUY TAX</span><div style="font-family:var(--font-mono); font-weight:700;">${data.raw.buyTax}</div></div>
+                    <div><span style="font-size:0.65rem; color:var(--secondary-color);">SELL TAX</span><div style="font-family:var(--font-mono); font-weight:700;">${data.raw.sellTax}</div></div>
+                    <div><span style="font-size:0.65rem; color:var(--secondary-color);">HOLDERS</span><div style="font-family:var(--font-mono); font-weight:700;">${data.raw.holders}</div></div>
+                </div>
+                <button class="btn btn-outline btn-small" onclick="showToast('Audit report downloaded', 'success')"><i class="fa-solid fa-download"></i> Full Report</button>
+            </div>
+        </div>
+    `;
+}
+
+function renderWalletResult(data, container) {
+    const riskColor = data.riskScore > 70 ? '#ef4444' : data.riskScore > 30 ? '#f59e0b' : '#10b981';
+    container.innerHTML = `
+        <div class="tool-result-card fade-in">
+            <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap:25px; padding:25px;">
+                <!-- Identity -->
+                <div style="background:rgba(255,255,255,0.03); padding:25px; border-radius:16px; border:1px solid rgba(255,255,255,0.05);">
+                    <div style="display:flex; align-items:center; gap:20px; margin-bottom:20px;">
+                        <div style="width:60px; height:60px; border-radius:50%; background:linear-gradient(45deg, #1e293b, #0f172a); border:2px solid ${riskColor}; display:flex; align-items:center; justify-content:center;">
+                            <i class="fa-solid fa-user-shield" style="color:${riskColor}; font-size:1.5rem;"></i>
+                        </div>
+                        <div>
+                            <h3 style="margin:0;">Wallet Profile</h3>
+                            <p style="margin:0; font-family:var(--font-mono); font-size:0.75rem; color:var(--secondary-color);">${data.address.substring(0,10)}...${data.address.substring(data.address.length-6)}</p>
+                        </div>
+                    </div>
+                    <div class="risk-meter" style="height:8px; background:rgba(255,255,255,0.05); border-radius:10px; margin-bottom:10px; overflow:hidden;">
+                        <div style="width:${data.riskScore}%; height:100%; background:${riskColor}; box-shadow:0 0 10px ${riskColor};"></div>
+                    </div>
+                    <div style="display:flex; justify-content:space-between; font-size:0.75rem;">
+                        <span style="color:var(--secondary-color);">Exposure Risk</span>
+                        <span style="color:${riskColor}; font-weight:700;">${data.riskScore}% (${data.riskLevel})</span>
+                    </div>
+                    <div style="display:flex; flex-wrap:wrap; gap:8px; margin-top:20px;">
+                        ${data.tags.map(tag => `<span class="badge" style="background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); font-size:0.65rem;">${tag}</span>`).join('')}
+                    </div>
+                </div>
+
+                <!-- Threat Intel -->
+                <div style="background:rgba(255,255,255,0.03); padding:25px; border-radius:16px; border:1px solid rgba(255,255,255,0.05);">
+                    <p style="font-family:var(--font-mono); font-size:0.75rem; color:var(--accent-vibrant); margin-bottom:15px;"><i class="fa-solid fa-database"></i> REGISTRY MATCHES</p>
+                    <div class="signal-list">
+                        ${data.riskFlags.map(flag => `
+                            <div class="signal-row">
+                                <div class="signal-icon" style="background:rgba(168,85,247,0.1); color:#a855f7;"><i class="fa-solid fa-fingerprint"></i></div>
+                                <span class="signal-label" style="font-size:0.8rem;">${flag}</span>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            </div>
+            <div style="padding:20px 25px; background:rgba(0,0,0,0.2); border-top:1px solid rgba(255,255,255,0.05);">
+                <p style="margin:0; font-size:0.85rem; color:var(--secondary-color);">🤖 <strong>AI Conclusion:</strong> ${data.summary}</p>
+            </div>
+        </div>
+    `;
+}
+
+function renderPhishingResult(data, container) {
+    const riskColor = data.isMalicious ? '#ef4444' : '#10b981';
+    container.innerHTML = `
+        <div class="tool-result-card fade-in" style="border:1px solid ${riskColor}44;">
+            <div style="padding:30px; text-align:center;">
+                <div style="width:80px; height:80px; border-radius:50%; background:${riskColor}11; border:2px solid ${riskColor}; display:flex; align-items:center; justify-content:center; margin:0 auto 20px;">
+                    <i class="fa-solid ${data.isMalicious ? 'fa-biohazard' : 'fa-shield-heart'}" style="color:${riskColor}; font-size:2.5rem;"></i>
+                </div>
+                <h2 style="margin-bottom:10px;">${data.isMalicious ? 'DANGEROUS DOMAIN' : 'BENIGN DOMAIN'}</h2>
+                <p style="font-family:var(--font-mono); color:var(--secondary-color);">${data.url}</p>
+                
+                <div style="max-width:500px; margin:30px auto; display:grid; grid-template-columns: 1fr 1fr; gap:15px;">
+                    <div style="background:rgba(255,255,255,0.03); padding:15px; border-radius:12px; border:1px solid rgba(255,255,255,0.05);">
+                        <div style="font-size:0.65rem; color:var(--secondary-color);">RISK SCORE</div>
+                        <div style="font-size:1.5rem; font-weight:900; color:${riskColor};">${data.riskScore}/100</div>
+                    </div>
+                    <div style="background:rgba(255,255,255,0.03); padding:15px; border-radius:12px; border:1px solid rgba(255,255,255,0.05);">
+                        <div style="font-size:0.65rem; color:var(--secondary-color);">REGISTRY STATUS</div>
+                        <div style="font-size:1rem; font-weight:900; color:${riskColor}; margin-top:5px;">${data.isMalicious ? 'FLAGGED' : 'CLEAN'}</div>
+                    </div>
+                </div>
+
+                <div style="text-align:left; max-width:600px; margin:0 auto; padding:20px; background:rgba(0,0,0,0.3); border-radius:12px;">
+                    <p style="font-family:var(--font-mono); font-size:0.75rem; color:var(--accent-vibrant); margin-bottom:10px;">THREAT INTELLIGENCE LOGS:</p>
+                    ${data.riskFlags.map(flag => `<div style="font-size:0.8rem; color:white; margin-bottom:5px;"><i class="fa-solid fa-caret-right" style="color:${riskColor}; margin-right:8px;"></i>${flag}</div>`).join('')}
+                </div>
+            </div>
+        </div>
+    `;
+}
+
+function renderSmartMoneyResult(data, container) {
+    const scoreColor = data.score > 75 ? '#10b981' : data.score > 50 ? '#38bdf8' : '#f59e0b';
+    container.innerHTML = `
+        <div class="tool-result-card fade-in">
+            <div style="padding:25px; border-bottom:1px solid rgba(255,255,255,0.05); display:flex; justify-content:space-between; align-items:center;">
+                <div>
+                    <h2 style="margin:0; font-weight:900;"><i class="fa-solid fa-fish-fins" style="color:#f59e0b;"></i> Smart Money Cluster Report</h2>
+                    <p style="margin:5px 0 0; color:var(--secondary-color); font-family:var(--font-mono); font-size:0.8rem;">Target: ${data.address}</p>
+                </div>
+                <div style="text-align:right;">
+                    <div style="font-size:1.5rem; font-weight:900; color:${scoreColor};">${data.overall}</div>
+                    <div style="font-size:0.6rem; color:var(--secondary-color); letter-spacing:2px;">CLUSTER POSTURE</div>
+                </div>
+            </div>
+            
+            <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap:25px; padding:25px;">
+                <!-- Whale Stats -->
+                <div style="display:grid; grid-template-columns: 1fr 1fr; gap:15px;">
+                    <div style="background:rgba(255,255,255,0.03); padding:20px; border-radius:16px; border:1px solid rgba(255,255,255,0.05);">
+                        <div style="font-size:0.65rem; color:var(--secondary-color);">ETH BALANCE</div>
+                        <div style="font-size:1.2rem; font-weight:900; color:white; margin-top:5px;">${data.whaleDetails.balance}</div>
+                    </div>
+                    <div style="background:rgba(255,255,255,0.03); padding:20px; border-radius:16px; border:1px solid rgba(255,255,255,0.05);">
+                        <div style="font-size:0.65rem; color:var(--secondary-color);">TX COUNT</div>
+                        <div style="font-size:1.2rem; font-weight:900; color:white; margin-top:5px;">${data.whaleDetails.txCount}</div>
+                    </div>
+                    <div style="background:rgba(255,255,255,0.03); padding:20px; border-radius:16px; border:1px solid rgba(255,255,255,0.05);">
+                        <div style="font-size:0.65rem; color:var(--secondary-color);">ORIGIN</div>
+                        <div style="font-size:1rem; font-weight:700; color:white; margin-top:5px;">${data.whaleDetails.firstSeen}</div>
+                    </div>
+                    <div style="background:rgba(255,255,255,0.03); padding:20px; border-radius:16px; border:1px solid rgba(255,255,255,0.05);">
+                        <div style="font-size:0.65rem; color:var(--secondary-color);">LAST ACTIVE</div>
+                        <div style="font-size:1rem; font-weight:700; color:white; margin-top:5px;">${data.whaleDetails.lastActive}</div>
+                    </div>
+                </div>
+
+                <!-- Signals -->
+                <div style="background:rgba(255,255,255,0.03); padding:20px; border-radius:16px; border:1px solid rgba(255,255,255,0.05); max-height:300px; overflow-y:auto;">
+                    <p style="font-family:var(--font-mono); font-size:0.7rem; color:var(--accent-vibrant); margin-bottom:15px;">NEURAL PATTERN MATCHES:</p>
+                    ${data.signals.map(s => `
+                        <div style="margin-bottom:12px; padding-bottom:12px; border-bottom:1px solid rgba(255,255,255,0.05);">
+                            <div style="display:flex; justify-content:space-between; margin-bottom:4px;">
+                                <span style="font-size:0.8rem; font-weight:700; color:white;">${s.label}</span>
+                                <span style="font-size:0.65rem; color:${s.sentiment === 'BULLISH' ? '#10b981' : '#f59e0b'};">${s.confidence}% Conf.</span>
+                            </div>
+                            <p style="margin:0; font-size:0.75rem; color:var(--secondary-color);">${s.detail}</p>
+                        </div>
+                    `).join('')}
+                </div>
+            </div>
+        </div>
+    `;
+}
+
+function renderArbitrageResult(data, container) {
+    container.innerHTML = `
+        <div class="tool-result-card fade-in">
+            <div style="padding:25px; background:rgba(16,185,129,0.05); border-bottom:1px solid rgba(16,185,129,0.2); display:flex; justify-content:space-between; align-items:center;">
+                <div>
+                    <h2 style="margin:0; font-weight:900; color:#10b981;"><i class="fa-solid fa-arrows-left-right"></i> Opportunity Matrix</h2>
+                    <p style="margin:5px 0 0; color:var(--secondary-color); font-size:0.8rem;">Spread Detected: <strong style="color:white;">${data.spreadPct}</strong> | Window: <strong style="color:#10b981;">${data.status}</strong></p>
+                </div>
+                <div style="text-align:center; padding:8px 20px; background:#10b981; color:#000; border-radius:12px; font-weight:900; font-size:0.9rem;">
+                    PROFITS: ${data.isProfit ? 'OPEN' : 'SCANNING'}
+                </div>
+            </div>
+            
+            <div style="padding:25px; overflow-x:auto;">
+                <table style="width:100%; border-collapse:collapse; font-family:var(--font-mono); font-size:0.85rem;">
+                    <thead>
+                        <tr style="border-bottom:1px solid rgba(255,255,255,0.1); text-align:left;">
+                            <th style="padding:15px 10px; color:var(--secondary-color);">EXCHANGE</th>
+                            <th style="padding:15px 10px; color:var(--secondary-color);">PRICE</th>
+                            <th style="padding:15px 10px; color:var(--secondary-color);">PROX. GAS</th>
+                            <th style="padding:15px 10px; color:var(--secondary-color);">LIQUIDITY</th>
+                            <th style="padding:15px 10px; color:var(--secondary-color);">STATUS</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${data.opportunities.map(o => {
+                            const isBest = o.dex === data.bestSell.dex || o.dex === data.bestBuy.dex;
+                            return `
+                                <tr style="border-bottom:1px solid rgba(255,255,255,0.05); background:${isBest ? 'rgba(16,185,129,0.05)' : 'transparent'};">
+                                    <td style="padding:15px 10px;"><i class="fa-solid fa-circle" style="color:${o.color}; font-size:0.5rem; margin-right:10px;"></i> ${o.dex}</td>
+                                    <td style="padding:15px 10px; font-weight:900;">$${o.price}</td>
+                                    <td style="padding:15px 10px; color:var(--secondary-color);">${o.gas}</td>
+                                    <td style="padding:15px 10px;"><span class="badge" style="background:rgba(255,255,255,0.05); font-size:0.6rem;">${o.liquidity}</span></td>
+                                    <td style="padding:15px 10px;">${o.dex === data.bestBuy.dex ? '<span style="color:#ef4444; font-weight:700;">BEST BUY</span>' : o.dex === data.bestSell.dex ? '<span style="color:#10b981; font-weight:700;">BEST SELL</span>' : '<span style="color:var(--secondary-color);">Neutral</span>'}</td>
+                                </tr>
+                            `;
+                        }).join('')}
+                    </tbody>
+                </table>
+            </div>
+            
+            <div style="margin:0 25px 25px; padding:20px; background:rgba(0,0,0,0.3); border-radius:16px; border:1px solid rgba(255,255,255,0.05); display:flex; align-items:center; gap:20px;">
+                <div style="width:50px; height:50px; border-radius:50%; background:#10b98111; border:1px solid #10b981; display:flex; align-items:center; justify-content:center;">
+                    <i class="fa-solid fa-route" style="color:#10b981;"></i>
+                </div>
+                <div style="flex:1;">
+                    <div style="font-size:0.7rem; color:var(--secondary-color);">OPTIMIZED ARBITRAGE ROUTE</div>
+                    <div style="font-size:0.95rem; color:white; font-weight:700;">Buy on <strong style="color:#ef4444;">${data.bestBuy.dex}</strong> → Bridge → Sell on <strong style="color:#10b981;">${data.bestSell.dex}</strong></div>
+                </div>
+                <button class="btn btn-primary btn-small" style="background:#10b981; color:#000;">Execute via Bot</button>
+            </div>
+        </div>
+    `;
+}
+
+function renderAlphaResult(data, container) {
+    container.innerHTML = `
+        <div class="tool-result-card fade-in" style="background:rgba(15,23,42,0.8); border:1px solid rgba(168,85,247,0.3);">
+            <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));">
+                <!-- Left: Master Score -->
+                <div style="padding:40px; border-right:1px solid rgba(168,85,247,0.2); text-align:center;">
+                    <p style="font-family:var(--font-mono); font-size:0.75rem; color:#a855f7; letter-spacing:4px; margin-bottom:20px;">NEURAL CONVERGENCE SCORE</p>
+                    <div style="position:relative; width:180px; height:180px; margin:0 auto 30px;">
+                        <svg viewBox="0 0 100 100" style="transform: rotate(-90deg); filter: drop-shadow(0 0 10px rgba(168,85,247,0.4));">
+                            <circle cx="50" cy="50" r="45" fill="none" stroke="rgba(168,85,247,0.1)" stroke-width="8"></circle>
+                            <circle cx="50" cy="50" r="45" fill="none" stroke="url(#alphaGradient)" stroke-width="8" stroke-dasharray="${data.avgScore * 2.8} 282" stroke-linecap="round"></circle>
+                            <defs>
+                                <linearGradient id="alphaGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                                    <stop offset="0%" stop-color="#a855f7" />
+                                    <stop offset="100%" stop-color="#38bdf8" />
+                                </linearGradient>
+                            </defs>
+                        </svg>
+                        <div style="position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center;">
+                            <div style="font-size:3.5rem; font-weight:900; background:linear-gradient(135deg, white, #a855f7); -webkit-background-clip:text; -webkit-text-fill-color:transparent;">${data.avgScore}</div>
+                            <div style="font-size:0.7rem; color:var(--secondary-color); font-weight:800;">ALPHA INDEX</div>
+                        </div>
+                    </div>
+                    <div style="background:rgba(168,85,247,0.15); padding:10px 25px; border-radius:30px; display:inline-block; border:1px solid rgba(168,85,247,0.3); margin-bottom:20px;">
+                        <span style="font-weight:900; color:#a855f7; font-size:1.2rem;">${data.overallSignal}</span>
+                    </div>
+                    <p style="color:var(--secondary-color); font-size:0.85rem; line-height:1.6;">${data.recommendation}</p>
+                </div>
+
+                <!-- Right: Model Matrix -->
+                <div style="padding:40px; background:rgba(0,0,0,0.2);">
+                    <p style="font-family:var(--font-mono); font-size:0.7rem; color:var(--secondary-color); margin-bottom:25px;">MODEL SIGNAL STRENGTH MATRIX</p>
+                    ${data.factors.map(f => `
+                        <div style="margin-bottom:20px;">
+                            <div style="display:flex; justify-content:space-between; margin-bottom:8px; align-items:center;">
+                                <div style="display:flex; align-items:center; gap:10px;">
+                                    <i class="fa-solid ${f.icon}" style="color:${f.color}; font-size:0.9rem;"></i>
+                                    <span style="font-size:0.85rem; color:white; font-weight:600;">${f.name}</span>
+                                </div>
+                                <span style="font-family:var(--font-mono); color:${f.color}; font-weight:900;">${f.score}%</span>
+                            </div>
+                            <div style="height:6px; background:rgba(255,255,255,0.04); border-radius:10px; overflow:hidden; border:1px solid rgba(255,255,255,0.05);">
+                                <div style="width:${f.score}%; height:100%; background:linear-gradient(90deg, transparent, ${f.color}); box-shadow:0 0 10px ${f.color}44;"></div>
+                            </div>
+                        </div>
+                    `).join('')}
+                    
+                    <div style="margin-top:30px; border-top:1px solid rgba(255,255,255,0.05); padding-top:20px; display:flex; justify-content:space-between;">
+                        <div>
+                            <div style="font-size:0.6rem; color:var(--secondary-color);">LIQUIDITY</div>
+                            <div style="font-size:0.9rem; font-weight:700; color:white;">${data.onchain.balance} ETH</div>
+                        </div>
+                        <div>
+                            <div style="font-size:0.6rem; color:var(--secondary-color);">MOMENTUM</div>
+                            <div style="font-size:0.9rem; font-weight:700; color:#10b981;">STABLE +${data.onchain.txCount} TX</div>
+                        </div>
+                        <div>
+                            <div style="font-size:0.6rem; color:var(--secondary-color);">NETWORK</div>
+                            <div style="font-size:0.9rem; font-weight:700; color:#38bdf8;">ETHEREUM</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+}
+
 
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -1212,6 +1678,112 @@ async function runTradingToolScan(type, inputValue, container) {
 
     } catch(err) {
         container.innerHTML = `<div class="p-3" style="border:1px solid rgba(239,68,68,0.5); border-radius:10px; color:#ef4444;"><i class="fa-solid fa-triangle-exclamation"></i> ${err.message}</div>`;
+    }
+}
+
+
+
+// === NEW INTEGRATIONS (PAYPAL & HISTORY) ===
+
+async function loadProfileHistory() {
+    const historyBody = document.getElementById('profile-history-body');
+    if (!historyBody) return;
+
+    try {
+        const res = await fetch('/api/profile/history', {
+            headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
+        });
+        const history = await res.json();
+
+        if (!history || history.length === 0) {
+            historyBody.innerHTML = '<tr><td colspan="3" class="text-center py-4" style="color:var(--secondary-color);">No recent activity. Start a scan to earn XP!</td></tr>';
+            return;
+        }
+
+        historyBody.innerHTML = history.map(item => `
+            <tr>
+                <td style="padding:12px;"><span class="badge" style="background:rgba(56,189,248,0.1); color:var(--accent-vibrant); font-size:0.7rem;">${item.type}</span></td>
+                <td style="padding:12px; color:rgba(255,255,255,0.8); font-weight:500;">${item.result}</td>
+                <td style="padding:12px; font-size:0.7rem; opacity:0.5; font-family:var(--font-mono);">${new Date(item.timestamp).toLocaleTimeString()}</td>
+            </tr>
+        `).join('');
+    } catch (e) {
+        historyBody.innerHTML = '<tr><td colspan="3" class="text-center py-4 text-high">Error loading activity log.</td></tr>';
+    }
+}
+
+function initPayPalButtons() {
+    if (!window.paypal) {
+        const script = document.createElement('script');
+        script.src = "https://www.paypal.com/sdk/js?client-id=AWn_Xn6_0m5-3wM31kC3lE71x3t1U883yH5D94D6K9-2B3484h-l4B1sD7M_m0W1-v609Z_b18E1h9s5&currency=USD";
+        script.onload = () => setupPayPal();
+        document.head.appendChild(script);
+    } else {
+        setupPayPal();
+    }
+}
+
+function setupPayPal() {
+    const plans = [
+        { id: 'pro', container: 'paypal-button-container-pro', amount: '29.00' },
+        { id: 'elite', container: 'paypal-button-container-elite', amount: '99.00' }
+    ];
+
+    plans.forEach(plan => {
+        const container = document.getElementById(plan.container);
+        if (!container) return;
+        container.innerHTML = ''; // Clear
+
+        window.paypal.Buttons({
+            style: { layout: 'vertical', color: 'blue', shape: 'pill', label: 'pay' },
+            createOrder: (data, actions) => {
+                return actions.order.create({
+                    purchase_units: [{
+                        description: `CryptoAyuda AI ${plan.id.toUpperCase()} Plan Upgrade`,
+                        amount: { value: plan.amount }
+                    }]
+                });
+            },
+            onApprove: async (data, actions) => {
+                const order = await actions.order.capture();
+                handleUpgradeSuccess(order.id, plan.id);
+            },
+            onError: (err) => {
+                showToast("Payment processing error. Please try again.", "high");
+                console.error("PayPal Error:", err);
+            }
+        }).render('#' + plan.container);
+        
+        // Hide standard upgrade buttons if PayPal is active
+        const standardBtn = container.nextElementSibling;
+        if (standardBtn && (standardBtn.classList.contains('payment-trigger') || (standardBtn.innerText && standardBtn.innerText.includes('Upgrade')))) {
+            standardBtn.style.display = 'none';
+        }
+    });
+}
+
+async function handleUpgradeSuccess(orderID, planType) {
+    try {
+        const res = await fetch('/api/payments/verify', {
+            method: 'POST',
+            headers: { 
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${localStorage.getItem('token')}`
+            },
+            body: JSON.stringify({ orderID, planType })
+        });
+        
+        const data = await res.json();
+        if (data.success) {
+            localStorage.setItem('plan', data.newPlan);
+            showToast(`LEVEL UP: You are now ${planType.toUpperCase()}! (+${data.bonusXP} XP Awarded)`, "low");
+            // Sound effect simulation
+            setTimeout(() => navigateTo('profile'), 3000);
+        } else {
+            showToast(data.error || "Upgrade verification failed.", "high");
+        }
+    } catch (e) {
+        showToast("Network error verifying payment.", "high");
     }
 }
 

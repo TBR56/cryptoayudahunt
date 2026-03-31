@@ -661,9 +661,31 @@ window.views = {
                             </div>
                         </div>
                         
-                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
                             ${!isPro ? '<button class="btn btn-primary" data-route="pricing"><i class="fa-solid fa-arrow-up-right-dots"></i> Upgrade to Pro</button>' : '<button class="btn btn-outline" data-route="tools"><i class="fa-solid fa-shield-halved"></i> Access Arsenal</button>'}
                             <button class="btn btn-outline" style="color: #ef4444; border-color: rgba(239,68,68,0.3);" id="btn-logout"><i class="fa-solid fa-right-from-bracket"></i> Logout</button>
+                        </div>
+
+                        <!-- Recent Activity Section -->
+                        <div style="margin-top: 40px; text-align: left;">
+                            <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 20px; padding-bottom: 10px; border-bottom: 1px solid rgba(255,255,255,0.05);">
+                                <i class="fa-solid fa-clock-rotate-left" style="color: var(--accent-vibrant);"></i>
+                                <h3 style="margin: 0; font-family: var(--font-mono); font-size: 0.9rem; letter-spacing: 2px;">RECENT SMART SCANS</h3>
+                            </div>
+                            <div class="table-responsive">
+                                <table class="table custom-table" style="color:white; font-size:0.85rem; width: 100%;">
+                                    <thead>
+                                        <tr style="opacity: 0.5; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 1px;">
+                                            <th style="padding: 10px;">Tool</th>
+                                            <th style="padding: 10px;">Result Summary</th>
+                                            <th style="padding: 10px;">Time</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="profile-history-body">
+                                        <tr><td colspan="3" class="text-center py-4" style="color: var(--secondary-color);"><i class="fa-solid fa-spinner fa-spin"></i> Loading activity...</td></tr>
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
                     </div>
                 </div>
