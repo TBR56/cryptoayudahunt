@@ -786,16 +786,21 @@ function downloadReport(type, address) {
 // View-specific event bindings
 function bindViewEvents(route) {
     if (route === 'home') {
-        const analyzeBtns = document.querySelectorAll('.analyze-btn');
-        const inputField = document.getElementById('hero-input');
-        const resultArea = document.getElementById('analysis-result-area');
-
-        analyzeBtns.forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                const type = e.target.textContent;
-                performScan(inputField.value, type, resultArea);
+        const signupBtns = document.querySelectorAll('.signup-trigger');
+        signupBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                navigateTo('auth');
+                // Switch to register tab automatically
+                setTimeout(() => {
+                    const regTab = document.getElementById('tab-register');
+                    if (regTab) regTab.click();
+                }, 100);
             });
         });
+
+        // Initialize Tactical Network Graph Demo
+        initTacticalGraph('hero-network-graph', 8);
+        initTacticalGraph('mock-graph-container', 12);
     }
     
     if (route === 'tools') {
@@ -1787,3 +1792,54 @@ async function handleUpgradeSuccess(orderID, planType) {
     }
 }
 
+// Tactical Network Graph Animation Logic
+function initTacticalGraph(containerId, nodeCount) {
+    const container = document.getElementById(containerId);
+    if (!container) return;
+    
+    container.innerHTML = ''; // Clear for re-init
+    const nodes = [];
+    
+    // Create Nodes
+    for (let i = 0; i < nodeCount; i++) {
+        const node = document.createElement('div');
+        node.className = 'network-node';
+        const x = Math.random() * 80 + 10;
+        const y = Math.random() * 80 + 10;
+        node.style.left = `${x}%`;
+        node.style.top = `${y}%`;
+        
+        if (Math.random() > 0.8) {
+            node.style.background = 'var(--risk-high)';
+            node.style.boxShadow = '0 0 15px var(--risk-high)';
+            const pulse = document.createElement('div');
+            pulse.className = 'pulse-ring';
+            node.appendChild(pulse);
+        }
+        
+        container.appendChild(node);
+        nodes.push({ el: node, x, y });
+    }
+    
+    // Create Random Edges
+    nodes.forEach((node, i) => {
+        const neighbors = nodes.slice(i + 1, i + 3);
+        neighbors.forEach(neighbor => {
+            const edge = document.createElement('div');
+            edge.className = 'network-edge';
+            
+            const dx = neighbor.x - node.x;
+            const dy = neighbor.y - node.y;
+            const distance = Math.sqrt(dx*dx + dy*dy);
+            const angle = Math.atan2(dy, dx) * 180 / Math.PI;
+            
+            // Adjust position slightly to center the edge on the node
+            edge.style.width = `${distance}%`;
+            edge.style.left = `${node.x}%`;
+            edge.style.top = `${node.y}%`;
+            edge.style.transform = `rotate(${angle}deg)`;
+            
+            container.appendChild(edge);
+        });
+    });
+}

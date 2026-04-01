@@ -1,214 +1,160 @@
-/**
+﻿/**
  * Views for the SPA
  */
 
 window.views = {
     home: () => `
-        <!-- HERO SECTION -->
-        <section class="hero landing-hero" style="min-height: 80vh; display: flex; align-items: center; padding-top: 100px;">
-            <div class="background-grid"></div>
-            <div class="container hero-container" style="display: grid; grid-template-columns: 1.2fr 1fr; gap: 40px; align-items: center;">
-                <div class="hero-content fade-in" style="text-align: left;">
-                    <div class="feature-pill"><i class="fa-solid fa-microchip"></i> AI-POWERED INSIDER INTELLIGENCE</div>
-                    <h1 style="font-size: 4rem; line-height: 1.1; margin-bottom: 25px; font-weight: 800; letter-spacing: -2px;">
-                        Avoid rug pulls <br><span class="highlight" style="color: var(--accent-color);">before they happen.</span>
-                    </h1>
-                    <p class="hero-sub" style="font-size: 1.25rem; color: var(--secondary-color); margin-bottom: 40px; max-width: 600px;">
-                        Track wallet clusters, liquidity shifts, and insider positioning before it hits the chart. Stop trading blind.
-                    </p>
-                    <div class="hero-cta-area" style="display: flex; align-items: center; gap: 20px;">
-                        <button class="btn btn-primary btn-lg signup-trigger" style="padding: 18px 35px; font-size: 1.1rem;">Start Free Trial</button>
-                        <div style="font-size: 0.85rem; color: var(--secondary-color);">
-                            <div style="color: var(--risk-low); font-weight: bold;"><i class="fa-solid fa-check"></i> No credit card required</div>
-                            <div>Instant access to basic scans</div>
+        <section class="hero">
+            <div class="hero-glow"></div>
+            <div class="container hero-container">
+                <div class="hero-content fade-in">
+                    <div class="badge"><i class="fa-solid fa-sparkles"></i> Artificial Intelligence Guardian</div>
+                    <h1>Enterprise-Grade Security <br>for your <span class="highlight">Crypto Assets.</span></h1>
+                    <p class="hero-sub">Before you invest, let our AI analyze smart contracts, wallets, and dApps in 3 seconds to detect hidden threats, honeypots, and phishing scams.</p>
+                    
+                    <div class="hero-interactive">
+                        <div class="input-group">
+                            <i class="fa-solid fa-bolt" style="color: var(--accent-vibrant);"></i>
+                            <input type="text" id="hero-input" placeholder="Paste wallet address, token contract or website link...">
+                        </div>
+                        <div class="hero-buttons">
+                            <button class="btn btn-primary analyze-btn">Analyze Wallet</button>
+                            <button class="btn btn-accent analyze-btn">Analyze Token</button>
+                            <button class="btn btn-outline analyze-btn">Check Website</button>
+                        </div>
+                        <div id="analysis-result-area" class="analysis-result-area" style="display: none;"></div>
+                        
+                        <div class="trust-banner fade-in" style="animation-delay: 0.4s; margin-top: 30px; display: flex; align-items: center; gap: 15px;">
+                            <div class="avatars" style="display:flex; margin-left: 10px;">
+                                <img src="https://i.pravatar.cc/100?img=11" alt="User" style="width:32px; height:32px; border-radius:50%; border:2px solid var(--bg-color); margin-left:-10px;">
+                                <img src="https://i.pravatar.cc/100?img=12" alt="User" style="width:32px; height:32px; border-radius:50%; border:2px solid var(--bg-color); margin-left:-10px;">
+                                <img src="https://i.pravatar.cc/100?img=13" alt="User" style="width:32px; height:32px; border-radius:50%; border:2px solid var(--bg-color); margin-left:-10px;">
+                                <img src="https://i.pravatar.cc/100?img=14" alt="User" style="width:32px; height:32px; border-radius:50%; border:2px solid var(--bg-color); margin-left:-10px;">
+                            </div>
+                            <div style="text-align:left; font-size:0.9rem;">
+                                <div style="color:#f59e0b; font-size:12px;"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></div>
+                                <span style="color:var(--secondary-color);">Trusted by <b>50,000+</b> active Web3 investors</span>
+                            </div>
                         </div>
                     </div>
                 </div>
-                <div class="hero-visual fade-in" style="position: relative;">
-                    <div class="network-demo-container" style="border: 1px solid var(--border-color); background: rgba(15, 23, 42, 0.5); backdrop-filter: blur(10px);">
-                        <!-- Placeholder for Network Graph Demo -->
-                        <div id="hero-network-graph" style="width: 100%; height: 100%;">
-                             <div class="center" style="height: 100%; opacity: 0.5;">
-                                <i class="fa-solid fa-diagram-project" style="font-size: 4rem; color: var(--accent-glow);"></i>
-                                <p style="font-family: var(--font-mono); font-size: 0.7rem; margin-top: 10px;">ANALYZING CLUSTER DELTA...</p>
-                             </div>
+                <div class="hero-visual fade-in" style="animation-delay: 0.2s;">
+                    <div class="threat-map-container">
+                        <div class="badge" style="margin-bottom:10px;"><i class="fa-solid fa-earth-americas"></i> Live Global Threat Map</div>
+                        <div class="map-visual" id="live-threat-map">
+                            <!-- Tactical Map UI -->
+                            <div class="map-dot" style="top:30%; left:25%;"></div>
+                            <div class="map-dot" style="top:50%; left:60%;"></div>
+                            <div class="map-dot" style="top:70%; left:40%;"></div>
+                            <i class="fa-solid fa-satellite-dish" style="font-size:5rem; color:rgba(56, 189, 248, 0.2);"></i>
                         </div>
-                    </div>
-                    <div class="urgency-badge">LIVE INTEL</div>
-                </div>
-            </div>
-        </section>
-
-        <!-- PROBLEM SECTION -->
-        <section class="problem-section" style="padding: 100px 24px; border-top: 1px solid var(--border-color);">
-            <div class="container narrow center">
-                <div class="feature-pill" style="background: var(--danger-soft); color: var(--risk-high); border-color: rgba(239, 68, 68, 0.2);">THE RETAIL TRAP</div>
-                <h2 style="font-size: 3rem; margin-bottom: 20px;">Why most traders lose everything.</h2>
-                <p style="color: var(--secondary-color); font-size: 1.2rem; max-width: 700px; margin-bottom: 60px;">
-                    By the time a token hits your favorite chart or "alpha" group, the insiders have already positioned. You aren't "early"ÔÇöyou are the exit liquidity.
-                </p>
-
-                <div class="benefit-grid" style="text-align: left;">
-                    <div class="pain-point-card">
-                        <i class="fa-solid fa-chart-line" style="color: var(--risk-high); font-size: 1.5rem; margin-bottom: 15px;"></i>
-                        <h4 style="margin-bottom: 10px;">Trailing the Chart</h4>
-                        <p style="font-size: 0.9rem; color: var(--secondary-color);">Price action is a lagging indicator. If you wait for the green candle, the smart money is already clicking "Sell".</p>
-                    </div>
-                    <div class="pain-point-card">
-                        <i class="fa-solid fa-users-viewfinder" style="color: var(--risk-high); font-size: 1.5rem; margin-bottom: 15px;"></i>
-                        <h4 style="margin-bottom: 10px;">Invisible Clusters</h4>
-                        <p style="font-size: 0.9rem; color: var(--secondary-color);">100 wallets might look like "organic growth" to you. To us, they are 1 dev using a mixer to hide a 40% supply control.</p>
-                    </div>
-                    <div class="pain-point-card">
-                        <i class="fa-solid fa-bridge-circle-exclamation" style="color: var(--risk-high); font-size: 1.5rem; margin-bottom: 15px;"></i>
-                        <h4 style="margin-bottom: 10px;">Liquidity Fakes</h4>
-                        <p style="font-size: 0.9rem; color: var(--secondary-color);">"Liquidity Locked" means nothing if the dev has a secret mint function or a hidden proxy to pull it all in one block.</p>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- SOLUTION SECTION -->
-        <section class="solution-section" style="padding: 120px 24px; background: rgba(15, 23, 42, 0.3);">
-            <div class="container" style="display: grid; grid-template-columns: 1fr 1.2fr; gap: 80px; align-items: center;">
-                <div class="solution-visual">
-                    <img src="https://images.unsplash.com/photo-1639762681485-074b7f938ba0?auto=format&fit=crop&q=80&w=800" alt="Data Intelligence" style="width: 100%; border-radius: 20px; box-shadow: var(--shadow-premium); filter: grayscale(1) contrast(1.2) brightness(0.8);">
-                </div>
-                <div class="solution-content">
-                    <div class="feature-pill">THE INSIDER EDGE</div>
-                    <h2 style="font-size: 3rem; margin-bottom: 25px;">See the moves <u>before</u> they hit the chart.</h2>
-                    <p style="color: var(--secondary-color); font-size: 1.1rem; margin-bottom: 40px;">
-                        CryptoAyuda analyzes raw mempool data and cross-chain wallet relationships to identify "Dev Clusters" and "Insider Positioning" in milliseconds.
-                    </p>
-
-                    <div style="display: grid; gap: 30px;">
-                        <div style="display: flex; gap: 20px;">
-                            <div class="center" style="width: 50px; height: 50px; background: var(--success-soft); border-radius: 12px; color: var(--risk-low); flex-shrink: 0;">
-                                <i class="fa-solid fa-diagram-nested"></i>
-                            </div>
-                            <div>
-                                <h4 style="margin-bottom: 5px;">Cluster Detection</h4>
-                                <p style="font-size: 0.9rem; color: var(--secondary-color);">Instantly map how many "different" buyers are actually controlled by the same private key.</p>
-                            </div>
-                        </div>
-                        <div style="display: flex; gap: 20px;">
-                            <div class="center" style="width: 50px; height: 50px; background: var(--success-soft); border-radius: 12px; color: var(--risk-low); flex-shrink: 0;">
-                                <i class="fa-solid fa-droplet"></i>
-                            </div>
-                            <div>
-                                <h4 style="margin-bottom: 5px;">Liquidity Shift Alerts</h4>
-                                <p style="font-size: 0.9rem; color: var(--secondary-color);">Real-time tracking of stealth liquidity withdrawals that simple scanners miss.</p>
-                            </div>
+                        <div class="threat-feed" id="threat-feed">
+                            <div class="threat-item"><span>[NEW SCAN] Phishing detected: metamask-verify.io</span><span class="text-high">HIGH RISK</span></div>
+                            <div class="threat-item"><span>[NEW SCAN] Honeypot found: $ELON_SAFE</span><span class="text-high">CRITICAL</span></div>
                         </div>
                     </div>
                 </div>
             </div>
         </section>
 
-        <!-- VISUAL DEMO SECTION -->
-        <section class="demo-section center" style="padding: 100px 24px;">
-             <div class="container center">
-                <div class="section-header">
-                    <h2>Professional Intelligence Dashboard</h2>
-                    <p style="color: var(--secondary-color);">Actionable data, not just raw logs.</p>
-                </div>
-                <div class="network-demo-container" style="width: 100%; max-width: 1000px; margin-top: 50px; border-color: var(--accent-glow);">
-                     <div style="padding: 20px; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.3);">
-                        <div style="display:flex; gap:10px; align-items:center;">
-                            <div style="width:10px; height:10px; border-radius:50%; background: #ef4444; box-shadow: 0 0 5px #ef4444;"></div>
-                            <span style="font-family: var(--font-mono); font-size: 0.7rem; color: var(--secondary-color);">DEEP SCAN ACTIVE</span>
-                        </div>
-                        <div style="font-family: var(--font-mono); font-size: 0.7rem; color: var(--accent-color);">[ ANALYZING TOKEN: $HYPE_GEM ]</div>
-                     </div>
-                     <div id="dashboard-mock-area" style="height: 400px; display: grid; grid-template-columns: 2fr 1fr; padding: 20px; gap: 20px;">
-                        <div style="background: rgba(255,255,255,0.02); border: 1px solid var(--border-color); border-radius: 12px; position: relative;" class="center">
-                             <!-- Complex Layout Simulation -->
-                             <div style="width: 100%; height: 100%; position: relative;" id="mock-graph-container">
-                                <i class="fa-solid fa-project-diagram" style="font-size: 10rem; opacity: 0.05;"></i>
-                                <div style="position: absolute; top: 20%; left: 30%;" class="network-node"><div class="pulse-ring"></div></div>
-                                <div style="position: absolute; top: 60%; left: 70%;" class="network-node"></div>
-                                <div style="position: absolute; top: 40%; left: 50%;" class="network-node" style="background:#ef4444; box-shadow: 0 0 15px #ef4444;"></div>
-                             </div>
-                        </div>
-                        <div style="display: grid; gap: 10px;">
-                            <div style="background: rgba(239,68,68,0.1); border: 1px solid rgba(239,68,68,0.3); border-radius: 8px; padding: 15px;">
-                                <div style="font-size: 0.6rem; color: var(--risk-high);">RUG PROBABILITY</div>
-                                <div style="font-size: 1.5rem; font-weight: 900; color: var(--risk-high);">94.2%</div>
-                            </div>
-                            <div style="background: rgba(255,255,255,0.02); border: 1px solid var(--border-color); border-radius: 8px; padding: 15px;">
-                                <div style="font-size: 0.6rem; color: var(--secondary-color);">INSIDER CLUSTERS</div>
-                                <div style="font-size: 1.5rem; font-weight: 900;">18 Detected</div>
-                            </div>
-                        </div>
-                     </div>
-                </div>
-             </div>
-        </section>
-
-        <!-- BENEFITS SECTION -->
-        <section class="benefits-section" style="padding: 100px 24px; border-top: 1px solid var(--border-color);">
-            <div class="container narrow center">
-                <h2>Designed for the 0.1% of traders.</h2>
-                <div class="benefit-grid">
-                    <div class="benefit-card">
-                        <div class="benefit-icon"><i class="fa-solid fa-shield-halved"></i></div>
-                        <h3>Avoid Exit Liquidity</h3>
-                        <p>Stop being the person who buys the local top. See when the smart money starts their distribution phase.</p>
-                    </div>
-                    <div class="benefit-card">
-                        <div class="benefit-icon"><i class="fa-solid fa-bolt-lightning"></i></div>
-                        <h3>Early Detection</h3>
-                        <p>Identify "Safe" memecoins with organic holder distribution before they trend on social media.</p>
-                    </div>
-                    <div class="benefit-card">
-                        <div class="benefit-icon"><i class="fa-solid fa-database"></i></div>
-                        <h3>Data Over Hype</h3>
-                        <p>Ignore the Twitter bot comments. Base your entries on hard on-chain wallet behavior and liquidity depth.</p>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- SOCIAL PROOF SECTION -->
-        <section class="proof-section" style="padding: 80px 24px; background: rgba(0,0,0,0.4);">
-            <div class="container">
-                <p style="text-align: center; color: var(--secondary-color); font-size: 0.8rem; margin-bottom: 40px; text-transform: uppercase; letter-spacing: 2px;">Used by serious hunters to avoid bad entries</p>
-                <div class="testimonial-row">
-                    <div class="testimonial-card">
-                        <p style="font-size: 0.95rem; margin-bottom: 15px;">"I avoided three major rug pulls in my first week. The wallet cluster detection is a game changer for memecoin trading."</p>
-                        <div style="display:flex; align-items:center; gap:10px;">
-                            <div style="width:30px; height:30px; border-radius:50%; background: var(--accent-glow);"></div>
-                            <span style="font-family: var(--font-mono); font-size: 0.75rem;">@WhaleWatcher_7</span>
-                        </div>
-                    </div>
-                    <div class="testimonial-card">
-                        <p style="font-size: 0.95rem; margin-bottom: 15px;">"Charts lie. Wallets don't. CryptoAyuda is the first tool I check before every single trade now."</p>
-                        <div style="display:flex; align-items:center; gap:10px;">
-                            <div style="width:30px; height:30px; border-radius:50%; background: var(--accent-glow);"></div>
-                            <span style="font-family: var(--font-mono); font-size: 0.75rem;">0xAlphaHunter</span>
-                        </div>
-                    </div>
-                    <div class="testimonial-card">
-                        <p style="font-size: 0.95rem; margin-bottom: 15px;">"The insider positioning alerts are scary accurate. I finally feel like I have an edge over the bots."</p>
-                        <div style="display:flex; align-items:center; gap:10px;">
-                            <div style="width:30px; height:30px; border-radius:50%; background: var(--accent-glow);"></div>
-                            <span style="font-family: var(--font-mono); font-size: 0.75rem;">DeFi_Wizard</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- FINAL CTA SECTION -->
-        <section class="cta-section center" style="padding: 120px 24px; border-top: 1px solid var(--border-color); position: relative;">
+        <section class="stats-section" style="padding: 40px 0; border-top: 1px solid var(--border-color); border-bottom: 1px solid var(--border-color); background: rgba(0,0,0,0.2);">
             <div class="container center">
-                <div class="feature-pill">LIMITED EARLY ACCESS</div>
-                <h2 style="font-size: 3.5rem; margin-bottom: 20px;">Stop trading blind.</h2>
-                <p style="color: var(--secondary-color); font-size: 1.25rem; margin-bottom: 40px; max-width: 600px;">
-                    Join thousands of traders who are using data to protect their capital. Start your free trial today.
-                </p>
-                <button class="btn btn-primary btn-lg signup-trigger" style="padding: 20px 50px; font-size: 1.2rem;">Start Free Trial Now</button>
-                <p style="margin-top: 20px; font-size: 0.8rem; color: var(--secondary-color);">No credit card required ÔÇó Instant access</p>
+                <div style="display: flex; justify-content: space-around; flex-wrap: wrap; gap: 20px;">
+                    <div>
+                        <h3 style="font-size: 2.5rem; color: var(--accent-vibrant); margin-bottom: 5px;">$150M+</h3>
+                        <p style="color: var(--secondary-color); font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px;">Assets Protected</p>
+                    </div>
+                    <div>
+                        <h3 style="font-size: 2.5rem; color: var(--accent-vibrant); margin-bottom: 5px;">2.5M+</h3>
+                        <p style="color: var(--secondary-color); font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px;">Contracts Scanned</p>
+                    </div>
+                    <div>
+                        <h3 style="font-size: 2.5rem; color: var(--accent-vibrant); margin-bottom: 5px;">99.9%</h3>
+                        <p style="color: var(--secondary-color); font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px;">Threat Detection Rate</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="how-it-works">
+            <div class="container">
+                <div class="section-header center">
+                    <h2>How It Works</h2>
+                    <p>Enterprise-grade security in three simple steps.</p>
+                </div>
+                <div class="steps-grid">
+                    <div class="step-card">
+                        <div class="step-icon"><i class="fa-solid fa-paste"></i></div>
+                        <h3>Step 1</h3>
+                        <p>Paste wallet address, token contract or crypto website into our AI engine.</p>
+                    </div>
+                    <div class="step-card">
+                        <div class="step-icon"><i class="fa-solid fa-microchip"></i></div>
+                        <h3>Step 2</h3>
+                        <p>CryptoAyuda AI analyzes blockchain signals, contract data and security indicators instantly.</p>
+                    </div>
+                    <div class="step-card">
+                        <div class="step-icon"><i class="fa-solid fa-bell"></i></div>
+                        <h3>Step 3</h3>
+                        <p>Receive an instant AI risk score and real-time security alerts before you invest.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="testimonials" id="testimonials">
+            <div class="container">
+                <div class="section-header center">
+                    <h2>Real Users, Real <span class="highlight">Saved Assets</span></h2>
+                    <p>Don't just take our word for it.</p>
+                </div>
+                <div class="testimonial-grid">
+                    <div class="testimonial-card">
+                        <div style="color:#f59e0b; font-size:14px; margin-bottom: 10px;"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></div>
+                        <p class="t-text">"CryptoAyuda AI helped me avoid investing in a scam token. The rug pull predictor is scary accurate. Saved me 3 ETH!"</p>
+                        <div class="t-user">
+                            <div class="t-avatar"><img src="https://i.pravatar.cc/100?img=33" alt="User"></div>
+                            <div class="t-info">
+                                <h4>Alex M.</h4>
+                                <span>DeFi Trader</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="testimonial-card">
+                        <div style="color:#f59e0b; font-size:14px; margin-bottom: 10px;"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></div>
+                        <p class="t-text">"The phishing detector found a malicious exchange clone before I deposited my assets. Indispensable tool for web3."</p>
+                        <div class="t-user">
+                            <div class="t-avatar"><img src="https://i.pravatar.cc/100?img=5" alt="User"></div>
+                            <div class="t-info">
+                                <h4>Sarah J.</h4>
+                                <span>NFT Collector</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="testimonial-card">
+                        <div style="color:#f59e0b; font-size:14px; margin-bottom: 10px;"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></div>
+                        <p class="t-text">"As a fund manager, the God-Mode tools are essential. We run every single contract through this before deploying capital."</p>
+                        <div class="t-user">
+                            <div class="t-avatar"><img src="https://i.pravatar.cc/100?img=11" alt="User"></div>
+                            <div class="t-info">
+                                <h4>David R.</h4>
+                                <span>Capital Fund VP</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="cta-section" style="background: radial-gradient(circle at 50% 100%, rgba(14, 165, 233, 0.1) 0%, transparent 50%); border-top: 1px solid var(--border-color);">
+            <div class="container cta-container center">
+                <i class="fa-solid fa-shield-halved" style="font-size: 3rem; color: var(--accent-vibrant); margin-bottom: 20px;"></i>
+                <h2>Trust nothing, verify everything.</h2>
+                <p>Join thousands of secure users today. Protection takes exactly 3 seconds.</p>
+                <div class="cta-buttons" style="justify-content: center; margin-top:20px;">
+                    <button class="btn btn-primary" data-route="home" onclick="window.scrollTo(0,0)">Start Free Scan Now</button>
+                    <button class="btn btn-outline" data-route="pricing">View Pricing Plans</button>
+                </div>
             </div>
         </section>
     `,
