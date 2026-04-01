@@ -424,7 +424,7 @@ window.views = {
                 <div class="pricing-card pro active">
                     <div class="badge plan-badge">Most Popular</div>
                     <div class="plan-name">Pro Plan</div>
-                    <div class="plan-price">$29<span>/mo</span></div>
+                    <div class="plan-price">$5<span>/mo</span></div>
                     <p class="plan-desc">For active traders and investors who need constant vigilance.</p>
                     <ul class="plan-features">
                         <li><i class="fa-solid fa-check"></i> <strong>Unlimited</strong> AI scans</li>
@@ -439,7 +439,7 @@ window.views = {
 
                 <div class="pricing-card elite">
                     <div class="plan-name">Elite Plan</div>
-                    <div class="plan-price">$99<span>/mo</span></div>
+                    <div class="plan-price">$19<span>/mo</span></div>
                     <p class="plan-desc">Enterprise-grade protection for institutions and whales.</p>
                     <ul class="plan-features">
                         <li><i class="fa-solid fa-check"></i> Everything in Pro</li>

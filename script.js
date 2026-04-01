@@ -1730,8 +1730,8 @@ function initPayPalButtons() {
 
 function setupPayPal() {
     const plans = [
-        { id: 'pro', container: 'paypal-button-container-pro', amount: '29.00' },
-        { id: 'elite', container: 'paypal-button-container-elite', amount: '99.00' }
+        { id: 'pro', container: 'paypal-button-container-pro', amount: '5.00' },
+        { id: 'elite', container: 'paypal-button-container-elite', amount: '19.00' }
     ];
 
     plans.forEach(plan => {
