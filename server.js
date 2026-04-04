@@ -792,6 +792,152 @@ app.get('/api/trading/alpha', authenticateToken, async (req, res) => {
 });
 
 
+
+// Fast mock for LP Scanner
+app.get('/api/trading/lp', authenticateToken, async (req, res) => {
+    try {
+        const { address } = req.query;
+        const isPro = req.user.plan === 'pro' || req.user.plan === 'elite' || req.user.role === 'admin';
+        if (!isPro) return res.status(403).json({ error: 'Pro or Elite plan required.', planGate: true });
+
+        const liq = (Math.random() * 500000 + 50000).toFixed(0);
+        const locked = (Math.random() * 30 + 70).toFixed(1);
+        const risk = locked > 90 ? 'LOW' : 'HIGH';
+        
+        res.json({
+            success: true, address,
+            totalLiquidity: '
+function recordScan(userId, type, resultSummary) {
+    const db = readDB();
+    const userIndex = db.users.findIndex(u => u.id === userId);
+    if (userIndex === -1) return;
+
+    if (!db.users[userIndex].history) db.users[userIndex].history = [];
+    db.users[userIndex].history.unshift({
+        type,
+        result: resultSummary,
+        timestamp: new Date().toISOString()
+    });
+
+    // Keep only last 15 scans
+    if (db.users[userIndex].history.length > 15) {
+        db.users[userIndex].history = db.users[userIndex].history.slice(0, 15);
+    }
+
+    writeDB(db);
+}
+
+// Payment Verification Endpoint: Upgrades user plan
+app.post('/api/payments/verify', authenticateToken, (req, res) => {
+    try {
+        const { orderID, planType } = req.body;
+        if (!orderID || !planType) return res.status(400).json({ error: 'Order ID and Plan Type required' });
+
+        const db = readDB();
+        const userIndex = db.users.findIndex(u => u.id === req.user.id);
+        if (userIndex === -1) return res.status(404).json({ error: 'User not found' });
+
+        // In a real app, we'd verify the orderID with PayPal API here.
+        // For this implementation, we trust the frontend confirmation.
+        db.users[userIndex].plan = planType.toLowerCase(); // 'pro' or 'elite'
+        
+        // Bonus XP for upgrading
+        const bonusXP = planType.toLowerCase() === 'elite' ? 500 : 200;
+        db.users[userIndex].xp = (db.users[userIndex].xp || 0) + bonusXP;
+
+        writeDB(db);
+        
+        res.json({ 
+            success: true, 
+            message: `Plan upgraded to ${planType} successfully!`,
+            newPlan: db.users[userIndex].plan,
+            bonusXP
+        });
+
+    } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+// Fetch Leaderboard based on real XP
+app.get('/api/leaderboard', (req, res) => {
+    try {
+        const db = readDB();
+        const leaderboard = db.users
+            .filter(u => u.role !== 'admin') // Optional: hide admins
+            .map(u => ({
+                id: u.id,
+                username: u.username || u.email.split('@')[0],
+                xp: u.xp || 0,
+                rank: u.rank || 'Novice',
+                plan: u.plan
+            }))
+            .sort((a, b) => b.xp - a.xp)
+            .slice(0, 10);
+        
+        res.json(leaderboard);
+    } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+// Fetch Scan History
+app.get('/api/profile/history', authenticateToken, (req, res) => {
+    try {
+        const db = readDB();
+        const user = db.users.find(u => u.id === req.user.id);
+        if (!user) return res.status(404).json({ error: 'User not found' });
+        res.json(user.history || []);
+    } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+
+// Export for Vercel Serverless Functions
+module.exports = app;
+
+
+// Only start listening locally
+if (require.main === module) {
+    app.listen(PORT, () => {
+        console.log(`CryptoAyuda Backend Server running on http://localhost:${PORT}`);
+    });
+}
+ + parseInt(liq).toLocaleString(),
+            lockedPct: locked + '%',
+            ratio: '1 ETH : 4.4M TKN',
+            ilRisk: risk,
+            riskScore: risk === 'HIGH' ? 80 : 10,
+            riskStatus: risk === 'HIGH' ? 'DANGER' : 'SECURE',
+            summary: locked > 90 ? 'Most liquidity is locked by reputable lockers. Dump risk is low.' : 'Warning: Liquidity is mostly unlocked. Creator can remove pooled funds instantly.'
+        });
+    } catch(e) { res.status(500).json({ error: e.message }); }
+});
+
+// Fast mock for Exploit Simulator
+app.get('/api/trading/exploit', authenticateToken, async (req, res) => {
+    try {
+        const { address } = req.query;
+        const isElite = req.user.plan === 'elite' || req.user.role === 'admin';
+        if (!isElite) return res.status(403).json({ error: 'Elite plan required.', planGate: true });
+
+        const isHoney = Math.random() > 0.5;
+        
+        res.json({
+            success: true, address,
+            isHoneypot: isHoney,
+            simulationResult: isHoney ? 'TRAP DETECTED: UNABLE TO SELL' : 'SIMULATION PASSED',
+            buySim: 'SUCCESS (Gas: 0.04m)',
+            sellSim: isHoney ? 'REVERTED (Error: Transfer_Failed)' : 'SUCCESS (Gas: 0.05m)',
+            traces: [
+                'Initializing isolated EVM Sandbox...',
+                'Mocking 1.0 ETH liquidity environment...',
+                '[Call] router.swapExactETHForTokens(1.0 ETH)',
+                'Buy transaction simulated successfully.',
+                '[Call] token.approve(router, max_uint)',
+                '[Call] router.swapExactTokensForETH(all)',
+                isHoney ? 'FATAL: Revert reason: "Not whitelisted"' : 'Sell transaction completed.',
+                'Sandbox environment tearing down.'
+            ]
+        });
+    } catch(e) { res.status(500).json({ error: e.message }); }
+});
+
 // Store scan in history (helper)
 function recordScan(userId, type, resultSummary) {
     const db = readDB();

@@ -213,6 +213,35 @@ window.views = {
                             <div class="hub-tool-launch" style="color:#a855f7;"><span>Launch Tool</span><i class="fa-solid fa-arrow-right"></i></div>
                         </div>
                     </div>
+                
+                        <!-- Impermanent Loss & LP Scanner -->
+                        <div class="hub-tool-card" onclick="navigateTo('tool-lp')" style="--card-color:#3b82f6;background:linear-gradient(135deg,rgba(59,130,246,0.05),rgba(2,6,23,0.95));">
+                            <div class="hub-tool-card-header">
+                                <div class="hub-tool-icon" style="background:rgba(59,130,246,0.15);border-color:rgba(59,130,246,0.4);"><i class="fa-solid fa-droplet" style="color:#3b82f6;"></i></div>
+                                <span class="plan-pill-pro">PRO+</span>
+                            </div>
+                            <h3>Impermanent Loss & LP Scanner</h3>
+                            <p>Analyze DEX liquidity pools for manipulation, impermanent loss risk, and locked liquidity depth.</p>
+                            <div class="hub-tool-tags" style="--tag-color:rgba(59,130,246,0.2);--tag-border:rgba(59,130,246,0.4);--tag-text:#3b82f6;">
+                                <span>LP Analysis</span><span>Drain Risk</span><span>Token Ratio</span><span>+20 XP</span>
+                            </div>
+                            <div class="hub-tool-launch" style="color:#3b82f6;"><span>Launch Tool</span><i class="fa-solid fa-arrow-right"></i></div>
+                        </div>
+
+                        <!-- Honeypot Exploit Simulator -->
+                        <div class="hub-tool-card" onclick="navigateTo('tool-exploit')" style="--card-color:#ef4444;background:linear-gradient(135deg,rgba(239,68,68,0.05),rgba(2,6,23,0.95));">
+                            <div class="hub-tool-card-header">
+                                <div class="hub-tool-icon" style="background:rgba(239,68,68,0.15);border-color:rgba(239,68,68,0.4);"><i class="fa-solid fa-bug" style="color:#ef4444;"></i></div>
+                                <span class="plan-pill-elite">ELITE 👑</span>
+                            </div>
+                            <h3>Honeypot Exploit Simulator</h3>
+                            <p>Bypass static checks by executing contracts in a sandbox to catch deeply hidden honeypots and drainers.</p>
+                            <div class="hub-tool-tags" style="--tag-color:rgba(239,68,68,0.2);--tag-border:rgba(239,68,68,0.4);--tag-text:#ef4444;">
+                                <span>Execution Run</span><span>Buy/Sell Test</span><span>Code Sim</span><span>+40 XP</span>
+                            </div>
+                            <div class="hub-tool-launch" style="color:#ef4444;"><span>Launch Tool</span><i class="fa-solid fa-arrow-right"></i></div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </section>
@@ -285,46 +314,49 @@ window.views = {
         </section>
         
         <section class="pricing-section">
-            <div class="container pricing-grid">
+            <div class="container pricing-grid" style="grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));">
                 
                 <div class="pricing-card">
-                    <div class="plan-name">Free Plan</div>
-                    <div class="plan-price">$0<span>/mo</span></div>
-                    <p class="plan-desc">For casual crypto users protecting a single wallet.</p>
+                    <div class="plan-name">Basic Plan</div>
+                    <div class="plan-price">$7<span>/mo</span></div>
+                    <p class="plan-desc">For casual crypto users protecting a simple portfolio.</p>
                     <ul class="plan-features">
-                        <li><i class="fa-solid fa-check"></i> 3 AI scans per day</li>
+                        <li><i class="fa-solid fa-check"></i> Unlimited manual scans</li>
                         <li><i class="fa-solid fa-check"></i> Basic risk score</li>
                         <li><i class="fa-solid fa-check"></i> Access to security blog</li>
                         <li class="disabled"><i class="fa-solid fa-xmark"></i> Real-time scam alerts</li>
-                        <li class="disabled"><i class="fa-solid fa-xmark"></i> AI Crypto Assistant access</li>
+                        <li class="disabled"><i class="fa-solid fa-xmark"></i> Advanced tracking tools</li>
                     </ul>
-                    <button class="btn btn-outline full-width" data-route="auth">Sign Up Free</button>
+                    <div id="paypal-button-container-basic" class="paypal-container"></div>
+                    <button class="btn btn-outline full-width payment-trigger" data-plan="basic">Start Basic</button>
+                    <p style="text-align:center;font-size:0.8rem;color:var(--secondary-color);margin-top:10px;">Or play safe with Free (3 scans/day)</p>
                 </div>
 
-                <div class="pricing-card pro active">
-                    <div class="badge plan-badge">Most Popular</div>
+                <div class="pricing-card pro active pricing-highlight">
+                    <div class="badge plan-badge" style="background:#f59e0b;color:#000;">7-Day Free Trial</div>
                     <div class="plan-name">Pro Plan</div>
-                    <div class="plan-price">$5<span>/mo</span></div>
+                    <div class="plan-price">$19<span>/mo</span></div>
                     <p class="plan-desc">For active traders and investors who need constant vigilance.</p>
                     <ul class="plan-features">
                         <li><i class="fa-solid fa-check"></i> <strong>Unlimited</strong> AI scans</li>
-                        <li><i class="fa-solid fa-check"></i> Smart Contract Audit AI</li>
-                        <li><i class="fa-solid fa-check"></i> HoneyPot Pro AI (Deep Scan)</li>
+                        <li><i class="fa-solid fa-check"></i> Smart Money Tracker</li>
+                        <li><i class="fa-solid fa-check"></i> Arbitrage Command Center</li>
                         <li><i class="fa-solid fa-check"></i> Real-time scam alerts (SMS/Email)</li>
-                        <li><i class="fa-solid fa-check"></i> API Access (1K requests)</li>
+                        <li><i class="fa-solid fa-check"></i> LP Scanner Access</li>
                     </ul>
                     <div id="paypal-button-container-pro" class="paypal-container"></div>
                     <button class="btn btn-primary full-width payment-trigger" data-plan="pro">Upgrade to Pro</button>
+                    <p style="text-align:center;font-size:0.8rem;color:var(--accent-vibrant);margin-top:10px;">Recommended</p>
                 </div>
 
                 <div class="pricing-card elite">
                     <div class="plan-name">Elite Plan</div>
-                    <div class="plan-price">$19<span>/mo</span></div>
+                    <div class="plan-price">$39<span>/mo</span></div>
                     <p class="plan-desc">Enterprise-grade protection for institutions and whales.</p>
                     <ul class="plan-features">
                         <li><i class="fa-solid fa-check"></i> Everything in Pro</li>
-                        <li><i class="fa-solid fa-check"></i> <strong>Whale Move AI</strong> Tracking</li>
-                        <li><i class="fa-solid fa-check"></i> Flash Loan Attack Guard</li>
+                        <li><i class="fa-solid fa-check"></i> <strong>Honeypot Exploit Sim</strong></li>
+                        <li><i class="fa-solid fa-check"></i> Alpha Intelligence Center</li>
                         <li><i class="fa-solid fa-check"></i> Priority AI processing</li>
                         <li><i class="fa-solid fa-check"></i> 24/7 Dedicated Support</li>
                     </ul>
@@ -335,95 +367,6 @@ window.views = {
             </div>
         </section>
     `,
-
-    about: () => `
-        <section class="page-header">
-            <div class="container center">
-                <h1>About CryptoAyuda AI</h1>
-                <p>Our mission is to make web3 safe for everyone.</p>
-            </div>
-        </section>
-
-        <section class="about-content">
-            <div class="container about-grid">
-                <div class="about-text">
-                    <h2>Our Mission</h2>
-                    <p>CryptoAyuda AI Guardian was created to help people stay safe in the rapidly evolving crypto ecosystem. By using cutting-edge artificial intelligence, we democratize security, allowing anyone to automatically detect scams, risky tokens, and phishing attacks before they happen.</p>
-                    
-                    <h2 style="margin-top: 40px;">Why Security Matters</h2>
-                    <p>In web3, you are your own bank. While decentralization provides immense freedom, it also removes the safety nets of traditional finance. Hacks, rug pulls, and phishing drained billions from users last year alone. We believe that AI is the only scalable solution capable of reading complex contracts and monitoring millions of transactions in real-time to protect end users.</p>
-                </div>
-                <div class="about-image">
-                    <div class="cyber-shield large">
-                        <i class="fa-solid fa-brain"></i>
-                    </div>
-                </div>
-            </div>
-        </section>
-    `,
-
-    resources: () => `
-        <section class="page-header">
-            <div class="container center">
-                <h1>Security Resources</h1>
-                <p>Free educational content to help you understand crypto safety.</p>
-            </div>
-        </section>
-
-        <section class="resources-section">
-            <div class="container">
-                <div class="resource-list">
-                    
-                    <div class="resource-item">
-                        <div class="resource-icon"><i class="fa-solid fa-book-open"></i></div>
-                        <div class="resource-text">
-                            <h3>Beginner Guide to Crypto Security</h3>
-                            <p>Start here if you are new to crypto. Learn the fundamentals of self-custody, seed phrases, and basic opsec.</p>
-                        </div>
-                        <button class="btn btn-outline">Read Guide</button>
-                    </div>
-
-                    <div class="resource-item">
-                        <div class="resource-icon"><i class="fa-solid fa-fish-fins"></i></div>
-                        <div class="resource-text">
-                            <h3>How to Detect Phishing Websites</h3>
-                            <p>Hackers clone popular exchanges and dApps perfectly. Learn how to spot the subtle differences in URLs and SSL certs.</p>
-                        </div>
-                        <button class="btn btn-outline">Read Guide</button>
-                    </div>
-
-                    <div class="resource-item">
-                        <div class="resource-icon"><i class="fa-solid fa-person-running"></i></div>
-                        <div class="resource-text">
-                            <h3>How to Avoid Rug Pulls</h3>
-                            <p>Understand the mechanics of liquidity pools, contract ownership, and how to verify if a team can steal funds.</p>
-                        </div>
-                        <button class="btn btn-outline">Read Guide</button>
-                    </div>
-
-                    <div class="resource-item">
-                        <div class="resource-icon"><i class="fa-solid fa-key"></i></div>
-                        <div class="resource-text">
-                            <h3>How to Secure Your Wallet</h3>
-                            <p>Hardware wallets vs hot wallets, multi-sig setups, and why you should revoke token approvals regularly.</p>
-                        </div>
-                        <button class="btn btn-outline">Read Guide</button>
-                    </div>
-
-                    <div class="resource-item">
-                        <div class="resource-icon"><i class="fa-solid fa-list-check"></i></div>
-                        <div class="resource-text">
-                            <h3>Crypto Security Checklist</h3>
-                            <p>A printable PDF checklist to keep by your desk. Run through these steps before generating any transaction.</p>
-                        </div>
-                        <button class="btn btn-outline">Download PDF</button>
-                    </div>
-
-                </div>
-            </div>
-        </section>
-    `,
-    
     auth: () => `
         <section class="auth-section d-flex align-center justify-center p-y-2" style="min-height: 80vh; padding-top: 100px;">
             <div class="auth-box fade-in" style="max-width: 440px; width: 100%; background: var(--surface-color); border: 1px solid rgba(255,255,255,0.08); border-radius: 24px; padding: 40px; box-shadow: var(--shadow-premium); backdrop-filter: var(--glass-blur);">

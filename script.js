@@ -161,6 +161,8 @@ function bindToolEvents(route) {
             else if (toolType === 'smart-money') inputId = 'tsm-address';
             else if (toolType === 'arbitrage') inputId = 'ta-address';
             else if (toolType === 'alpha') inputId = 'tal-address';
+            else if (toolType === 'lp') inputId = 'tl-address';
+            else if (toolType === 'exploit') inputId = 'te-address';
 
             const input = document.getElementById(inputId);
             if (input) {
@@ -184,7 +186,7 @@ function bindToolEvents(route) {
                     toolType === 'wallet' ? 'tw-address' : 
                     toolType === 'phishing' ? 'tp-url' : 
                     toolType === 'smart-money' ? 'tsm-address' : 
-                    toolType === 'arbitrage' ? 'ta-address' : 'tal-address';
+                    toolType === 'arbitrage' ? 'ta-address' : toolType === 'lp' ? 'tl-address' : toolType === 'exploit' ? 'te-address' : 'tal-address';
     const input = document.getElementById(inputId);
     if (input) {
         input.addEventListener('keypress', (e) => {
@@ -196,7 +198,7 @@ function bindToolEvents(route) {
 // === ENTERPRISE SCAN ENGINE ===
 async function runToolScan(type) {
     const token = localStorage.getItem('token');
-    const prefix = type === 'token' ? 'tt' : type === 'wallet' ? 'tw' : type === 'phishing' ? 'tp' : type === 'smart-money' ? 'tsm' : type === 'arbitrage' ? 'ta' : 'tal';
+    const prefix = type === 'token' ? 'tt' : type === 'wallet' ? 'tw' : type === 'phishing' ? 'tp' : type === 'smart-money' ? 'tsm' : type === 'arbitrage' ? 'ta' : type === 'lp' ? 'tl' : type === 'exploit' ? 'te' : 'tal';
     const resultsContainer = document.getElementById(`${prefix}-results`);
     const addressInput = document.getElementById(`${prefix}-address`) || document.getElementById(`${prefix}-url`);
     const chainSelect = document.getElementById(`${prefix}-chain`);
@@ -262,6 +264,8 @@ async function runToolScan(type) {
         else if (type === 'smart-money') renderSmartMoneyResult(data, resultsContainer);
         else if (type === 'arbitrage') renderArbitrageResult(data, resultsContainer);
         else if (type === 'alpha') renderAlphaResult(data, resultsContainer);
+        else if (type === 'lp') renderLpResult(data, resultsContainer);
+        else if (type === 'exploit') renderExploitResult(data, resultsContainer);
 
     } catch (err) {
         resultsContainer.innerHTML = `
@@ -1882,4 +1886,71 @@ function initTacticalGraph(containerId, nodeCount) {
             container.appendChild(edge);
         });
     });
+}
+
+function renderLpResult(data, container) {
+    const riskColor = data.riskScore > 50 ? '#ef4444' : '#10b981';
+    container.innerHTML = `
+        <div class="tool-result-card fade-in" style="border:1px solid ${riskColor}44;">
+            <div style="padding:25px; border-bottom:1px solid rgba(255,255,255,0.05); display:flex; justify-content:space-between; align-items:center;">
+                <div>
+                    <h2 style="margin:0; font-weight:900;"><i class="fa-solid fa-droplet" style="color:#3b82f6;"></i> Liquidity Pool Analysis</h2>
+                    <p style="margin:5px 0 0; color:var(--secondary-color); font-family:var(--font-mono); font-size:0.8rem;">Pool: ${data.address}</p>
+                </div>
+                <div style="text-align:right;">
+                    <div style="font-size:1.5rem; font-weight:900; color:${riskColor};">${data.riskStatus}</div>
+                    <div style="font-size:0.6rem; color:var(--secondary-color); letter-spacing:2px;">LP HEALTH</div>
+                </div>
+            </div>
+            
+            <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap:25px; padding:25px;">
+                <div style="background:rgba(255,255,255,0.03); padding:20px; border-radius:16px; border:1px solid rgba(255,255,255,0.05);">
+                    <div style="font-size:0.65rem; color:var(--secondary-color);">TOTAL LIQUIDITY</div>
+                    <div style="font-size:1.2rem; font-weight:900; color:white; margin-top:5px;">${data.totalLiquidity}</div>
+                </div>
+                <div style="background:rgba(255,255,255,0.03); padding:20px; border-radius:16px; border:1px solid rgba(255,255,255,0.05);">
+                    <div style="font-size:0.65rem; color:var(--secondary-color);">LOCKED %</div>
+                    <div style="font-size:1.2rem; font-weight:900; color:#10b981; margin-top:5px;">${data.lockedPct}</div>
+                </div>
+                <div style="background:rgba(255,255,255,0.03); padding:20px; border-radius:16px; border:1px solid rgba(255,255,255,0.05);">
+                    <div style="font-size:0.65rem; color:var(--secondary-color);">RESERVE RATIO</div>
+                    <div style="font-size:1rem; font-weight:700; color:white; margin-top:5px;">${data.ratio}</div>
+                </div>
+                <div style="background:rgba(255,255,255,0.03); padding:20px; border-radius:16px; border:1px solid rgba(255,255,255,0.05);">
+                    <div style="font-size:0.65rem; color:var(--secondary-color);">IMPERMANENT LOSS RISK</div>
+                    <div style="font-size:1rem; font-weight:700; color:${riskColor}; margin-top:5px;">${data.ilRisk}</div>
+                </div>
+            </div>
+            <div style="padding:20px 25px; background:rgba(0,0,0,0.2); border-top:1px solid rgba(255,255,255,0.05);">
+                <p style="margin:0; font-size:0.85rem; color:var(--secondary-color);">🤖 <strong>AI Conclusion:</strong> ${data.summary}</p>
+            </div>
+        </div>
+    `;
+}
+
+function renderExploitResult(data, container) {
+    const riskColor = data.isHoneypot ? '#ef4444' : '#10b981';
+    container.innerHTML = `
+        <div class="tool-result-card fade-in" style="background:rgba(15,23,42,0.8); border:1px solid ${riskColor}44;">
+            <div style="padding:25px; background:rgba(239,68,68,0.05); border-bottom:1px solid rgba(0,0,0,0.2); display:flex; justify-content:space-between; align-items:center;">
+                <div>
+                    <h2 style="margin:0; font-weight:900;"><i class="fa-solid fa-code-compare" style="color:#ef4444;"></i> Zero-Knowledge VM Sandbox</h2>
+                    <p style="margin:5px 0 0; color:var(--secondary-color); font-family:var(--font-mono); font-size:0.8rem;">Target: ${data.address}</p>
+                </div>
+            </div>
+            
+            <div style="padding:30px; text-align:center;">
+                <div style="width:70px; height:70px; border-radius:50%; background:${riskColor}22; border:2px solid ${riskColor}; display:flex; align-items:center; justify-content:center; margin:0 auto 15px;">
+                    <i class="fa-solid ${data.isHoneypot ? 'fa-triangle-exclamation' : 'fa-check'}" style="color:${riskColor}; font-size:2rem;"></i>
+                </div>
+                <h3 style="color:${riskColor}; margin-bottom:10px;">${data.simulationResult}</h3>
+                <p style="color:var(--secondary-color);">Simulated Buy: <strong>${data.buySim}</strong> | Simulated Sell: <strong style="color:${riskColor};">${data.sellSim}</strong></p>
+                
+                <div style="text-align:left; max-width:600px; margin:20px auto 0; padding:20px; background:rgba(0,0,0,0.3); border-radius:12px; font-family:var(--font-mono); font-size:0.75rem;">
+                    <p style="color:#ef4444; margin-bottom:10px;">EXECUTION TRACE LOGS:</p>
+                    ${data.traces.map(t => `<div style="color:#94a3b8; margin-bottom:5px;">> ${t}</div>`).join('')}
+                </div>
+            </div>
+        </div>
+    `;
 }

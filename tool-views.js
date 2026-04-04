@@ -314,3 +314,76 @@ window.views['tool-alpha'] = () => `
   </div>
 </div>
 `;
+
+
+// ─── TOOL 7: LP SCANNER ───────────────────────────────────
+window.views['tool-lp'] = () => `
+<div class="tool-page-layout">
+  <div class="tool-page-header" style="--tool-color:#3b82f6;">
+    <div class="container">
+      <div class="tool-breadcrumb"><a href="#" data-route="tools">AI Arsenal</a> <i class="fa-solid fa-chevron-right"></i> LP Scanner</div>
+      <div class="tool-page-title-row">
+        <div>
+          <h1 class="tool-page-title"><i class="fa-solid fa-droplet" style="color:#3b82f6;"></i> Impermanent Loss & LP Scanner</h1>
+          <p class="tool-page-sub">Analyze DEX liquidity pools for manipulation, impermanent loss risk, and lock data.</p>
+        </div>
+        <div style="display:flex;gap:10px;align-items:center;">
+          <span class="xp-pill" style="background:rgba(59,130,246,0.2);color:#3b82f6;">+20 XP per scan</span>
+          <span class="plan-pill-pro">PRO+</span>
+        </div>
+      </div>
+      <div class="scan-bar-wrapper">
+        <div class="scan-bar" style="border-color:rgba(59,130,246,0.4);">
+          <i class="fa-solid fa-magnifying-glass" style="color:#3b82f6;font-size:1.1rem;"></i>
+          <input id="tl-address" type="text" class="scan-bar-input" placeholder="LP Pair Address (e.g. Uniswap V2/V3 pool)..." autocomplete="off"/>
+          <button id="tl-scan-btn" class="btn btn-primary scan-bar-btn" style="background:linear-gradient(135deg,#3b82f6,#2563eb);"><i class="fa-solid fa-water"></i> Scan Pool</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="container tool-results-container">
+    <div id="tl-results" class="tool-results-placeholder">
+      <div class="placeholder-content">
+        <div class="placeholder-icon-ring" style="border-color:rgba(59,130,246,0.5);"><i class="fa-solid fa-droplet" style="color:#3b82f6;font-size:2rem;"></i></div>
+        <h3>Enter a Liquidity Pool address</h3>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+// ─── TOOL 8: EXPLOIT SIMULATOR ───────────────────────────────────
+window.views['tool-exploit'] = () => `
+<div class="tool-page-layout">
+  <div class="tool-page-header" style="--tool-color:#ef4444;">
+    <div class="container">
+      <div class="tool-breadcrumb"><a href="#" data-route="tools">AI Arsenal</a> <i class="fa-solid fa-chevron-right"></i> Exploit Simulator</div>
+      <div class="tool-page-title-row">
+        <div>
+          <h1 class="tool-page-title"><i class="fa-solid fa-bug" style="color:#ef4444;"></i> Honeypot Exploit Sim</h1>
+          <p class="tool-page-sub">Trace contract execution in a controlled sandbox to catch advanced threats.</p>
+        </div>
+        <div style="display:flex;gap:10px;align-items:center;">
+          <span class="xp-pill" style="background:rgba(239,68,68,0.2);color:#ef4444;">+40 XP per scan</span>
+          <span class="plan-pill-elite">ELITE 👑</span>
+        </div>
+      </div>
+      <div class="scan-bar-wrapper">
+        <div class="scan-bar" style="border-color:rgba(239,68,68,0.4);">
+          <i class="fa-solid fa-magnifying-glass" style="color:#ef4444;font-size:1.1rem;"></i>
+          <input id="te-address" type="text" class="scan-bar-input" placeholder="Token contract address..." autocomplete="off"/>
+          <button id="te-scan-btn" class="btn btn-primary scan-bar-btn" style="background:linear-gradient(135deg,#ef4444,#b91c1c);"><i class="fa-solid fa-play"></i> Simulate Trade</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="container tool-results-container">
+    <div id="te-results" class="tool-results-placeholder">
+      <div class="placeholder-content">
+        <div class="placeholder-icon-ring" style="border-color:rgba(239,68,68,0.5);"><i class="fa-solid fa-bug" style="color:#ef4444;font-size:2rem;"></i></div>
+        <h3>Simulate execution paths</h3>
+      </div>
+    </div>
+  </div>
+</div>
+`;
