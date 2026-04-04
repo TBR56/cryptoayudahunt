@@ -798,9 +798,49 @@ function bindViewEvents(route) {
             });
         });
 
-        // Initialize Tactical Network Graph Demo
-        initTacticalGraph('hero-network-graph', 8);
-        initTacticalGraph('mock-graph-container', 12);
+        const checkBtn = document.getElementById('landing-check-btn');
+        if (checkBtn) {
+            checkBtn.addEventListener('click', () => {
+                const input = document.getElementById('landing-link-input');
+                const val = input.value.trim().toLowerCase();
+                if(!val) return;
+                
+                checkBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Checking...';
+                checkBtn.style.opacity = '0.7';
+
+                setTimeout(() => {
+                    checkBtn.innerHTML = 'Check link now';
+                    checkBtn.style.opacity = '1';
+                    
+                    const resultArea = document.getElementById('landing-result-area');
+                    const resultContent = document.getElementById('landing-result-content');
+                    resultArea.style.display = 'block';
+                    
+                    // Simple mock logic
+                    const isSafe = val.includes('safe');
+                    
+                    if(isSafe) {
+                        resultArea.className = 'result-safe success-anim';
+                        resultContent.innerHTML = `
+                            <div class="center">
+                                <i class="fa-solid fa-shield-check" style="color: var(--risk-low); font-size: 3rem; margin-bottom: 10px;"></i>
+                                <h3 style="color: var(--risk-low); font-size: 1.6rem; margin-bottom: 10px;">✅ This link appears safe</h3>
+                                <p style="color: var(--secondary-color); font-size: 1.1rem;">No known phishing signatures found. Proceed with normal caution.</p>
+                            </div>
+                        `;
+                    } else {
+                        resultArea.className = 'result-unsafe glitch-anim';
+                        resultContent.innerHTML = `
+                            <div class="center">
+                                <i class="fa-solid fa-triangle-exclamation" style="color: var(--risk-high); font-size: 3rem; margin-bottom: 10px;"></i>
+                                <h3 style="color: var(--risk-high); font-size: 1.6rem; margin-bottom: 10px; text-shadow: 0 0 10px rgba(239, 68, 68, 0.5);">⚠️ This link is likely a scam</h3>
+                                <p style="color: var(--primary-color); font-size: 1.1rem; font-weight: 500;">Users lose funds this way every day. Do not connect your wallet.</p>
+                            </div>
+                        `;
+                    }
+                }, 800);
+            });
+        }
     }
     
     if (route === 'tools') {

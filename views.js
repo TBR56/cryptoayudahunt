@@ -4,214 +4,94 @@
 
 window.views = {
     home: () => `
-        <!-- HERO SECTION -->
-        <section class="hero landing-hero" style="min-height: 80vh; display: flex; align-items: center; padding-top: 100px;">
+        <!-- NEW HIGH-CONVERTING LANDING PAGE -->
+        <section class="hero landing-hero center" style="min-height: 80vh;">
             <div class="background-grid"></div>
-            <div class="container hero-container" style="display: grid; grid-template-columns: 1.2fr 1fr; gap: 40px; align-items: center;">
-                <div class="hero-content fade-in" style="text-align: left;">
-                    <div class="feature-pill"><i class="fa-solid fa-microchip"></i> AI-POWERED INSIDER INTELLIGENCE</div>
-                    <h1 style="font-size: 4rem; line-height: 1.1; margin-bottom: 25px; font-weight: 800; letter-spacing: -2px;">
-                        Avoid rug pulls <br><span class="highlight" style="color: var(--accent-color);">before they happen.</span>
-                    </h1>
-                    <p class="hero-sub" style="font-size: 1.25rem; color: var(--secondary-color); margin-bottom: 40px; max-width: 600px;">
-                        Track wallet clusters, liquidity shifts, and insider positioning before it hits the chart. Stop trading blind.
-                    </p>
-                    <div class="hero-cta-area" style="display: flex; align-items: center; gap: 20px;">
-                        <button class="btn btn-primary btn-lg signup-trigger" style="padding: 18px 35px; font-size: 1.1rem;">Start Free Trial</button>
-                        <div style="font-size: 0.85rem; color: var(--secondary-color);">
-                            <div style="color: var(--risk-low); font-weight: bold;"><i class="fa-solid fa-check"></i> No credit card required</div>
-                            <div>Instant access to basic scans</div>
-                        </div>
-                    </div>
-                </div>
-                <div class="hero-visual fade-in" style="position: relative;">
-                    <div class="network-demo-container" style="border: 1px solid var(--border-color); background: rgba(15, 23, 42, 0.5); backdrop-filter: blur(10px);">
-                        <!-- Placeholder for Network Graph Demo -->
-                        <div id="hero-network-graph" style="width: 100%; height: 100%;">
-                             <div class="center" style="height: 100%; opacity: 0.5;">
-                                <i class="fa-solid fa-diagram-project" style="font-size: 4rem; color: var(--accent-glow);"></i>
-                                <p style="font-family: var(--font-mono); font-size: 0.7rem; margin-top: 10px;">ANALYZING CLUSTER DELTA...</p>
-                             </div>
-                        </div>
-                    </div>
-                    <div class="urgency-badge">LIVE INTEL</div>
-                </div>
-            </div>
-        </section>
-
-        <!-- PROBLEM SECTION -->
-        <section class="problem-section" style="padding: 100px 24px; border-top: 1px solid var(--border-color);">
-            <div class="container narrow center">
-                <div class="feature-pill" style="background: var(--danger-soft); color: var(--risk-high); border-color: rgba(239, 68, 68, 0.2);">THE RETAIL TRAP</div>
-                <h2 style="font-size: 3rem; margin-bottom: 20px;">Why most traders lose everything.</h2>
-                <p style="color: var(--secondary-color); font-size: 1.2rem; max-width: 700px; margin-bottom: 60px;">
-                    By the time a token hits your favorite chart or "alpha" group, the insiders have already positioned. You aren't "early"ÔÇöyou are the exit liquidity.
+            <div class="particles" id="particles-container"></div>
+            <div class="container hero-container" style="max-width: 800px; display: block; margin: 0 auto; text-align: center;">
+                <h1 style="font-size: 4rem; line-height: 1.1; margin-bottom: 20px; font-weight: 800; letter-spacing: -2px;">
+                    One wrong click can <br><span style="color: var(--risk-high); text-shadow: 0 0 20px rgba(239, 68, 68, 0.4);">drain your wallet</span>
+                </h1>
+                <p class="hero-sub" style="font-size: 1.3rem; color: var(--secondary-color); margin-bottom: 40px;">
+                    Check any crypto link before it's too late
                 </p>
-
-                <div class="benefit-grid" style="text-align: left;">
-                    <div class="pain-point-card">
-                        <i class="fa-solid fa-chart-line" style="color: var(--risk-high); font-size: 1.5rem; margin-bottom: 15px;"></i>
-                        <h4 style="margin-bottom: 10px;">Trailing the Chart</h4>
-                        <p style="font-size: 0.9rem; color: var(--secondary-color);">Price action is a lagging indicator. If you wait for the green candle, the smart money is already clicking "Sell".</p>
+                
+                <div class="check-link-wrapper" style="position: relative; max-width: 600px; margin: 0 auto;">
+                    <div class="input-group" style="background: rgba(0,0,0,0.6); border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; padding: 12px 20px; margin-bottom: 20px; display: flex;">
+                        <i class="fa-solid fa-link" style="color: var(--secondary-color); font-size: 1.5rem; margin-right: 15px;"></i>
+                        <input type="text" id="landing-link-input" placeholder="Paste a link here..." style="width: 100%; border: none; background: transparent; color: #fff; font-size: 1.2rem; outline: none; font-family: var(--font-mono);">
                     </div>
-                    <div class="pain-point-card">
-                        <i class="fa-solid fa-users-viewfinder" style="color: var(--risk-high); font-size: 1.5rem; margin-bottom: 15px;"></i>
-                        <h4 style="margin-bottom: 10px;">Invisible Clusters</h4>
-                        <p style="font-size: 0.9rem; color: var(--secondary-color);">100 wallets might look like "organic growth" to you. To us, they are 1 dev using a mixer to hide a 40% supply control.</p>
-                    </div>
-                    <div class="pain-point-card">
-                        <i class="fa-solid fa-bridge-circle-exclamation" style="color: var(--risk-high); font-size: 1.5rem; margin-bottom: 15px;"></i>
-                        <h4 style="margin-bottom: 10px;">Liquidity Fakes</h4>
-                        <p style="font-size: 0.9rem; color: var(--secondary-color);">"Liquidity Locked" means nothing if the dev has a secret mint function or a hidden proxy to pull it all in one block.</p>
-                    </div>
+                    <button id="landing-check-btn" class="btn btn-primary full-width btn-danger-glow" style="padding: 20px; font-size: 1.3rem; border-radius: 16px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px;">
+                        Check link now
+                    </button>
+                    <p style="margin-top: 15px; font-size: 0.95rem; color: var(--secondary-color);">No signup required &bull; Instant result</p>
+                </div>
+                
+                <!-- INSTANT RESULT -->
+                <div id="landing-result-area" style="display: none; margin-top: 40px; padding: 30px; border-radius: 16px; position: relative; border: 2px solid transparent;">
+                    <div id="landing-result-content" style="position: relative; z-index: 2;"></div>
                 </div>
             </div>
         </section>
 
-        <!-- SOLUTION SECTION -->
-        <section class="solution-section" style="padding: 120px 24px; background: rgba(15, 23, 42, 0.3);">
-            <div class="container" style="display: grid; grid-template-columns: 1fr 1.2fr; gap: 80px; align-items: center;">
-                <div class="solution-visual">
-                    <img src="https://images.unsplash.com/photo-1639762681485-074b7f938ba0?auto=format&fit=crop&q=80&w=800" alt="Data Intelligence" style="width: 100%; border-radius: 20px; box-shadow: var(--shadow-premium); filter: grayscale(1) contrast(1.2) brightness(0.8);">
-                </div>
-                <div class="solution-content">
-                    <div class="feature-pill">THE INSIDER EDGE</div>
-                    <h2 style="font-size: 3rem; margin-bottom: 25px;">See the moves <u>before</u> they hit the chart.</h2>
-                    <p style="color: var(--secondary-color); font-size: 1.1rem; margin-bottom: 40px;">
-                        CryptoAyuda analyzes raw mempool data and cross-chain wallet relationships to identify "Dev Clusters" and "Insider Positioning" in milliseconds.
-                    </p>
-
-                    <div style="display: grid; gap: 30px;">
-                        <div style="display: flex; gap: 20px;">
-                            <div class="center" style="width: 50px; height: 50px; background: var(--success-soft); border-radius: 12px; color: var(--risk-low); flex-shrink: 0;">
-                                <i class="fa-solid fa-diagram-nested"></i>
-                            </div>
-                            <div>
-                                <h4 style="margin-bottom: 5px;">Cluster Detection</h4>
-                                <p style="font-size: 0.9rem; color: var(--secondary-color);">Instantly map how many "different" buyers are actually controlled by the same private key.</p>
-                            </div>
-                        </div>
-                        <div style="display: flex; gap: 20px;">
-                            <div class="center" style="width: 50px; height: 50px; background: var(--success-soft); border-radius: 12px; color: var(--risk-low); flex-shrink: 0;">
-                                <i class="fa-solid fa-droplet"></i>
-                            </div>
-                            <div>
-                                <h4 style="margin-bottom: 5px;">Liquidity Shift Alerts</h4>
-                                <p style="font-size: 0.9rem; color: var(--secondary-color);">Real-time tracking of stealth liquidity withdrawals that simple scanners miss.</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- VISUAL DEMO SECTION -->
-        <section class="demo-section center" style="padding: 100px 24px;">
-             <div class="container center">
-                <div class="section-header">
-                    <h2>Professional Intelligence Dashboard</h2>
-                    <p style="color: var(--secondary-color);">Actionable data, not just raw logs.</p>
-                </div>
-                <div class="network-demo-container" style="width: 100%; max-width: 1000px; margin-top: 50px; border-color: var(--accent-glow);">
-                     <div style="padding: 20px; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.3);">
-                        <div style="display:flex; gap:10px; align-items:center;">
-                            <div style="width:10px; height:10px; border-radius:50%; background: #ef4444; box-shadow: 0 0 5px #ef4444;"></div>
-                            <span style="font-family: var(--font-mono); font-size: 0.7rem; color: var(--secondary-color);">DEEP SCAN ACTIVE</span>
-                        </div>
-                        <div style="font-family: var(--font-mono); font-size: 0.7rem; color: var(--accent-color);">[ ANALYZING TOKEN: $HYPE_GEM ]</div>
-                     </div>
-                     <div id="dashboard-mock-area" style="height: 400px; display: grid; grid-template-columns: 2fr 1fr; padding: 20px; gap: 20px;">
-                        <div style="background: rgba(255,255,255,0.02); border: 1px solid var(--border-color); border-radius: 12px; position: relative;" class="center">
-                             <!-- Complex Layout Simulation -->
-                             <div style="width: 100%; height: 100%; position: relative;" id="mock-graph-container">
-                                <i class="fa-solid fa-project-diagram" style="font-size: 10rem; opacity: 0.05;"></i>
-                                <div style="position: absolute; top: 20%; left: 30%;" class="network-node"><div class="pulse-ring"></div></div>
-                                <div style="position: absolute; top: 60%; left: 70%;" class="network-node"></div>
-                                <div style="position: absolute; top: 40%; left: 50%;" class="network-node" style="background:#ef4444; box-shadow: 0 0 15px #ef4444;"></div>
-                             </div>
-                        </div>
-                        <div style="display: grid; gap: 10px;">
-                            <div style="background: rgba(239,68,68,0.1); border: 1px solid rgba(239,68,68,0.3); border-radius: 8px; padding: 15px;">
-                                <div style="font-size: 0.6rem; color: var(--risk-high);">RUG PROBABILITY</div>
-                                <div style="font-size: 1.5rem; font-weight: 900; color: var(--risk-high);">94.2%</div>
-                            </div>
-                            <div style="background: rgba(255,255,255,0.02); border: 1px solid var(--border-color); border-radius: 8px; padding: 15px;">
-                                <div style="font-size: 0.6rem; color: var(--secondary-color);">INSIDER CLUSTERS</div>
-                                <div style="font-size: 1.5rem; font-weight: 900;">18 Detected</div>
-                            </div>
-                        </div>
-                     </div>
-                </div>
-             </div>
-        </section>
-
-        <!-- BENEFITS SECTION -->
-        <section class="benefits-section" style="padding: 100px 24px; border-top: 1px solid var(--border-color);">
-            <div class="container narrow center">
-                <h2>Designed for the 0.1% of traders.</h2>
-                <div class="benefit-grid">
-                    <div class="benefit-card">
-                        <div class="benefit-icon"><i class="fa-solid fa-shield-halved"></i></div>
-                        <h3>Avoid Exit Liquidity</h3>
-                        <p>Stop being the person who buys the local top. See when the smart money starts their distribution phase.</p>
-                    </div>
-                    <div class="benefit-card">
-                        <div class="benefit-icon"><i class="fa-solid fa-bolt-lightning"></i></div>
-                        <h3>Early Detection</h3>
-                        <p>Identify "Safe" memecoins with organic holder distribution before they trend on social media.</p>
-                    </div>
-                    <div class="benefit-card">
-                        <div class="benefit-icon"><i class="fa-solid fa-database"></i></div>
-                        <h3>Data Over Hype</h3>
-                        <p>Ignore the Twitter bot comments. Base your entries on hard on-chain wallet behavior and liquidity depth.</p>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- SOCIAL PROOF SECTION -->
-        <section class="proof-section" style="padding: 80px 24px; background: rgba(0,0,0,0.4);">
+        <!-- SOCIAL PROOF -->
+        <section class="social-proof center" style="padding: 40px 24px; border-top: 1px solid rgba(255,255,255,0.05); background: rgba(0,0,0,0.3);">
             <div class="container">
-                <p style="text-align: center; color: var(--secondary-color); font-size: 0.8rem; margin-bottom: 40px; text-transform: uppercase; letter-spacing: 2px;">Used by serious hunters to avoid bad entries</p>
-                <div class="testimonial-row">
-                    <div class="testimonial-card">
-                        <p style="font-size: 0.95rem; margin-bottom: 15px;">"I avoided three major rug pulls in my first week. The wallet cluster detection is a game changer for memecoin trading."</p>
-                        <div style="display:flex; align-items:center; gap:10px;">
-                            <div style="width:30px; height:30px; border-radius:50%; background: var(--accent-glow);"></div>
-                            <span style="font-family: var(--font-mono); font-size: 0.75rem;">@WhaleWatcher_7</span>
-                        </div>
-                    </div>
-                    <div class="testimonial-card">
-                        <p style="font-size: 0.95rem; margin-bottom: 15px;">"Charts lie. Wallets don't. CryptoAyuda is the first tool I check before every single trade now."</p>
-                        <div style="display:flex; align-items:center; gap:10px;">
-                            <div style="width:30px; height:30px; border-radius:50%; background: var(--accent-glow);"></div>
-                            <span style="font-family: var(--font-mono); font-size: 0.75rem;">0xAlphaHunter</span>
-                        </div>
-                    </div>
-                    <div class="testimonial-card">
-                        <p style="font-size: 0.95rem; margin-bottom: 15px;">"The insider positioning alerts are scary accurate. I finally feel like I have an edge over the bots."</p>
-                        <div style="display:flex; align-items:center; gap:10px;">
-                            <div style="width:30px; height:30px; border-radius:50%; background: var(--accent-glow);"></div>
-                            <span style="font-family: var(--font-mono); font-size: 0.75rem;">DeFi_Wizard</span>
-                        </div>
-                    </div>
+                <p style="font-size: 1.1rem; color: var(--secondary-color); margin-bottom: 8px;">Used by crypto users to avoid phishing and fake airdrops</p>
+                <div style="font-size: 0.95rem; color: var(--risk-low); font-family: var(--font-mono); opacity: 0.8;">
+                    <i class="fa-solid fa-shield-check"></i> Thousands of links checked daily
                 </div>
             </div>
         </section>
 
-        <!-- FINAL CTA SECTION -->
-        <section class="cta-section center" style="padding: 120px 24px; border-top: 1px solid var(--border-color); position: relative;">
-            <div class="container center">
-                <div class="feature-pill">LIMITED EARLY ACCESS</div>
-                <h2 style="font-size: 3.5rem; margin-bottom: 20px;">Stop trading blind.</h2>
-                <p style="color: var(--secondary-color); font-size: 1.25rem; margin-bottom: 40px; max-width: 600px;">
-                    Join thousands of traders who are using data to protect their capital. Start your free trial today.
-                </p>
-                <button class="btn btn-primary btn-lg signup-trigger" style="padding: 20px 50px; font-size: 1.2rem;">Start Free Trial Now</button>
-                <p style="margin-top: 20px; font-size: 0.8rem; color: var(--secondary-color);">No credit card required ÔÇó Instant access</p>
+        <!-- URGENCY BLOCK -->
+        <section class="urgency-block center" style="padding: 80px 24px; border-top: 1px solid rgba(255,255,255,0.05);">
+            <div class="container" style="max-width: 700px;">
+                <i class="fa-solid fa-triangle-exclamation" style="font-size: 3rem; color: var(--risk-medium); margin-bottom: 20px;"></i>
+                <h2 style="font-size: 2.5rem; margin-bottom: 20px;">New scam links appear every day</h2>
+                <p style="font-size: 1.3rem; color: var(--secondary-color);">Most look identical to real ones.</p>
             </div>
         </section>
-    `,
+
+        <!-- MONETIZATION -->
+        <section class="pricing-section center" style="padding: 100px 24px; border-top: 1px solid var(--border-color); position: relative; overflow: hidden;">
+            <div style="position: absolute; top: -100px; left: 50%; transform: translateX(-50%); width: 800px; height: 300px; background: var(--accent-vibrant); filter: blur(150px); opacity: 0.1;"></div>
+            <div class="container">
+                <h2 style="font-size: 3rem; margin-bottom: 60px;">Stay protected before you click</h2>
+                
+                <div class="pricing-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; align-items: stretch; max-width: 1000px; margin: 0 auto;">
+                    <!-- $7 Plan -->
+                    <div class="pricing-card" style="padding: 40px 30px; background: rgba(15,23,42,0.6); border: 1px solid rgba(255,255,255,0.05); border-radius: 24px; display: flex; flex-direction: column; justify-content: space-between;">
+                        <div>
+                            <div style="font-size: 1.2rem; margin-bottom: 15px; color: var(--secondary-color);">Basic Protection</div>
+                            <div style="font-size: 3.5rem; font-weight: 800; margin-bottom: 10px;">$7<span style="font-size: 1rem; color: var(--secondary-color);">/mo</span></div>
+                        </div>
+                        <button class="btn btn-outline full-width signup-trigger" style="padding: 15px; margin-top: 20px;">Get Basic</button>
+                    </div>
+
+                    <!-- $19 Plan -->
+                    <div class="pricing-card pricing-highlight" style="padding: 50px 30px; background: rgba(15,23,42,0.9); border: 2px solid var(--accent-vibrant); border-radius: 24px; position: relative; box-shadow: 0 0 40px rgba(14, 165, 233, 0.2); display: flex; flex-direction: column; justify-content: space-between; transform: scale(1.05); z-index: 10;">
+                        <div class="badge" style="position: absolute; top: -15px; left: 50%; transform: translateX(-50%); background: var(--accent-vibrant); color: #fff; border: none; padding: 6px 15px; white-space: nowrap;">RECOMMENDED</div>
+                        <div>
+                            <div style="font-size: 1.2rem; margin-bottom: 15px; color: var(--accent-color);">Pro Protection</div>
+                            <div style="font-size: 4rem; font-weight: 800; margin-bottom: 10px;">$19<span style="font-size: 1rem; color: var(--secondary-color);">/mo</span></div>
+                            <div style="color: var(--risk-low); font-size: 0.9rem; margin-bottom: 20px;"><i class="fa-solid fa-gift"></i> 7-day free trial</div>
+                        </div>
+                        <button class="btn btn-primary full-width signup-trigger" style="padding: 18px; font-size: 1.1rem; box-shadow: 0 0 20px rgba(255,255,255,0.2);">Unlock full protection</button>
+                    </div>
+
+                    <!-- $39 Plan -->
+                    <div class="pricing-card" style="padding: 40px 30px; background: rgba(15,23,42,0.6); border: 1px solid rgba(255,255,255,0.05); border-radius: 24px; display: flex; flex-direction: column; justify-content: space-between;">
+                        <div>
+                            <div style="font-size: 1.2rem; margin-bottom: 15px; color: var(--secondary-color);">Elite Protection</div>
+                            <div style="font-size: 3.5rem; font-weight: 800; margin-bottom: 10px;">$39<span style="font-size: 1rem; color: var(--secondary-color);">/mo</span></div>
+                        </div>
+                        <button class="btn btn-outline full-width signup-trigger" style="padding: 15px; margin-top: 20px;">Get Elite</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+`,
 
     tools: () => `
         <section style="padding: 120px 0 40px; background: radial-gradient(ellipse at 50% 0%, rgba(56,189,248,0.08) 0%, transparent 60%);">
