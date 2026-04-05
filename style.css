@@ -1418,14 +1418,16 @@ section {
 }
 
 @media (max-width: 768px) {
-    .nav-links { display: none; }
+    /* .nav-links { display: none; } removed for mobile menu */
     .mobile-menu-btn { display: block; }
     h1 { font-size: 2.5rem; }
     h2 { font-size: 2rem; }
     .footer-container { grid-template-columns: 1fr; gap: 30px; }
     .chatbot-window { bottom: 80px; right: 0; width: calc(100vw - 40px); margin: 0 20px; }
     .tools-grid { grid-template-columns: 1fr; }
-    .pricing-card { width: 100%; }
+    .pricing-grid { grid-template-columns: 1fr !important; gap: 20px !important; }
+    .pricing-card { width: 100%; box-sizing: border-box; }
+    .pricing-highlight { transform: scale(1) !important; z-index: 1 !important; margin-top: 10px; margin-bottom: 10px; }
     .resource-item { flex-direction: column; text-align: center; gap: 16px;}
 }
 
