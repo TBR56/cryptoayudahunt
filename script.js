@@ -802,47 +802,90 @@ function bindViewEvents(route) {
             });
         });
 
+        // Sticky CTA scroll observer
+        const heroObserverTarget = document.getElementById('hero-observer-target');
+        const stickyCta = document.getElementById('sticky-cta');
+        
+        if (heroObserverTarget && stickyCta) {
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach((entry) => {
+                    if (!entry.isIntersecting) {
+                        stickyCta.classList.add('visible');
+                    } else {
+                        stickyCta.classList.remove('visible');
+                    }
+                });
+            }, { threshold: 0.1 });
+            observer.observe(heroObserverTarget);
+        }
+
+        const runCheckLogic = (btn) => {
+            const input = document.getElementById('landing-link-input');
+            const val = input.value.trim().toLowerCase();
+            
+            if(!val) {
+                // If triggered from sticky CTA and empty, jump up to the input
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+                if (input) input.focus();
+                return;
+            }
+            
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Checking...';
+            btn.style.opacity = '0.7';
+
+            setTimeout(() => {
+                btn.innerHTML = originalText;
+                btn.style.opacity = '1';
+                
+                const resultArea = document.getElementById('landing-result-area');
+                const resultContent = document.getElementById('landing-result-content');
+                resultArea.style.display = 'block';
+                
+                // Simple mock logic
+                const isSafe = val.includes('safe');
+                
+                if(isSafe) {
+                    resultArea.className = 'result-safe success-anim';
+                    resultContent.innerHTML = `
+                        <div class="center">
+                            <i class="fa-solid fa-shield-check result-icon-large result-icon-pulse-green"></i>
+                            <h3 style="color: var(--risk-low); font-size: 1.6rem; margin-bottom: 10px;">✅ This link is safe</h3>
+                            <p style="color: var(--secondary-color); font-size: 1.1rem;">No hidden threats detected. You may proceed.</p>
+                        </div>
+                    `;
+                } else {
+                    resultArea.className = 'result-unsafe glitch-anim';
+                    resultContent.innerHTML = `
+                        <div class="center">
+                            <i class="fa-solid fa-triangle-exclamation result-icon-large result-icon-pulse-red"></i>
+                            <h3 style="color: var(--risk-high); font-size: 1.6rem; margin-bottom: 10px; text-shadow: 0 0 10px rgba(239, 68, 68, 0.5);">⚠️ HIGH RISK SCAM</h3>
+                            <p style="color: var(--primary-color); font-size: 1.1rem; font-weight: 500;">Do not connect your wallet! This site is flagged as malicious.</p>
+                        </div>
+                    `;
+                }
+                
+                // Scroll to result on complete
+                resultArea.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }, 600);
+        };
+
         const checkBtn = document.getElementById('landing-check-btn');
         if (checkBtn) {
-            checkBtn.addEventListener('click', () => {
-                const input = document.getElementById('landing-link-input');
-                const val = input.value.trim().toLowerCase();
-                if(!val) return;
-                
-                checkBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Checking...';
-                checkBtn.style.opacity = '0.7';
-
-                setTimeout(() => {
-                    checkBtn.innerHTML = 'Check link now';
-                    checkBtn.style.opacity = '1';
-                    
-                    const resultArea = document.getElementById('landing-result-area');
-                    const resultContent = document.getElementById('landing-result-content');
-                    resultArea.style.display = 'block';
-                    
-                    // Simple mock logic
-                    const isSafe = val.includes('safe');
-                    
-                    if(isSafe) {
-                        resultArea.className = 'result-safe success-anim';
-                        resultContent.innerHTML = `
-                            <div class="center">
-                                <i class="fa-solid fa-shield-check" style="color: var(--risk-low); font-size: 3rem; margin-bottom: 10px;"></i>
-                                <h3 style="color: var(--risk-low); font-size: 1.6rem; margin-bottom: 10px;">✅ This link appears safe</h3>
-                                <p style="color: var(--secondary-color); font-size: 1.1rem;">No known phishing signatures found. Proceed with normal caution.</p>
-                            </div>
-                        `;
-                    } else {
-                        resultArea.className = 'result-unsafe glitch-anim';
-                        resultContent.innerHTML = `
-                            <div class="center">
-                                <i class="fa-solid fa-triangle-exclamation" style="color: var(--risk-high); font-size: 3rem; margin-bottom: 10px;"></i>
-                                <h3 style="color: var(--risk-high); font-size: 1.6rem; margin-bottom: 10px; text-shadow: 0 0 10px rgba(239, 68, 68, 0.5);">⚠️ This link is likely a scam</h3>
-                                <p style="color: var(--primary-color); font-size: 1.1rem; font-weight: 500;">Users lose funds this way every day. Do not connect your wallet.</p>
-                            </div>
-                        `;
-                    }
-                }, 800);
+            checkBtn.addEventListener('click', function() {
+                // adding tap effect
+                this.classList.add('btn-tap-effect');
+                setTimeout(() => this.classList.remove('btn-tap-effect'), 150);
+                runCheckLogic(this);
+            });
+        }
+        
+        const stickyCheckBtn = document.querySelector('.sticky-check-btn');
+        if (stickyCheckBtn) {
+            stickyCheckBtn.addEventListener('click', function() {
+                this.classList.add('btn-tap-effect');
+                setTimeout(() => this.classList.remove('btn-tap-effect'), 150);
+                runCheckLogic(this);
             });
         }
     }

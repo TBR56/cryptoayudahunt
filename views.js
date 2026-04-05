@@ -8,7 +8,7 @@ window.views = {
         <section class="hero landing-hero center" style="min-height: 80vh;">
             <div class="background-grid"></div>
             <div class="particles" id="particles-container"></div>
-            <div class="container hero-container" style="max-width: 800px; display: block; margin: 0 auto; text-align: center;">
+            <div class="container hero-container" id="hero-observer-target" style="max-width: 800px; display: block; margin: 0 auto; text-align: center;">
                 <h1 style="font-size: 4rem; line-height: 1.1; margin-bottom: 20px; font-weight: 800; letter-spacing: -2px;">
                     One wrong click can <br><span style="color: var(--risk-high); text-shadow: 0 0 20px rgba(239, 68, 68, 0.4);">drain your wallet</span>
                 </h1>
@@ -33,6 +33,13 @@ window.views = {
                 </div>
             </div>
         </section>
+
+        <!-- STICKY MOBILE CTA -->
+        <div class="sticky-mobile-cta" id="sticky-cta">
+            <button class="btn btn-primary btn-danger-glow sticky-check-btn" style="text-transform: uppercase; font-weight: 800; letter-spacing: 1px;">
+                Check link now
+            </button>
+        </div>
 
         <!-- SOCIAL PROOF -->
         <section class="social-proof center" style="padding: 40px 24px; border-top: 1px solid rgba(255,255,255,0.05); background: rgba(0,0,0,0.3);">
