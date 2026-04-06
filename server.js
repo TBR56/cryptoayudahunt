@@ -131,9 +131,14 @@ function isAdmin(req, res, next) {
     return res.status(403).json({ error: 'Admin access required.' });
 }
 
+// === Helper Functions ===
+function generateAffiliateCode() {
+    return Math.random().toString(36).substring(2, 8).toUpperCase();
+}
+
 // === Auth Routes ===
 app.post('/api/auth/register', async (req, res) => {
-    const { email, password } = req.body;
+    const { email, password, username, ref } = req.body;
     if (!email || !password) return res.status(400).json({ error: "Email and password required" });
 
     const db = readDB();
@@ -143,21 +148,43 @@ app.post('/api/auth/register', async (req, res) => {
 
     try {
         const hash = await bcrypt.hash(password, 10);
+        const affiliateCode = generateAffiliateCode();
+        
+        // Check if referral code is valid
+        let referredBy = null;
+        if (ref) {
+            const referrer = db.users.find(u => u.affiliateCode === ref.toUpperCase());
+            if (referrer) {
+                referredBy = referrer.affiliateCode;
+                referrer.affiliateClicks = (referrer.affiliateClicks || 0) + 1;
+            }
+        }
+
         const user = {
             id: db.nextId++,
             email,
+            username: username || email.split('@')[0],
             password: hash,
             plan: 'free',
             role: 'user',
+            affiliateCode,
+            referredBy,
+            affiliateEarnings: 0,
+            unpaidEarnings: 0,
+            affiliateClicks: 0,
             created_at: new Date().toISOString(),
             dailyScans: 0,
-            lastScanDate: new Date().toISOString().split('T')[0]
+            lastScanDate: new Date().toISOString().split('T')[0],
+            history: [],
+            xp: 0,
+            rank: 'Rookie'
         };
         db.users.push(user);
         writeDB(db);
         res.status(201).json({ message: "User registered successfully", id: user.id });
     } catch (e) {
-        res.status(500).json({ error: "Server error" });
+        console.error('Register error:', e);
+        res.status(500).json({ error: "Server error during registration" });
     }
 });
 
@@ -171,18 +198,26 @@ app.post('/api/auth/login', async (req, res) => {
     if (!isMatch) return res.status(400).json({ error: "Invalid credentials" });
 
     const token = jwt.sign(
-        { id: user.id, email: user.email, plan: user.plan, role: user.role },
+        { id: user.id, email: user.email, plan: user.plan, role: user.role, username: user.username },
         JWT_SECRET,
         { expiresIn: '24h' }
     );
-    res.json({ token, plan: user.plan, email: user.email, role: user.role });
+    res.json({ token, plan: user.plan, email: user.email, role: user.role, username: user.username });
 });
 
 app.get('/api/auth/me', authenticateToken, (req, res) => {
     const db = readDB();
     const user = db.users.find(u => u.id === req.user.id);
     if (!user) return res.status(404).json({ error: "User not found" });
-    res.json({ id: user.id, email: user.email, plan: user.plan, role: user.role });
+    res.json({ 
+        id: user.id, 
+        email: user.email, 
+        username: user.username,
+        plan: user.plan, 
+        role: user.role,
+        xp: user.xp || 0,
+        rank: user.rank || 'Rookie'
+    });
 });
 
 // === Admin Routes ===
@@ -229,17 +264,33 @@ app.post('/api/orders/capture', authenticateToken, async (req, res) => {
     const { orderID, planType } = req.body;
     if (planType !== 'pro' && planType !== 'elite') return res.status(400).json({ error: "Invalid plan" });
 
-    // Without a Client Secret, we trust the frontend JS SDK's capture event for this MVP.
-    // The payment goes directly to the configured Payee email in the frontend.
     const db = readDB();
     const user = db.users.find(u => u.id === req.user.id);
-    if (user) { 
-        user.plan = planType; 
-        writeDB(db); 
-        res.status(200).json({ message: "Plan upgraded successfully", plan: planType, orderID });
-    } else {
-        res.status(404).json({ error: "User not found" });
+    if (!user) return res.status(404).json({ error: "User not found" });
+
+    user.plan = planType;
+    
+    // Affiliate Reward Logic
+    if (user.referredBy) {
+        const referrer = db.users.find(u => u.affiliateCode === user.referredBy);
+        if (referrer) {
+            let planPrice = 7.00;
+            if (planType === 'pro') planPrice = 19.00;
+            else if (planType === 'elite') planPrice = 39.00;
+            
+            const commission = planPrice * 0.20; // 20% commission
+            referrer.affiliateEarnings = (referrer.affiliateEarnings || 0) + commission;
+            referrer.unpaidEarnings = (referrer.unpaidEarnings || 0) + commission;
+        }
     }
+
+    // Bonus XP
+    const bonusXP = planType === 'elite' ? 500 : 200;
+    user.xp = (user.xp || 0) + bonusXP;
+    user.rank = getRankFromXP(user.xp).name;
+
+    writeDB(db); 
+    res.status(200).json({ message: "Plan upgraded successfully", plan: planType, orderID, bonusXP });
 });
 
 // === Scan Limit Helper ===
@@ -806,99 +857,7 @@ app.get('/api/trading/lp', authenticateToken, async (req, res) => {
         
         res.json({
             success: true, address,
-            totalLiquidity: '
-function recordScan(userId, type, resultSummary) {
-    const db = readDB();
-    const userIndex = db.users.findIndex(u => u.id === userId);
-    if (userIndex === -1) return;
-
-    if (!db.users[userIndex].history) db.users[userIndex].history = [];
-    db.users[userIndex].history.unshift({
-        type,
-        result: resultSummary,
-        timestamp: new Date().toISOString()
-    });
-
-    // Keep only last 15 scans
-    if (db.users[userIndex].history.length > 15) {
-        db.users[userIndex].history = db.users[userIndex].history.slice(0, 15);
-    }
-
-    writeDB(db);
-}
-
-// Payment Verification Endpoint: Upgrades user plan
-app.post('/api/payments/verify', authenticateToken, (req, res) => {
-    try {
-        const { orderID, planType } = req.body;
-        if (!orderID || !planType) return res.status(400).json({ error: 'Order ID and Plan Type required' });
-
-        const db = readDB();
-        const userIndex = db.users.findIndex(u => u.id === req.user.id);
-        if (userIndex === -1) return res.status(404).json({ error: 'User not found' });
-
-        // In a real app, we'd verify the orderID with PayPal API here.
-        // For this implementation, we trust the frontend confirmation.
-        db.users[userIndex].plan = planType.toLowerCase(); // 'pro' or 'elite'
-        
-        // Bonus XP for upgrading
-        const bonusXP = planType.toLowerCase() === 'elite' ? 500 : 200;
-        db.users[userIndex].xp = (db.users[userIndex].xp || 0) + bonusXP;
-
-        writeDB(db);
-        
-        res.json({ 
-            success: true, 
-            message: `Plan upgraded to ${planType} successfully!`,
-            newPlan: db.users[userIndex].plan,
-            bonusXP
-        });
-
-    } catch (e) { res.status(500).json({ error: e.message }); }
-});
-
-// Fetch Leaderboard based on real XP
-app.get('/api/leaderboard', (req, res) => {
-    try {
-        const db = readDB();
-        const leaderboard = db.users
-            .filter(u => u.role !== 'admin') // Optional: hide admins
-            .map(u => ({
-                id: u.id,
-                username: u.username || u.email.split('@')[0],
-                xp: u.xp || 0,
-                rank: u.rank || 'Novice',
-                plan: u.plan
-            }))
-            .sort((a, b) => b.xp - a.xp)
-            .slice(0, 10);
-        
-        res.json(leaderboard);
-    } catch (e) { res.status(500).json({ error: e.message }); }
-});
-
-// Fetch Scan History
-app.get('/api/profile/history', authenticateToken, (req, res) => {
-    try {
-        const db = readDB();
-        const user = db.users.find(u => u.id === req.user.id);
-        if (!user) return res.status(404).json({ error: 'User not found' });
-        res.json(user.history || []);
-    } catch (e) { res.status(500).json({ error: e.message }); }
-});
-
-
-// Export for Vercel Serverless Functions
-module.exports = app;
-
-
-// Only start listening locally
-if (require.main === module) {
-    app.listen(PORT, () => {
-        console.log(`CryptoAyuda Backend Server running on http://localhost:${PORT}`);
-    });
-}
- + parseInt(liq).toLocaleString(),
+            totalLiquidity: parseInt(liq).toLocaleString(),
             lockedPct: locked + '%',
             ratio: '1 ETH : 4.4M TKN',
             ilRisk: risk,
@@ -909,122 +868,97 @@ if (require.main === module) {
     } catch(e) { res.status(500).json({ error: e.message }); }
 });
 
-// Fast mock for Exploit Simulator
-app.get('/api/trading/exploit', authenticateToken, async (req, res) => {
-    try {
-        const { address } = req.query;
-        const isElite = req.user.plan === 'elite' || req.user.role === 'admin';
-        if (!isElite) return res.status(403).json({ error: 'Elite plan required.', planGate: true });
+// === Affiliate Logic Endpoints ===
+app.get('/api/affiliate/stats', authenticateToken, (req, res) => {
+    const db = readDB();
+    const user = db.users.find(u => u.id === req.user.id);
+    if (!user) return res.status(404).json({ error: "User not found" });
 
-        const isHoney = Math.random() > 0.5;
-        
-        res.json({
-            success: true, address,
-            isHoneypot: isHoney,
-            simulationResult: isHoney ? 'TRAP DETECTED: UNABLE TO SELL' : 'SIMULATION PASSED',
-            buySim: 'SUCCESS (Gas: 0.04m)',
-            sellSim: isHoney ? 'REVERTED (Error: Transfer_Failed)' : 'SUCCESS (Gas: 0.05m)',
-            traces: [
-                'Initializing isolated EVM Sandbox...',
-                'Mocking 1.0 ETH liquidity environment...',
-                '[Call] router.swapExactETHForTokens(1.0 ETH)',
-                'Buy transaction simulated successfully.',
-                '[Call] token.approve(router, max_uint)',
-                '[Call] router.swapExactTokensForETH(all)',
-                isHoney ? 'FATAL: Revert reason: "Not whitelisted"' : 'Sell transaction completed.',
-                'Sandbox environment tearing down.'
-            ]
-        });
-    } catch(e) { res.status(500).json({ error: e.message }); }
+    // Count referrals
+    const referrals = db.users.filter(u => u.referredBy === user.affiliateCode);
+    const converted = referrals.filter(u => u.plan !== 'free').length;
+
+    res.json({
+        code: user.affiliateCode || 'N/A',
+        clicks: user.affiliateClicks || 0,
+        referrals: referrals.length,
+        conversions: converted,
+        earnings: user.affiliateEarnings || 0,
+        unpaidEarnings: user.unpaidEarnings || 0
+    });
 });
 
-// Store scan in history (helper)
+app.get('/api/admin/affiliates', authenticateToken, isAdmin, (req, res) => {
+    const db = readDB();
+    const affiliates = db.users.filter(u => u.affiliateCode).map(u => {
+        const referrals = db.users.filter(usr => usr.referredBy === u.affiliateCode);
+        return {
+            id: u.id,
+            email: u.email,
+            code: u.affiliateCode,
+            referrals: referrals.length,
+            earnings: u.affiliateEarnings || 0,
+            unpaid: u.unpaidEarnings || 0
+        };
+    });
+    res.json(affiliates);
+});
+
+app.post('/api/admin/affiliates/payout', authenticateToken, isAdmin, (req, res) => {
+    const { userId } = req.body;
+    const db = readDB();
+    const user = db.users.find(u => u.id === userId);
+    if (!user) return res.status(404).json({ error: "User not found" });
+    
+    user.unpaidEarnings = 0;
+    writeDB(db);
+    res.json({ success: true, message: "Payout recorded" });
+});
+
+// === Other Profile Routes ===
+app.get('/api/profile/history', authenticateToken, (req, res) => {
+    const db = readDB();
+    const user = db.users.find(u => u.id === req.user.id);
+    if (!user) return res.status(404).json({ error: 'User not found' });
+    res.json(user.history || []);
+});
+
+app.get('/api/leaderboard', (req, res) => {
+    const db = readDB();
+    const leaderboard = db.users
+        .filter(u => u.role !== 'admin')
+        .map(u => ({
+            username: u.username || u.email.split('@')[0],
+            email: u.email.substring(0,3) + '***@' + u.email.split('@')[1],
+            xp: u.xp || 0,
+            rank: u.rank || 'Rookie'
+        }))
+        .sort((a, b) => b.xp - a.xp)
+        .slice(0, 10);
+    res.json(leaderboard);
+});
+
+// === Helper Functions ===
 function recordScan(userId, type, resultSummary) {
     const db = readDB();
-    const userIndex = db.users.findIndex(u => u.id === userId);
-    if (userIndex === -1) return;
+    const user = db.users.find(u => u.id === userId);
+    const targetUser = db.users.find(u => u.id === userId);
+    if (!targetUser) return;
 
-    if (!db.users[userIndex].history) db.users[userIndex].history = [];
-    db.users[userIndex].history.unshift({
+    if (!targetUser.history) targetUser.history = [];
+    targetUser.history.unshift({
         type,
         result: resultSummary,
         timestamp: new Date().toISOString()
     });
 
-    // Keep only last 15 scans
-    if (db.users[userIndex].history.length > 15) {
-        db.users[userIndex].history = db.users[userIndex].history.slice(0, 15);
-    }
-
+    if (targetUser.history.length > 15) targetUser.history = targetUser.history.slice(0, 15);
     writeDB(db);
 }
 
-// Payment Verification Endpoint: Upgrades user plan
-app.post('/api/payments/verify', authenticateToken, (req, res) => {
-    try {
-        const { orderID, planType } = req.body;
-        if (!orderID || !planType) return res.status(400).json({ error: 'Order ID and Plan Type required' });
-
-        const db = readDB();
-        const userIndex = db.users.findIndex(u => u.id === req.user.id);
-        if (userIndex === -1) return res.status(404).json({ error: 'User not found' });
-
-        // In a real app, we'd verify the orderID with PayPal API here.
-        // For this implementation, we trust the frontend confirmation.
-        db.users[userIndex].plan = planType.toLowerCase(); // 'pro' or 'elite'
-        
-        // Bonus XP for upgrading
-        const bonusXP = planType.toLowerCase() === 'elite' ? 500 : 200;
-        db.users[userIndex].xp = (db.users[userIndex].xp || 0) + bonusXP;
-
-        writeDB(db);
-        
-        res.json({ 
-            success: true, 
-            message: `Plan upgraded to ${planType} successfully!`,
-            newPlan: db.users[userIndex].plan,
-            bonusXP
-        });
-
-    } catch (e) { res.status(500).json({ error: e.message }); }
-});
-
-// Fetch Leaderboard based on real XP
-app.get('/api/leaderboard', (req, res) => {
-    try {
-        const db = readDB();
-        const leaderboard = db.users
-            .filter(u => u.role !== 'admin') // Optional: hide admins
-            .map(u => ({
-                id: u.id,
-                username: u.username || u.email.split('@')[0],
-                xp: u.xp || 0,
-                rank: u.rank || 'Novice',
-                plan: u.plan
-            }))
-            .sort((a, b) => b.xp - a.xp)
-            .slice(0, 10);
-        
-        res.json(leaderboard);
-    } catch (e) { res.status(500).json({ error: e.message }); }
-});
-
-// Fetch Scan History
-app.get('/api/profile/history', authenticateToken, (req, res) => {
-    try {
-        const db = readDB();
-        const user = db.users.find(u => u.id === req.user.id);
-        if (!user) return res.status(404).json({ error: 'User not found' });
-        res.json(user.history || []);
-    } catch (e) { res.status(500).json({ error: e.message }); }
-});
-
-
-// Export for Vercel Serverless Functions
+// Export for Vercel
 module.exports = app;
 
-
-// Only start listening locally
 if (require.main === module) {
     app.listen(PORT, () => {
         console.log(`CryptoAyuda Backend Server running on http://localhost:${PORT}`);

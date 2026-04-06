@@ -5,100 +5,98 @@
 window.views = {
     home: () => `
         <!-- NEW HIGH-CONVERTING LANDING PAGE -->
-        <section class="hero landing-hero center" style="min-height: 80vh;">
+        <section class="hero landing-hero center" style="min-height: 85vh; display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; padding: 20px;">
             <div class="background-grid"></div>
             <div class="particles" id="particles-container"></div>
-            <div class="container hero-container" id="hero-observer-target" style="max-width: 800px; display: block; margin: 0 auto; text-align: center;">
-                <h1 style="font-size: 4rem; line-height: 1.1; margin-bottom: 20px; font-weight: 800; letter-spacing: -2px;">
-                    One wrong click can <br><span style="color: var(--risk-high); text-shadow: 0 0 20px rgba(239, 68, 68, 0.4);">drain your wallet</span>
+            <div class="container hero-container" id="hero-observer-target" style="max-width: 900px; text-align: center; position: relative; z-index: 5;">
+                <div class="badge fade-in" style="margin-bottom: 20px; text-transform: uppercase; letter-spacing: 2px;">
+                    <i class="fa-solid fa-shield-halved" style="margin-right: 8px;"></i> AI-Powered Shield v3.0
+                </div>
+                <h1 class="fade-up" style="font-size: clamp(2.5rem, 8vw, 4.5rem); line-height: 1; margin-bottom: 24px; font-weight: 900; letter-spacing: -2px;">
+                    One wrong click can <br><span class="text-glow-red" style="color: var(--risk-high);">drain your wallet</span>
                 </h1>
-                <p class="hero-sub" style="font-size: 1.3rem; color: var(--secondary-color); margin-bottom: 40px;">
-                    Check any crypto link before it's too late
+                <p class="hero-sub fade-up" style="font-size: clamp(1.1rem, 3vw, 1.4rem); color: var(--secondary-color); margin-bottom: 50px; max-width: 650px; margin-left: auto; margin-right: auto; opacity: 0.9;">
+                    The internet is full of "Free Airdrops" and "Support" links that lead to wallet drainers. Check any link before you connect.
                 </p>
                 
-                <div class="check-link-wrapper" style="position: relative; max-width: 600px; margin: 0 auto;">
-                    <div class="input-group" style="background: rgba(0,0,0,0.6); border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; padding: 12px 20px; margin-bottom: 20px; display: flex;">
-                        <i class="fa-solid fa-link" style="color: var(--secondary-color); font-size: 1.5rem; margin-right: 15px;"></i>
-                        <input type="text" id="landing-link-input" placeholder="Paste a link here..." style="width: 100%; border: none; background: transparent; color: #fff; font-size: 1.2rem; outline: none; font-family: var(--font-mono);">
+                <div class="landing-check-box fade-up" style="max-width: 700px; margin: 0 auto; background: rgba(2,6,23,0.8); border: 1px solid rgba(255,255,255,0.1); border-radius: 24px; padding: 10px; backdrop-filter: blur(20px); box-shadow: 0 20px 50px rgba(0,0,0,0.5);">
+                    <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                        <div class="input-group-modern" style="flex: 1; padding: 15px 25px; display: flex; align-items: center; min-width: 250px;">
+                            <i class="fa-solid fa-link" style="color: var(--secondary-color); margin-right: 15px; font-size: 1.2rem;"></i>
+                            <input type="text" id="landing-link-input" placeholder="Paste suspicious URL or airdrop link..." style="width: 100%; border: none; background: transparent; color: #fff; font-size: 1.1rem; outline: none; font-family: var(--font-mono);">
+                        </div>
+                        <button id="landing-check-btn" class="btn btn-primary btn-glow" style="padding: 15px 35px; border-radius: 16px; font-weight: 800; font-size: 1rem; text-transform: uppercase;">
+                            Check Link Now
+                        </button>
                     </div>
-                    <button id="landing-check-btn" class="btn btn-primary full-width btn-danger-glow" style="padding: 20px; font-size: 1.3rem; border-radius: 16px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px;">
-                        Check link now
-                    </button>
-                    <p style="margin-top: 15px; font-size: 0.95rem; color: var(--secondary-color);">No signup required &bull; Instant result</p>
                 </div>
                 
-                <!-- INSTANT RESULT -->
-                <div id="landing-result-area" style="display: none; margin-top: 40px; padding: 30px; border-radius: 16px; position: relative; border: 2px solid transparent;">
-                    <div id="landing-result-content" style="position: relative; z-index: 2;"></div>
+                <div id="landing-result-area" style="display: none; margin-top: 40px; min-height: 200px;">
+                    <div id="landing-result-content"></div>
                 </div>
-            </div>
-        </section>
-
-        <!-- STICKY MOBILE CTA -->
-        <div class="sticky-mobile-cta" id="sticky-cta">
-            <button class="btn btn-primary btn-danger-glow sticky-check-btn" style="text-transform: uppercase; font-weight: 800; letter-spacing: 1px;">
-                Check link now
-            </button>
-        </div>
-
-        <!-- SOCIAL PROOF -->
-        <section class="social-proof center" style="padding: 40px 24px; border-top: 1px solid rgba(255,255,255,0.05); background: rgba(0,0,0,0.3);">
-            <div class="container">
-                <p style="font-size: 1.1rem; color: var(--secondary-color); margin-bottom: 8px;">Used by crypto users to avoid phishing and fake airdrops</p>
-                <div style="font-size: 0.95rem; color: var(--risk-low); font-family: var(--font-mono); opacity: 0.8;">
-                    <i class="fa-solid fa-shield-check"></i> Thousands of links checked daily
-                </div>
-            </div>
-        </section>
-
-        <!-- URGENCY BLOCK -->
-        <section class="urgency-block center" style="padding: 80px 24px; border-top: 1px solid rgba(255,255,255,0.05);">
-            <div class="container" style="max-width: 700px;">
-                <i class="fa-solid fa-triangle-exclamation" style="font-size: 3rem; color: var(--risk-medium); margin-bottom: 20px;"></i>
-                <h2 style="font-size: 2.5rem; margin-bottom: 20px;">New scam links appear every day</h2>
-                <p style="font-size: 1.3rem; color: var(--secondary-color);">Most look identical to real ones.</p>
-            </div>
-        </section>
-
-        <!-- MONETIZATION -->
-        <section class="pricing-section center" style="padding: 100px 24px; border-top: 1px solid var(--border-color); position: relative; overflow: hidden;">
-            <div style="position: absolute; top: -100px; left: 50%; transform: translateX(-50%); width: 800px; height: 300px; background: var(--accent-vibrant); filter: blur(150px); opacity: 0.1;"></div>
-            <div class="container">
-                <h2 style="font-size: 3rem; margin-bottom: 60px;">Stay protected before you click</h2>
                 
-                <div class="pricing-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; align-items: stretch; max-width: 1000px; margin: 0 auto;">
-                    <!-- $7 Plan -->
-                    <div class="pricing-card" style="padding: 40px 30px; background: rgba(15,23,42,0.6); border: 1px solid rgba(255,255,255,0.05); border-radius: 24px; display: flex; flex-direction: column; justify-content: space-between;">
-                        <div>
-                            <div style="font-size: 1.2rem; margin-bottom: 15px; color: var(--secondary-color);">Basic Protection</div>
-                            <div style="font-size: 3.5rem; font-weight: 800; margin-bottom: 10px;">$7<span style="font-size: 1rem; color: var(--secondary-color);">/mo</span></div>
-                        </div>
-                        <button class="btn btn-outline full-width signup-trigger" style="padding: 15px; margin-top: 20px;">Get Basic</button>
+                <div class="trust-signals fade-in" style="margin-top: 40px; display: flex; justify-content: center; gap: 25px; opacity: 0.6; flex-wrap: wrap;">
+                    <div style="font-size: 0.85rem;"><i class="fa-solid fa-bolt" style="color: var(--risk-low);"></i> Instant Analysis</div>
+                    <div style="font-size: 0.85rem;"><i class="fa-solid fa-magnifying-glass-shield" style="color: var(--accent-color);"></i> Cross-Chain Registry</div>
+                    <div style="font-size: 0.85rem;"><i class="fa-solid fa-user-shield" style="color: var(--secondary-color);"></i> No Signup Required</div>
+                </div>
+            </div>
+        </section>
+
+        <section class="monetization-section center" id="pricing" style="padding: 100px 24px; background: rgba(0,0,0,0.2);">
+            <div class="container">
+                <h2 style="font-size: 2.8rem; margin-bottom: 20px; font-weight: 800;">Get Enterprise-Grade Protection</h2>
+                <p style="color: var(--secondary-color); margin-bottom: 60px; font-size: 1.2rem;">Pick a plan that fits your hunting style.</p>
+                
+                <div class="pricing-container" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 30px; max-width: 1100px; margin: 0 auto;">
+                    <!-- Basic -->
+                    <div class="plan-card" style="padding: 40px; background: var(--surface-color); border: 1px solid rgba(255,255,255,0.05); border-radius: 30px; text-align: left; transition: transform 0.3s ease;">
+                        <div style="color: var(--secondary-color); font-weight: bold; letter-spacing: 1px; margin-bottom: 10px;">BASIC</div>
+                        <div style="font-size: 3rem; font-weight: 900; margin-bottom: 20px;">$7<span style="font-size: 1rem; color: var(--secondary-color);">/mo</span></div>
+                        <ul style="list-style: none; padding: 0; margin: 0 0 40px; color: var(--secondary-color); line-height: 2;">
+                            <li><i class="fa-solid fa-check text-low"></i> 30 Scans per day</li>
+                            <li><i class="fa-solid fa-check text-low"></i> Wallet Intelligence</li>
+                            <li><i class="fa-solid fa-check text-low"></i> Phishing URL Scanner</li>
+                            <li style="opacity: 0.5; text-decoration: line-through;"><i class="fa-solid fa-xmark"></i> Smart Money Tracker</li>
+                            <li style="opacity: 0.5; text-decoration: line-through;"><i class="fa-solid fa-xmark"></i> Advanced Audit</li>
+                        </ul>
+                        <button class="btn btn-outline full-width payment-trigger" data-plan="basic">Get Basic</button>
                     </div>
 
-                    <!-- $19 Plan -->
-                    <div class="pricing-card pricing-highlight" style="padding: 50px 30px; background: rgba(15,23,42,0.9); border: 2px solid var(--accent-vibrant); border-radius: 24px; position: relative; box-shadow: 0 0 40px rgba(14, 165, 233, 0.2); display: flex; flex-direction: column; justify-content: space-between; transform: scale(1.05); z-index: 10;">
-                        <div class="badge" style="position: absolute; top: -15px; left: 50%; transform: translateX(-50%); background: var(--accent-vibrant); color: #fff; border: none; padding: 6px 15px; white-space: nowrap;">RECOMMENDED</div>
-                        <div>
-                            <div style="font-size: 1.2rem; margin-bottom: 15px; color: var(--accent-color);">Pro Protection</div>
-                            <div style="font-size: 4rem; font-weight: 800; margin-bottom: 10px;">$19<span style="font-size: 1rem; color: var(--secondary-color);">/mo</span></div>
-                            <div style="color: var(--risk-low); font-size: 0.9rem; margin-bottom: 20px;"><i class="fa-solid fa-gift"></i> 7-day free trial</div>
-                        </div>
-                        <button class="btn btn-primary full-width signup-trigger" style="padding: 18px; font-size: 1.1rem; box-shadow: 0 0 20px rgba(255,255,255,0.2);">Unlock full protection</button>
+                    <!-- Pro -->
+                    <div class="plan-card-featured" style="padding: 50px 40px; background: rgba(14, 165, 233, 0.05); border: 2px solid var(--accent-vibrant); border-radius: 30px; text-align: left; position: relative; box-shadow: 0 0 50px rgba(14, 165, 233, 0.15); transform: translateY(-10px);">
+                        <div class="badge" style="position: absolute; top: -15px; left: 50%; transform: translateX(-50%); background: var(--accent-vibrant); border: none;">MOST POPULAR</div>
+                        <div style="color: var(--accent-color); font-weight: bold; letter-spacing: 1px; margin-bottom: 10px;">PRO HUNTER</div>
+                        <div style="font-size: 3.5rem; font-weight: 900; margin-bottom: 20px;">$19<span style="font-size: 1rem; color: var(--secondary-color);">/mo</span></div>
+                        <ul style="list-style: none; padding: 0; margin: 0 0 40px; line-height: 2;">
+                            <li><i class="fa-solid fa-check text-low"></i> <strong>Unlimited</strong> AI Scans</li>
+                            <li><i class="fa-solid fa-check text-low"></i> AI Smart Money Tracking</li>
+                            <li><i class="fa-solid fa-check text-low"></i> Pro Rug Pull Predictor</li>
+                            <li><i class="fa-solid fa-check text-low"></i> Verified Contract Audits</li>
+                            <li><i class="fa-solid fa-check text-low"></i> 24/7 Threat Support</li>
+                        </ul>
+                        <div id="paypal-button-container-pro" class="paypal-container" style="display:none; margin-bottom:15px;"></div>
+                        <button class="btn btn-primary full-width payment-trigger" data-plan="pro">Upgrade to Pro</button>
                     </div>
 
-                    <!-- $39 Plan -->
-                    <div class="pricing-card" style="padding: 40px 30px; background: rgba(15,23,42,0.6); border: 1px solid rgba(255,255,255,0.05); border-radius: 24px; display: flex; flex-direction: column; justify-content: space-between;">
-                        <div>
-                            <div style="font-size: 1.2rem; margin-bottom: 15px; color: var(--secondary-color);">Elite Protection</div>
-                            <div style="font-size: 3.5rem; font-weight: 800; margin-bottom: 10px;">$39<span style="font-size: 1rem; color: var(--secondary-color);">/mo</span></div>
-                        </div>
-                        <button class="btn btn-outline full-width signup-trigger" style="padding: 15px; margin-top: 20px;">Get Elite</button>
+                    <!-- Elite -->
+                    <div class="plan-card" style="padding: 40px; background: var(--surface-color); border: 1px solid rgba(255,255,255,0.05); border-radius: 30px; text-align: left;">
+                        <div style="color: #a855f7; font-weight: bold; letter-spacing: 1px; margin-bottom: 10px;">ELITE WHALE</div>
+                        <div style="font-size: 3rem; font-weight: 900; margin-bottom: 20px;">$39<span style="font-size: 1rem; color: var(--secondary-color);">/mo</span></div>
+                        <ul style="list-style: none; padding: 0; margin: 0 0 40px; color: var(--secondary-color); line-height: 2;">
+                            <li><i class="fa-solid fa-check text-low"></i> Everything in Pro</li>
+                            <li><i class="fa-solid fa-check text-low"></i> Alpha Intelligence Feed</li>
+                            <li><i class="fa-solid fa-check text-low"></i> God-Mode Wallet Vision</li>
+                            <li><i class="fa-solid fa-check text-low"></i> API Key Access (Beta)</li>
+                            <li><i class="fa-solid fa-bolt" style="color: #f59e0b;"></i> Whale Move AI Alerts</li>
+                        </ul>
+                        <div id="paypal-button-container-elite" class="paypal-container" style="display:none; margin-bottom:15px;"></div>
+                        <button class="btn btn-primary full-width payment-trigger" data-plan="elite" style="background: #a855f7; border: none; box-shadow: 0 0 20px rgba(168, 85, 247, 0.3);">Go Elite</button>
                     </div>
                 </div>
             </div>
         </section>
-`,
+    `,
 
     tools: () => `
         <section style="padding: 120px 0 40px; background: radial-gradient(ellipse at 50% 0%, rgba(56,189,248,0.08) 0%, transparent 60%);">
@@ -404,6 +402,10 @@ window.views = {
 
                 <div id="register-form" style="display:none;">
                     <div class="input-group" style="background: rgba(0,0,0,0.4); border-radius: 12px; margin-bottom: 16px;">
+                        <i class="fa-solid fa-user"></i>
+                        <input type="text" id="reg-user" placeholder="Username (for affiliate link)" style="width: 100%;">
+                    </div>
+                    <div class="input-group" style="background: rgba(0,0,0,0.4); border-radius: 12px; margin-bottom: 16px;">
                         <i class="fa-solid fa-envelope"></i>
                         <input type="email" id="reg-email" placeholder="Email Address" style="width: 100%;">
                     </div>
@@ -608,6 +610,82 @@ window.views = {
                     </div>
                     <div id="leaderboard-body" style="min-height:250px;">
                         <div class="text-center py-5" style="color:var(--secondary-color);"><i class="fa-solid fa-spinner fa-spin" style="font-size:2rem;"></i><br>Loading leaderboard...</div>
+                    </div>
+                </div>
+            </div>
+    `,
+
+    affiliate: () => `
+        <section class="page-header" style="padding-top: 120px; padding-bottom: 40px;">
+            <div class="container">
+                <div style="display:flex; align-items:center; gap:20px; margin-bottom:8px;">
+                    <div style="width:48px;height:48px;border-radius:12px;background:linear-gradient(135deg,rgba(16,185,129,0.2),rgba(16,185,129,0.05));border:1px solid rgba(16,185,129,0.3);display:flex;align-items:center;justify-content:center;">
+                        <i class="fa-solid fa-users-viewfinder" style="color:#10b981;font-size:1.2rem;"></i>
+                    </div>
+                    <div>
+                        <h1 style="font-size:2rem;margin:0;">Affiliate Dashboard</h1>
+                        <p style="margin:4px 0 0; color:var(--secondary-color); font-size:0.9rem;">Earn 20% on every premium referral — Hunter's Program.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section style="padding: 0 0 80px;">
+            <div class="container">
+                <!-- Affiliate Quick Stats -->
+                <div id="affiliate-stats" style="display:grid; grid-template-columns:repeat(auto-fit, minmax(200px, 1fr)); gap:20px; margin-bottom:40px;">
+                    <div class="stat-card modern" style="padding:25px; background:var(--surface-color); border:1px solid rgba(255,255,255,0.05); border-radius:20px;">
+                        <span style="font-size:0.75rem; color:var(--secondary-color); text-transform:uppercase; font-family:var(--font-mono); letter-spacing:1px;">Unique Clicks</span>
+                        <div id="aff-clicks" style="font-size:2rem; font-weight:900; margin-top:5px; font-family:var(--font-mono);">—</div>
+                    </div>
+                    <div class="stat-card modern" style="padding:25px; background:var(--surface-color); border:1px solid rgba(255,255,255,0.05); border-radius:20px;">
+                        <span style="font-size:0.75rem; color:var(--secondary-color); text-transform:uppercase; font-family:var(--font-mono); letter-spacing:1px;">Referrals</span>
+                        <div id="aff-referrals" style="font-size:2rem; font-weight:900; margin-top:5px; font-family:var(--font-mono);">—</div>
+                    </div>
+                    <div class="stat-card modern" style="padding:25px; background:var(--surface-color); border:1px solid rgba(255,255,255,0.05); border-radius:20px; border-color:rgba(16,185,129,0.2);">
+                        <span style="font-size:0.75rem; color:var(--secondary-color); text-transform:uppercase; font-family:var(--font-mono); letter-spacing:1px;">Total Earnings</span>
+                        <div id="aff-earnings" style="font-size:2rem; font-weight:900; margin-top:5px; font-family:var(--font-mono); color:var(--risk-low);">$—</div>
+                    </div>
+                    <div class="stat-card modern" style="padding:25px; background:rgba(16,185,129,0.05); border:1px solid rgba(16,185,129,0.2); border-radius:20px;">
+                        <span style="font-size:0.75rem; color:var(--secondary-color); text-transform:uppercase; font-family:var(--font-mono); letter-spacing:1px;">Unpaid Account</span>
+                        <div id="aff-unpaid" style="font-size:2rem; font-weight:900; margin-top:5px; font-family:var(--font-mono); color:#10b981;">$—</div>
+                    </div>
+                </div>
+
+                <div style="display:grid; grid-template-columns: 1.2fr 1fr; gap:30px; align-items: start; flex-wrap: wrap;">
+                    <!-- Referral Link Section -->
+                    <div style="background:var(--surface-color); border:1px solid rgba(255,255,255,0.05); border-radius:24px; padding:35px;">
+                        <h3 style="margin-bottom:10px;"><i class="fa-solid fa-share-nodes" style="color:var(--accent-color); margin-right:12px;"></i> Your Referral Asset</h3>
+                        <p style="color:var(--secondary-color); margin-bottom:25px; font-size:0.95rem;">Share this link. Anyone who signs up using it will be linked to your account forever.</p>
+                        
+                        <div class="copy-link-box" style="background:rgba(0,0,0,0.4); border:1px solid rgba(255,255,255,0.1); border-radius:12px; padding:15px 20px; display:flex; align-items:center; gap:15px;">
+                            <input type="text" id="aff-link-input" readonly value="Loading..." style="background:transparent; border:none; color:#fff; width:100%; font-family:var(--font-mono); font-size:0.95rem; outline:none;">
+                            <button id="btn-copy-aff" class="btn btn-primary" style="padding:8px 20px; font-size:0.8rem; border-radius:8px; white-space:nowrap;">
+                                <i class="fa-solid fa-copy"></i> Copy
+                            </button>
+                        </div>
+                        
+                        <div style="margin-top:30px; padding:20px; background:rgba(16,185,129,0.05); border:1px solid rgba(16,185,129,0.2); border-radius:15px; display:flex; gap:15px;">
+                            <i class="fa-solid fa-circle-question" style="color:#10b981; font-size:1.5rem;"></i>
+                            <div style="font-size:0.9rem; color:rgba(255,255,255,0.8);">
+                                <strong>How it works?</strong><br>
+                                When your referral upgrades to <strong>Pro ($19)</strong>, you get **$3.80**. If they go <strong>Elite ($39)</strong>, you get **$7.80**. Payouts are made monthly via USDT/Bank transfer once your balance exceeds $20.
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Performance Chart / Promo Info -->
+                    <div style="background:var(--surface-color); border:1px solid rgba(255,255,255,0.05); border-radius:24px; padding:35px;">
+                        <h3 style="margin-bottom:6px;"><i class="fa-solid fa-bullhorn" style="color:var(--risk-medium); margin-right:12px;"></i> Marketing Tips</h3>
+                        <p style="color:var(--secondary-color); margin-bottom:24px; font-size:0.9rem;">Boost your hunter earnings.</p>
+                        
+                        <ul class="aff-tips-list" style="list-style:none; padding:0; margin:0; line-height:1.8; font-size:0.9rem; color:var(--secondary-color);">
+                            <li style="margin-bottom:12px;"><i class="fa-solid fa-check-circle" style="color:var(--risk-low); margin-right:10px;"></i> Share in trading Discord groups as a helpful tool.</li>
+                            <li style="margin-bottom:12px;"><i class="fa-solid fa-check-circle" style="color:var(--risk-low); margin-right:10px;"></i> Mention rug pull protection on Twitter/X threads.</li>
+                            <li style="margin-bottom:12px;"><i class="fa-solid fa-check-circle" style="color:var(--risk-low); margin-right:10px;"></i> Post results of your scans to build trust.</li>
+                        </ul>
+                        
+                        <button class="btn btn-outline full-width mt-4" style="color:var(--accent-color); border-color:var(--accent-color);">Download Media Kit</button>
                     </div>
                 </div>
             </div>

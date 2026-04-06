@@ -429,6 +429,160 @@ section {
 }
 
 /* ========================================= */
+/* NEW PREMIUM DESIGN SYSTEM ADDITIONS */
+/* ========================================= */
+
+.fade-up {
+    animation: fadeUp 1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    opacity: 0;
+}
+
+@keyframes fadeUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.text-glow-red {
+    text-shadow: 0 0 25px rgba(239, 68, 68, 0.5), 0 0 50px rgba(239, 68, 68, 0.2);
+}
+
+.btn-glow {
+    background: #fff !important;
+    color: #000 !important;
+    box-shadow: 0 0 20px rgba(255,255,255,0.4);
+    transition: all 0.4s ease;
+}
+
+.btn-glow:hover {
+    box-shadow: 0 0 40px rgba(255,255,255,0.6);
+    transform: translateY(-3px) scale(1.02);
+}
+
+.input-group-modern {
+    background: rgba(255,255,255,0.03);
+    border-radius: 16px;
+    transition: all 0.3s ease;
+}
+
+.input-group-modern:focus-within {
+    background: rgba(255,255,255,0.06);
+    box-shadow: inset 0 0 10px rgba(255,255,255,0.05);
+}
+
+/* Glitch Animation for Danger Result */
+.glitch-container {
+    padding: 40px;
+    background: rgba(239, 68, 68, 0.05);
+    border: 2px solid var(--risk-high);
+    border-radius: 24px;
+    position: relative;
+    overflow: hidden;
+    animation: glitch-pulse 2s infinite;
+}
+
+@keyframes glitch-pulse {
+    0% { box-shadow: 0 0 15px rgba(239, 68, 68, 0.3); }
+    50% { box-shadow: 0 0 40px rgba(239, 68, 68, 0.6); }
+    100% { box-shadow: 0 0 15px rgba(239, 68, 68, 0.3); }
+}
+
+.glitch-text {
+    position: relative;
+    color: var(--risk-high);
+    font-size: 2.5rem;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 5px;
+}
+
+.glitch-text::before,
+.glitch-text::after {
+    content: attr(data-text);
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0.8;
+}
+
+.glitch-text::before {
+    color: #0ff;
+    z-index: -1;
+    animation: glitch-move 0.3s cubic-bezier(.25,.46,.45,.94) both infinite;
+}
+
+.glitch-text::after {
+    color: #f0f;
+    z-index: -2;
+    animation: glitch-move 0.3s cubic-bezier(.25,.46,.45,.94) reverse both infinite;
+}
+
+@keyframes glitch-move {
+    0% { transform: translate(0); }
+    20% { transform: translate(-3px, 3px); }
+    40% { transform: translate(-3px, -3px); }
+    60% { transform: translate(3px, 3px); }
+    80% { transform: translate(3px, -3px); }
+    100% { transform: translate(0); }
+}
+
+/* Safe Pulse Animation */
+.safe-container {
+    padding: 40px;
+    background: rgba(16, 185, 129, 0.05);
+    border: 2px solid var(--risk-low);
+    border-radius: 24px;
+    animation: safe-pulse 3s infinite;
+}
+
+@keyframes safe-pulse {
+    0% { box-shadow: 0 0 10px rgba(16, 185, 129, 0.2); }
+    50% { box-shadow: 0 0 30px rgba(16, 185, 129, 0.4); }
+    100% { box-shadow: 0 0 10px rgba(16, 185, 129, 0.2); }
+}
+
+/* Pricing Card Hover */
+.plan-card:hover {
+    transform: translateY(-10px);
+    border-color: rgba(255,255,255,0.15) !important;
+    background: rgba(15, 23, 42, 0.9) !important;
+}
+
+.plan-card-featured:hover {
+    transform: translateY(-15px);
+    box-shadow: 0 20px 60px rgba(14, 165, 233, 0.3);
+}
+
+/* Affiliate Stats */
+.stat-card.modern {
+    transition: all 0.3s ease;
+}
+
+.stat-card.modern:hover {
+    transform: translateY(-5px);
+    background: rgba(255,255,255,0.02) !important;
+    border-color: rgba(255,255,255,0.1) !important;
+}
+
+.copy-link-box button:active {
+    transform: scale(0.95);
+}
+
+/* Responsive Fixes */
+@media (max-width: 768px) {
+    .hero-container h1 {
+        font-size: 2.5rem !important;
+    }
+    .landing-check-box {
+        padding: 15px;
+    }
+    .input-group-modern {
+        padding: 12px 15px !important;
+    }
+}
+
+/* ========================================= */
 /* Home Page */
 /* ========================================= */
 .hero {
