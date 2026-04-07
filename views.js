@@ -622,9 +622,7 @@ window.views = {
         <section class="page-header" style="padding-top: 120px; padding-bottom: 40px;">
             <div class="container">
                 <div style="display:flex; align-items:center; gap:20px; margin-bottom:8px;">
-                    <div style="width:48px;height:48px;border-radius:12px;background:linear-gradient(135deg,rgba(16,185,129,0.2),rgba(16,185,129,0.05));border:1px solid rgba(16,185,129,0.3);display:flex;align-items:center;justify-content:center;">
-                        <i class="fa-solid fa-users-viewfinder" style="color:#10b981;font-size:1.2rem;"></i>
-                    </div>
+                    <img src="/logo.png" alt="Affiliate Icon" style="width:48px; height:48px; object-fit:contain; background:rgba(16,185,129,0.1); border:1px solid rgba(16,185,129,0.3); border-radius:12px; padding:5px;" onerror="this.onerror=null; this.src='https://raw.githubusercontent.com/lucide-icons/lucide/main/icons/users.svg';">
                     <div>
                         <h1 style="font-size:2rem;margin:0;">Affiliate Dashboard</h1>
                         <p style="margin:4px 0 0; color:var(--secondary-color); font-size:0.9rem;">Earn 20% on every premium referral — Hunter's Program.</p>

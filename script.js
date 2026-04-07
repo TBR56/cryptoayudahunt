@@ -43,9 +43,10 @@ function updateAuthUI() {
 }
 
 // Basic SPA Router
-function navigateTo(route) {
+function navigateTo(route, subRoute = null) {
     const appContent = document.getElementById('app-content');
-    
+    if (!appContent) return;
+
     // Update active class in nav
     document.querySelectorAll('.nav-link').forEach(link => {
         link.classList.remove('active');
@@ -90,20 +91,20 @@ function navigateTo(route) {
     if ((window.views && window.views[route]) || (window.toolViews && window.toolViews[route])) {
         const viewHtml = window.views[route] ? window.views[route]() : window.toolViews[route]();
         appContent.innerHTML = viewHtml;
-        handleRouteLogic(route);
+        handleRouteLogic(route, subRoute);
     } else {
         appContent.innerHTML = `<div class="container center" style="padding:100px 20px;"><h1 style="font-size:4rem; margin-bottom:10px;">404</h1><p style="color:var(--secondary-color); margin-bottom:30px;">This command does not exist in our AI registry.</p><button class="btn btn-primary" onclick="navigateTo('home')">Return Home</button></div>`;
     }
 }
 
 // Handle route-specific initializations after render
-function handleRouteLogic(route) {
+function handleRouteLogic(route, subRoute) {
     bindViewEvents(route);
     if (route.startsWith('tool-')) bindToolEvents(route);
     
     if (route === 'dashboard') setTimeout(loadDashboard, 100);
     else if (route === 'tools') initToolsLogic();
-    else if (route === 'auth') initAuthLogic();
+    else if (route === 'auth') initAuthLogic(subRoute);
     else if (route === 'pricing') initPricingLogic();
     else if (route === 'admin') {
         if (typeof adminLoadStats === 'function') adminLoadStats();
@@ -162,7 +163,7 @@ function initToolsLogic() {
     });
 }
 
-function initAuthLogic() {
+function initAuthLogic(subRoute = null) {
     const tabLogin = document.getElementById('tab-login');
     const tabRegister = document.getElementById('tab-register');
     const formLogin = document.getElementById('login-form');
@@ -182,6 +183,11 @@ function initAuthLogic() {
             if (document.getElementById('login-error')) document.getElementById('login-error').style.display = 'none';
             if (document.getElementById('reg-error')) document.getElementById('reg-error').style.display = 'none';
         });
+
+        // Toggle to register if requested
+        if (subRoute === 'register') {
+            tabRegister.click();
+        }
     }
 
     const btnReg = document.getElementById('btn-register');
@@ -273,7 +279,10 @@ function initPricingLogic() {
     const paymentTriggers = document.querySelectorAll('.payment-trigger');
     paymentTriggers.forEach(btn => {
         btn.addEventListener('click', () => {
-            if (!token) { alert("Please register or log in to purchase a premium plan."); navigateTo('auth'); return; }
+            if (!token) {
+                navigateTo('auth', 'register');
+                return;
+            }
             const plan = btn.getAttribute('data-plan');
             const priceStr = plan === 'basic' ? '7.00' : (plan === 'pro' ? '19.00' : '39.00');
             const containerId = `paypal-button-container-${plan}`;
