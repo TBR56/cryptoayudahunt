@@ -102,7 +102,8 @@ function handleRouteLogic(route, subRoute) {
     bindViewEvents(route);
     if (route.startsWith('tool-')) bindToolEvents(route);
     
-    if (route === 'dashboard') setTimeout(loadDashboard, 100);
+    if (route === 'home') initPricingLogic();
+    else if (route === 'dashboard') setTimeout(loadDashboard, 100);
     else if (route === 'tools') initToolsLogic();
     else if (route === 'auth') initAuthLogic(subRoute);
     else if (route === 'pricing') initPricingLogic();
