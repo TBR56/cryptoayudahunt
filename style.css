@@ -2373,3 +2373,32 @@ section {
   4%, 60% { transform: translate(-2px, 0) skew(0deg); }
   62% { transform: translate(0, 0) skew(5deg); }
 }
+
+/* Pricing Container Mobile Stacking */
+@media (max-width: 600px) {
+    .pricing-container {
+        grid-template-columns: 1fr !important;
+        gap: 20px !important;
+        padding: 0 10px !important;
+    }
+    .plan-card, .plan-card-featured {
+        padding: 30px 20px !important;
+        transform: none !important;
+    }
+}
+
+/* Mobile Navbar Icon Adjustment */
+.mobile-menu-btn {
+    background: transparent;
+    border: none;
+    color: #fff;
+    font-size: 1.5rem;
+    cursor: pointer;
+    display: none;
+}
+
+@media (max-width: 968px) {
+    .mobile-menu-btn {
+        display: block;
+    }
+}
