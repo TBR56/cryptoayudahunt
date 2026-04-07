@@ -153,7 +153,7 @@ app.post('/api/auth/register', async (req, res) => {
         // Check if referral code is valid
         let referredBy = null;
         if (ref) {
-            const referrer = db.users.find(u => u.affiliateCode === ref.toUpperCase());
+            const referrer = db.users.find(u => u.affiliateCode && u.affiliateCode.toUpperCase() === ref.toString().toUpperCase());
             if (referrer) {
                 referredBy = referrer.affiliateCode;
                 referrer.affiliateClicks = (referrer.affiliateClicks || 0) + 1;

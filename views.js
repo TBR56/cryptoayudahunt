@@ -16,14 +16,14 @@ window.views = {
                     One wrong click can <br><span class="text-glow-red" style="color: var(--risk-high);">drain your wallet</span>
                 </h1>
                 <p class="hero-sub fade-up" style="font-size: clamp(1.1rem, 3vw, 1.4rem); color: var(--secondary-color); margin-bottom: 50px; max-width: 650px; margin-left: auto; margin-right: auto; opacity: 0.9;">
-                    The internet is full of "Free Airdrops" and "Support" links that lead to wallet drainers. Check any link before you connect.
+                    Check any crypto link before it's too late. Protect your funds from phishing and fake airdrops instantly.
                 </p>
                 
                 <div class="landing-check-box fade-up" style="max-width: 700px; margin: 0 auto; background: rgba(2,6,23,0.8); border: 1px solid rgba(255,255,255,0.1); border-radius: 24px; padding: 10px; backdrop-filter: blur(20px); box-shadow: 0 20px 50px rgba(0,0,0,0.5);">
                     <div style="display: flex; gap: 10px; flex-wrap: wrap;">
                         <div class="input-group-modern" style="flex: 1; padding: 15px 25px; display: flex; align-items: center; min-width: 250px;">
                             <i class="fa-solid fa-link" style="color: var(--secondary-color); margin-right: 15px; font-size: 1.2rem;"></i>
-                            <input type="text" id="landing-link-input" placeholder="Paste suspicious URL or airdrop link..." style="width: 100%; border: none; background: transparent; color: #fff; font-size: 1.1rem; outline: none; font-family: var(--font-mono);">
+                            <input type="text" id="landing-link-input" placeholder="Paste a link here..." style="width: 100%; border: none; background: transparent; color: #fff; font-size: 1.1rem; outline: none; font-family: var(--font-mono);">
                         </div>
                         <button id="landing-check-btn" class="btn btn-primary btn-glow" style="padding: 15px 35px; border-radius: 16px; font-weight: 800; font-size: 1rem; text-transform: uppercase;">
                             Check Link Now
@@ -31,14 +31,17 @@ window.views = {
                     </div>
                 </div>
                 
+                <p style="margin-top:15px; font-size:0.85rem; color:var(--secondary-color); font-family:var(--font-mono); opacity:0.7;">
+                    No signup required • Instant result
+                </p>
+                
                 <div id="landing-result-area" style="display: none; margin-top: 40px; min-height: 200px;">
                     <div id="landing-result-content"></div>
                 </div>
                 
-                <div class="trust-signals fade-in" style="margin-top: 40px; display: flex; justify-content: center; gap: 25px; opacity: 0.6; flex-wrap: wrap;">
-                    <div style="font-size: 0.85rem;"><i class="fa-solid fa-bolt" style="color: var(--risk-low);"></i> Instant Analysis</div>
-                    <div style="font-size: 0.85rem;"><i class="fa-solid fa-magnifying-glass-shield" style="color: var(--accent-color);"></i> Cross-Chain Registry</div>
-                    <div style="font-size: 0.85rem;"><i class="fa-solid fa-user-shield" style="color: var(--secondary-color);"></i> No Signup Required</div>
+                <div class="trust-signals fade-in" style="margin-top: 60px; display: flex; justify-content: center; gap: 40px; opacity: 0.8; flex-wrap: wrap;">
+                    <div style="font-size: 0.9rem; display:flex; align-items:center; gap:10px;"><i class="fa-solid fa-users" style="color: var(--risk-low);"></i> Trusted by 10k+ Crypto Users</div>
+                    <div style="font-size: 0.9rem; display:flex; align-items:center; gap:10px;"><i class="fa-solid fa-skull-crossbones" style="color: var(--risk-high);"></i> New scams appear every day — don’t click blindly</div>
                 </div>
             </div>
         </section>
@@ -60,12 +63,13 @@ window.views = {
                             <li style="opacity: 0.5; text-decoration: line-through;"><i class="fa-solid fa-xmark"></i> Smart Money Tracker</li>
                             <li style="opacity: 0.5; text-decoration: line-through;"><i class="fa-solid fa-xmark"></i> Advanced Audit</li>
                         </ul>
+                        <div id="paypal-button-container-basic" class="paypal-container" style="display:none; margin-bottom:15px;"></div>
                         <button class="btn btn-outline full-width payment-trigger" data-plan="basic">Get Basic</button>
                     </div>
 
                     <!-- Pro -->
                     <div class="plan-card-featured" style="padding: 50px 40px; background: rgba(14, 165, 233, 0.05); border: 2px solid var(--accent-vibrant); border-radius: 30px; text-align: left; position: relative; box-shadow: 0 0 50px rgba(14, 165, 233, 0.15); transform: translateY(-10px);">
-                        <div class="badge" style="position: absolute; top: -15px; left: 50%; transform: translateX(-50%); background: var(--accent-vibrant); border: none;">MOST POPULAR</div>
+                        <div class="badge" style="position: absolute; top: -15px; left: 50%; transform: translateX(-50%); background: var(--accent-vibrant); border: none;">RECOMMENDED</div>
                         <div style="color: var(--accent-color); font-weight: bold; letter-spacing: 1px; margin-bottom: 10px;">PRO HUNTER</div>
                         <div style="font-size: 3.5rem; font-weight: 900; margin-bottom: 20px;">$19<span style="font-size: 1rem; color: var(--secondary-color);">/mo</span></div>
                         <ul style="list-style: none; padding: 0; margin: 0 0 40px; line-height: 2;">
@@ -73,10 +77,9 @@ window.views = {
                             <li><i class="fa-solid fa-check text-low"></i> AI Smart Money Tracking</li>
                             <li><i class="fa-solid fa-check text-low"></i> Pro Rug Pull Predictor</li>
                             <li><i class="fa-solid fa-check text-low"></i> Verified Contract Audits</li>
-                            <li><i class="fa-solid fa-check text-low"></i> 24/7 Threat Support</li>
                         </ul>
                         <div id="paypal-button-container-pro" class="paypal-container" style="display:none; margin-bottom:15px;"></div>
-                        <button class="btn btn-primary full-width payment-trigger" data-plan="pro">Upgrade to Pro</button>
+                        <button class="btn btn-primary full-width payment-trigger" data-plan="pro">Unlock Full Protection</button>
                     </div>
 
                     <!-- Elite -->

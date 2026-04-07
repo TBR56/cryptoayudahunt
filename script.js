@@ -172,37 +172,69 @@ function initAuthLogic() {
         tabLogin.addEventListener('click', () => {
             tabLogin.classList.add('active'); tabRegister.classList.remove('active');
             formLogin.style.display = 'block'; formRegister.style.display = 'none';
+            if (document.getElementById('login-error')) document.getElementById('login-error').style.display = 'none';
+            if (document.getElementById('reg-error')) document.getElementById('reg-error').style.display = 'none';
+            if (document.getElementById('reg-success')) document.getElementById('reg-success').style.display = 'none';
         });
         tabRegister.addEventListener('click', () => {
             tabRegister.classList.add('active'); tabLogin.classList.remove('active');
             formRegister.style.display = 'block'; formLogin.style.display = 'none';
+            if (document.getElementById('login-error')) document.getElementById('login-error').style.display = 'none';
+            if (document.getElementById('reg-error')) document.getElementById('reg-error').style.display = 'none';
         });
     }
 
     const btnReg = document.getElementById('btn-register');
     if (btnReg) {
         btnReg.addEventListener('click', async () => {
-            const username = document.getElementById('reg-user').value;
-            const email = document.getElementById('reg-email').value;
-            const password = document.getElementById('reg-pass').value;
+            const usernameInput = document.getElementById('reg-user');
+            const emailInput = document.getElementById('reg-email');
+            const passwordInput = document.getElementById('reg-pass');
+            const username = usernameInput ? usernameInput.value.trim() : "";
+            const email = emailInput ? emailInput.value.trim() : "";
+            const password = passwordInput ? passwordInput.value : "";
+            
             const ref = localStorage.getItem('ref') || null;
             const errEl = document.getElementById('reg-error');
             const sucEl = document.getElementById('reg-success');
-            if (!username || !email || !password) { errEl.textContent = "Please fill all fields."; errEl.style.display = 'block'; return; }
+            
+            if (!email || !password) { 
+                errEl.textContent = "Email and password are required."; 
+                errEl.style.display = 'block'; 
+                return; 
+            }
+            
             errEl.style.display = 'none';
             btnReg.disabled = true; btnReg.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Processing...';
+            
             try {
                 const res = await fetch('/api/auth/register', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ username, email, password, ref })
+                    body: JSON.stringify({ username: username || null, email, password, ref })
                 });
                 const data = await res.json();
-                if(!res.ok) throw new Error(data.error);
-                sucEl.textContent = "Hunter Account Created! Redirecting..."; sucEl.style.display = 'block';
-                setTimeout(() => { if (tabLogin) tabLogin.click(); }, 2000);
-            } catch(e) { errEl.textContent = e.message; errEl.style.display = 'block'; }
-            finally { btnReg.disabled = false; btnReg.innerHTML = 'Create Account <i class="fa-solid fa-user-plus ml-2"></i>'; }
+                if(!res.ok) throw new Error(data.error || "Registration failed");
+                
+                sucEl.textContent = "Hunter Account Created! Redirecting to login..."; 
+                sucEl.style.display = 'block';
+                
+                // Pre-fill login email for convenience
+                const loginEmailInput = document.getElementById('login-email');
+                if (loginEmailInput) loginEmailInput.value = email;
+                
+                setTimeout(() => { 
+                    if (tabLogin) tabLogin.click(); 
+                    if (sucEl) sucEl.style.display = 'none';
+                }, 2500);
+            } catch(e) { 
+                errEl.textContent = e.message; 
+                errEl.style.display = 'block'; 
+            }
+            finally { 
+                btnReg.disabled = false; 
+                btnReg.innerHTML = 'Create Account <i class="fa-solid fa-user-plus ml-2"></i>'; 
+            }
         });
     }
 
@@ -212,6 +244,9 @@ function initAuthLogic() {
             const email = document.getElementById('login-email').value;
             const password = document.getElementById('login-pass').value;
             const errEl = document.getElementById('login-error');
+            if (!email || !password) { errEl.textContent = "Email and password required."; errEl.style.display = 'block'; return; }
+            errEl.style.display = 'none';
+            btnLogin.disabled = true; btnLogin.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Authenticating...';
             try {
                 const res = await fetch('/api/auth/login', {
                     method: 'POST',
@@ -219,14 +254,16 @@ function initAuthLogic() {
                     body: JSON.stringify({ email, password })
                 });
                 const data = await res.json();
-                if(!res.ok) throw new Error(data.error);
+                if(!res.ok) throw new Error(data.error || "Login failed");
                 localStorage.setItem('token', data.token);
                 localStorage.setItem('plan', data.plan);
                 localStorage.setItem('email', data.email);
                 localStorage.setItem('role', data.role || 'user');
+                localStorage.setItem('username', data.username || 'Hunter');
                 updateAuthUI();
                 navigateTo(data.role === 'admin' ? 'admin' : 'tools');
             } catch(e) { errEl.textContent = e.message; errEl.style.display = 'block'; }
+            finally { btnLogin.disabled = false; btnLogin.innerHTML = 'Login to Dashboard <i class="fa-solid fa-arrow-right ml-2"></i>'; }
         });
     }
 }
@@ -247,15 +284,34 @@ function initPricingLogic() {
                     style: { layout: 'vertical', color: 'gold', shape: 'pill' },
                     createOrder: (data, actions) => actions.order.create({ purchase_units: [{ amount: { currency_code: 'USD', value: priceStr }, description: `CryptoAyuda - ${plan.toUpperCase()}` }] }),
                     onApprove: (data, actions) => actions.order.capture().then(details => {
+                        btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Verifying Payment...';
                         return fetch('/api/orders/capture', {
                             method: 'POST',
                             headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
                             body: JSON.stringify({ orderID: details.id, planType: plan })
                         }).then(res => res.json()).then(serverData => {
-                            if (serverData.error) alert("Upgrade failed: " + serverData.error);
-                            else { localStorage.setItem('plan', serverData.plan); location.reload(); }
+                            if (serverData.error) {
+                                alert("Upgrade failed: " + serverData.error);
+                                btn.style.display = 'block';
+                                btn.innerHTML = 'Retry Upgrade';
+                            } else {
+                                localStorage.setItem('plan', serverData.plan);
+                                containerEl.innerHTML = `
+                                    <div class="fade-in center p-4" style="background:rgba(16,185,129,0.1); border:1px solid var(--risk-low); border-radius:12px;">
+                                        <i class="fa-solid fa-circle-check" style="font-size:2rem;color:var(--risk-low);margin-bottom:10px;"></i>
+                                        <h3 style="color:var(--risk-low);">Upgrade Successful!</h3>
+                                        <p style="font-size:0.9rem;">Your account is now <strong>${serverData.plan.toUpperCase()}</strong>.</p>
+                                        <button class="btn btn-primary btn-sm mt-3" onclick="location.reload()">Refresh Dashboard</button>
+                                    </div>
+                                `;
+                            }
                         });
-                    })
+                    }),
+                    onError: (err) => {
+                        console.error('PayPal Error:', err);
+                        alert("There was an error with the PayPal checkout process.");
+                        btn.style.display = 'block';
+                    }
                 }).render(`#${containerId}`);
             }
         });
@@ -277,18 +333,45 @@ function bindViewEvents(route) {
     if (route === 'home') {
         const checkBtn = document.getElementById('landing-check-btn');
         if (checkBtn) {
-            checkBtn.addEventListener('click', () => {
+            checkBtn.addEventListener('click', async () => {
                 const input = document.getElementById('landing-link-input');
-                const val = input ? input.value.trim().toLowerCase() : "";
+                const val = input ? input.value.trim() : "";
                 if(!val) return;
                 const resultArea = document.getElementById('landing-result-area');
                 const resultContent = document.getElementById('landing-result-content');
                 if (resultArea) resultArea.style.display = 'block';
-                const isMalicious = val.includes('scam') || val.includes('drainer') || val.length < 5;
-                if (resultContent) {
-                    resultContent.innerHTML = isMalicious ? 
-                        `<div class="glitch-container fade-up"><div class="glitch-text" data-text="DANGER DETECTED">DANGER DETECTED</div><p style="color:var(--primary-color); margin-top:15px; font-weight:700;">PHISHING VENTURE IDENTIFIED. AVOID INTERACTION.</p></div>` :
-                        `<div class="safe-container fade-up"><div style="display:flex; align-items:center; gap:20px;"><i class="fa-solid fa-shield-check" style="color:var(--risk-low); font-size:2rem;"></i><div><h3 style="color:var(--risk-low); margin:0;">VERIFIED SECURE</h3><p style="margin:5px 0 0; color:var(--secondary-color);">No malicious signatures detected.</p></div></div></div>`;
+                if (resultContent) resultContent.innerHTML = `<div class="center p-4"><i class="fa-solid fa-satellite-dish fa-spin" style="font-size:2rem;color:var(--accent-color);"></i><p style="margin-top:10px;">Analyzing URL security signatures...</p></div>`;
+                
+                try {
+                    // Use real API for landing page check
+                    const res = await fetch(`/api/analyze/phishing?url=${encodeURIComponent(val)}`);
+                    const data = await res.json();
+                    
+                    if (data.isMalicious || data.riskScore > 50) {
+                        resultContent.innerHTML = `
+                            <div class="glitch-container fade-up">
+                                <div class="glitch-text" data-text="DANGER DETECTED">DANGER DETECTED</div>
+                                <p style="color:var(--primary-color); margin-top:15px; font-weight:700;">PHISHING VENTURE IDENTIFIED. AVOID INTERACTION.</p>
+                                <p style="font-size:0.9rem;opacity:0.8;margin-top:5px;">This URL has been flagged in our malicious registry.</p>
+                            </div>
+                        `;
+                    } else {
+                        resultContent.innerHTML = `
+                            <div class="safe-container fade-up">
+                                <div style="display:flex; align-items:center; gap:20px; justify-content:center; flex-wrap:wrap;">
+                                    <i class="fa-solid fa-shield-check" style="color:var(--risk-low); font-size:3rem;"></i>
+                                    <div style="text-align:left;">
+                                        <h3 style="color:var(--risk-low); margin:0;">VERIFIED SECURE</h3>
+                                        <p style="margin:5px 0 0; color:var(--secondary-color);">No malicious signatures detected in our registry.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                    }
+                    // Scroll to result
+                    resultArea.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                } catch(e) {
+                    resultContent.innerHTML = `<div class="p-3 text-high">Analysis failed. Please check your connection.</div>`;
                 }
             });
         }

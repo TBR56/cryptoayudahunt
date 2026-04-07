@@ -68,8 +68,15 @@ window.views.admin = () => `
                 </div>
             </div>
 
-            <!-- Users Table -->
-            <div style="background:var(--surface-color);border:1px solid rgba(255,255,255,0.06);border-radius:24px;padding:30px;backdrop-filter:var(--glass-blur);">
+            <!-- Tabs Navigation -->
+            <div style="display:flex;gap:10px;margin-bottom:30px;border-bottom:1px solid rgba(255,255,255,0.05);padding-bottom:10px;">
+                <button class="btn btn-ghost active" id="admin-tab-users" style="padding:10px 20px;" onclick="adminSwitchTab('users')">Users</button>
+                <button class="btn btn-ghost" id="admin-tab-affiliates" style="padding:10px 20px;" onclick="adminSwitchTab('affiliates')">Affiliates & Payouts</button>
+                <button class="btn btn-ghost" id="admin-tab-payments" style="padding:10px 20px;" onclick="adminSwitchTab('payments')">Payments</button>
+            </div>
+
+            <!-- Users Section -->
+            <div id="admin-section-users" style="background:var(--surface-color);border:1px solid rgba(255,255,255,0.06);border-radius:24px;padding:30px;backdrop-filter:var(--glass-blur);">
                 <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:24px;">
                     <h3 style="margin:0;font-size:1.3rem;">
                         <i class="fa-solid fa-database" style="color:var(--accent-color);margin-right:10px;"></i>
@@ -86,9 +93,48 @@ window.views.admin = () => `
                     </div>
                 </div>
             </div>
+
+            <!-- Affiliates Section -->
+            <div id="admin-section-affiliates" style="display:none;background:var(--surface-color);border:1px solid rgba(255,255,255,0.06);border-radius:24px;padding:30px;backdrop-filter:var(--glass-blur);">
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:24px;">
+                    <h3 style="margin:0;font-size:1.3rem;">
+                        <i class="fa-solid fa-users-viewfinder" style="color:#10b981;margin-right:10px;"></i>
+                        Affiliate Performance
+                    </h3>
+                    <button class="btn btn-outline" style="padding:8px 18px;font-size:0.85rem;" onclick="adminLoadAffiliates()">
+                        <i class="fa-solid fa-arrows-rotate"></i> Refresh
+                    </button>
+                </div>
+                <div id="admin-affiliates-table">
+                    <div style="text-align:center;padding:40px;color:var(--secondary-color);">Loading affiliates...</div>
+                </div>
+            </div>
+
+            <!-- Payments Section -->
+            <div id="admin-section-payments" style="display:none;background:var(--surface-color);border:1px solid rgba(255,255,255,0.06);border-radius:24px;padding:30px;backdrop-filter:var(--glass-blur);">
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:24px;">
+                    <h3 style="margin:0;font-size:1.3rem;">
+                        <i class="fa-solid fa-credit-card" style="color:#f59e0b;margin-right:10px;"></i>
+                        Recent Payments (PayPal)
+                    </h3>
+                </div>
+                <div style="text-align:center;padding:40px;color:var(--secondary-color);">
+                    <p>Live transaction data is pulled directly from PayPal Merchant API in production.</p>
+                    <p style="font-size:0.8rem;margin-top:10px;opacity:0.6;">Check the "Users" tab to see active plans.</p>
+                </div>
+            </div>
         </div>
     </section>
 `;
+
+window.adminSwitchTab = (tab) => {
+    document.querySelectorAll('[id^="admin-section-"]').forEach(s => s.style.display = 'none');
+    document.getElementById(`admin-section-${tab}`).style.display = 'block';
+    document.querySelectorAll('[id^="admin-tab-"]').forEach(b => b.classList.remove('active'));
+    document.getElementById(`admin-tab-${tab}`).classList.add('active');
+    if (tab === 'affiliates') adminLoadAffiliates();
+    if (tab === 'users') adminLoadUsers();
+};
 
 async function adminLoadStats() {
     const token = localStorage.getItem('token');
@@ -203,6 +249,74 @@ async function adminDeleteUser(userId) {
         if (!res.ok) throw new Error(data.error);
         await adminLoadUsers();
         await adminLoadStats();
+    } catch(e) {
+        alert('Error: ' + e.message);
+    }
+}
+
+async function adminLoadAffiliates() {
+    const table = document.getElementById('admin-affiliates-table');
+    if (!table) return;
+    const token = localStorage.getItem('token');
+    try {
+        const res = await fetch('/api/admin/affiliates', {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error);
+
+        if (data.length === 0) {
+            table.innerHTML = `<p style="text-align:center;color:var(--secondary-color);padding:20px;">No affiliates found.</p>`;
+            return;
+        }
+
+        table.innerHTML = `
+            <div style="overflow-x:auto;">
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>Email</th>
+                            <th>Code</th>
+                            <th>Referrals</th>
+                            <th>Earnings</th>
+                            <th>Unpaid</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${data.map(a => `
+                            <tr>
+                                <td>${a.email}</td>
+                                <td style="font-family:var(--font-mono);">${a.code}</td>
+                                <td>${a.referrals}</td>
+                                <td style="color:#10b981;">$${a.earnings.toFixed(2)}</td>
+                                <td style="color:${a.unpaid > 0 ? '#f59e0b' : 'inherit'}; font-weight:bold;">$${a.unpaid.toFixed(2)}</td>
+                                <td>
+                                    ${a.unpaid > 0 ? `<button class="btn btn-primary btn-sm" onclick="adminPayoutAffiliate(${a.id})" style="padding:4px 12px;font-size:0.75rem;">Mark Paid</button>` : '<span style="opacity:0.5;font-size:0.8rem;">Paid</span>'}
+                                </td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+            </div>
+        `;
+    } catch(e) {
+        table.innerHTML = `<p style="color:var(--risk-high);">${e.message}</p>`;
+    }
+}
+
+async function adminPayoutAffiliate(userId) {
+    if (!confirm('Mark all unpaid earnings as paid?')) return;
+    const token = localStorage.getItem('token');
+    try {
+        const res = await fetch('/api/admin/affiliates/payout', {
+            method: 'POST',
+            headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
+            body: JSON.stringify({ userId })
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error);
+        adminLoadAffiliates();
     } catch(e) {
         alert('Error: ' + e.message);
     }
