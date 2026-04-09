@@ -18,30 +18,53 @@
     <div class="background-grid"></div>
     <div class="particles" id="particles-container"></div>
 
-    <nav class="navbar">
-        <div class="container nav-container">
-            <a href="#" class="logo" data-route="home">
-                <img src="/logo.png" alt="CryptoAyuda Logo" style="height:32px; width:auto; border-radius:4px;" onerror="this.onerror=null; this.src='https://raw.githubusercontent.com/lucide-icons/lucide/main/icons/shield-half.svg';">
-                CryptoAyuda <span>AI</span>
-            </a>
-            <div class="nav-links">
-                <a href="#" class="nav-link" data-route="home">Home</a>
-                <a href="#" class="nav-link" data-route="tools">AI Tools</a>
-                <a href="#" class="nav-link" data-route="blog">Blog</a>
-                <a href="#" class="nav-link" data-route="pricing">Pricing</a>
-                <a href="#" class="nav-link" data-route="about">About</a>
-                <a href="#" class="nav-link" data-route="resources">Security Resources</a>
-                <a href="#" class="nav-link nav-admin-link" data-route="admin" id="nav-admin-link" style="display:none;color:#ef4444;border:1px solid rgba(239,68,68,0.3);padding:4px 14px;border-radius:99px;background:rgba(239,68,68,0.05);"><i class="fa-solid fa-crown" style="margin-right:6px;"></i>Admin</a>
-                <button class="btn btn-outline nav-btn" id="nav-auth-btn" data-route="auth">Login</button>
+    <!-- v2.0 APP SHELL -->
+    <div class="app-shell" id="app-shell">
+        
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar-v2" id="main-sidebar">
+            <div class="sidebar-header">
+                <a href="#" class="logo" data-route="home" style="display:flex; align-items:center; gap:12px; font-size:1.2rem; text-decoration:none; color:#fff;">
+                    <img src="/logo.png" alt="CA Logo" style="height:28px; width:auto; border-radius:4px;" onerror="this.onerror=null; this.src='https://raw.githubusercontent.com/lucide-icons/lucide/main/icons/shield-half.svg';">
+                    <span>CryptoAyuda</span>
+                </a>
             </div>
-            <button class="mobile-menu-btn" id="mobile-menu-btn">
-                <i class="fa-solid fa-bars"></i>
-            </button>
-        </div>
-    </nav>
+            
+            <nav class="sidebar-nav">
+                <div class="nav-item-v2 active" data-route="home"><i class="fa-solid fa-house"></i> <span>Home Portal</span></div>
+                <div class="nav-item-v2" data-route="tools"><i class="fa-solid fa-shield-halved"></i> <span>Intelligence Hub</span></div>
+                <div class="nav-item-v2" data-route="dashboard"><i class="fa-solid fa-gauge-high"></i> <span>My Portfolio</span></div>
+                <div class="nav-item-v2" data-route="leaderboard"><i class="fa-solid fa-trophy"></i> <span>Hunter Board</span></div>
+                <div class="nav-item-v2" data-route="affiliate"><i class="fa-solid fa-share-nodes"></i> <span>Commissions</span></div>
+                
+                <div style="margin-top: 20px; padding:0 20px; font-size:0.7rem; color:var(--secondary-color); text-transform:uppercase; letter-spacing:2px;">Governance</div>
+                <div class="nav-item-v2" data-route="admin" id="sidebar-admin-link" style="display:none; color:#ef4444;"><i class="fa-solid fa-crown"></i> <span>Admin Command</span></div>
+            </nav>
 
-    <!-- Main Content Area for SPA Routing -->
-    <main id="app-content"></main>
+            <div class="sidebar-footer">
+                <button class="btn btn-outline full-width" id="sidebar-auth-btn" data-route="auth" style="padding:10px; font-size:0.85rem;"><i class="fa-solid fa-user"></i> <span>Login / Profile</span></button>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <div class="main-content-v2" id="main-page-container">
+            <header class="top-bar-v2" id="app-top-bar">
+                <div style="display:flex; align-items:center; gap:20px;">
+                    <button id="sidebar-toggle" style="background:none; border:none; color:#fff; font-size:1.2rem; cursor:pointer;"><i class="fa-solid fa-bars-staggered"></i></button>
+                    <div class="global-search-trigger" id="global-search-trigger">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                        <span>Search address, URL or tool...</span>
+                        <span class="kbd-shortcut">Alt + K</span>
+                    </div>
+                </div>
+                <div style="display:flex; align-items:center; gap:24px;">
+                    <div style="display:flex; align-items:center; gap:12px; font-size:0.85rem; color:var(--secondary-color);"><i class="fa-solid fa-circle" style="color:var(--risk-low); font-size:0.6rem;"></i> <span>AI Engine: <strong>V2.0 STABLE</strong></span></div>
+                    <div id="top-bar-notifications" style="position:relative; cursor:pointer;"><i class="fa-solid fa-bell" style="font-size:1.1rem; color:var(--secondary-color);"></i><span style="position:absolute; top:-5px; right:-5px; width:8px; height:8px; background:var(--risk-high); border-radius:50%;"></span></div>
+                </div>
+            </header>
+            <main id="app-content"></main>
+        </div>
+    </div>
 
     <!-- Global Footer -->
     <footer class="footer">

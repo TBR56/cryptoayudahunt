@@ -5,163 +5,99 @@
 
 // ─── TOOL 1: TOKEN SECURITY PRO ─────────────────────────────────────────────
 window.views['tool-token'] = () => `
-<div class="tool-page-layout">
-  <div class="tool-page-header">
-    <div class="container">
-      <div class="tool-breadcrumb"><a href="#" data-route="tools">AI Arsenal</a> <i class="fa-solid fa-chevron-right"></i> Token Security Analyzer</div>
-      <div class="tool-page-title-row">
+<div class="tool-v2-container" style="padding: 40px 24px;">
+    <div class="tool-v2-header" style="margin-bottom: 40px; display:flex; justify-content:space-between; align-items:flex-end; flex-wrap:wrap; gap:20px;">
         <div>
-          <h1 class="tool-page-title"><i class="fa-solid fa-coins" style="color:#38bdf8;"></i> Token Security Pro</h1>
-          <p class="tool-page-sub">Deep smart contract auditing — honeypot detection, tax analysis, holder distribution & more</p>
+            <div style="font-size:0.8rem; color:var(--accent-color); font-family:var(--font-mono); margin-bottom:10px; text-transform:uppercase; letter-spacing:2px;">Advanced Smart Contract Audit</div>
+            <h1 style="font-size:3rem; font-weight:900; margin:0; letter-spacing:-1px;">Token Security Pro <span style="font-size:1.5rem; vertical-align:middle; opacity:0.5;">v3.0</span></h1>
         </div>
-        <div style="display:flex;gap:10px;align-items:center;">
-          <span class="xp-pill">+10–25 XP per scan</span>
-          <span class="plan-pill-free">FREE</span>
+        <div style="display:flex; gap:12px;">
+            <div class="badge" style="background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1);">+25 XP</div>
+            <div class="badge" style="background:var(--risk-low); border:none; color:#000;">STABLE ENGINE</div>
         </div>
-      </div>
-      <!-- Scan Input Bar -->
-      <div class="scan-bar-wrapper">
-        <div class="scan-bar">
-          <i class="fa-solid fa-magnifying-glass" style="color:var(--accent-vibrant);font-size:1.1rem;"></i>
-          <input id="tt-address" type="text" class="scan-bar-input" placeholder="Paste token contract address (0x...) or try: 0xdac17f958d2ee523a2206206994597c13d831ec7" autocomplete="off"/>
-          <select id="tt-chain" class="scan-bar-select">
+    </div>
+
+    <div class="scan-bar-v2" style="background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.08); border-radius:24px; padding:10px; display:flex; gap:10px; flex-wrap:wrap; margin-bottom:40px; box-shadow:var(--shadow-premium);">
+        <div style="flex:1; display:flex; align-items:center; padding:10px 20px; min-width:300px;">
+            <i class="fa-solid fa-coins" style="color:var(--accent-color); margin-right:15px; font-size:1.2rem;"></i>
+            <input id="tt-address" type="text" placeholder="Paste Token Contract Address..." style="background:transparent; border:none; color:#fff; width:100%; font-size:1.1rem; outline:none; font-family:var(--font-mono);">
+        </div>
+        <select id="tt-chain" style="background:rgba(0,0,0,0.3); border:1px solid rgba(255,255,255,0.1); color:#fff; border-radius:14px; padding:0 20px; outline:none; cursor:pointer;">
             <option value="1">Ethereum</option>
             <option value="56">BNB Chain</option>
             <option value="137">Polygon</option>
             <option value="42161">Arbitrum</option>
-          </select>
-          <button id="tt-scan-btn" class="btn btn-primary scan-bar-btn"><i class="fa-solid fa-shield-halved"></i> Analyze</button>
-        </div>
-        <div class="scan-bar-examples">
-          <span style="color:var(--secondary-color);font-size:0.75rem;margin-right:8px;">Quick examples:</span>
-          <button class="example-pill" data-addr="0xdac17f958d2ee523a2206206994597c13d831ec7" data-chain="1">USDT</button>
-          <button class="example-pill" data-addr="0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48" data-chain="1">USDC</button>
-          <button class="example-pill" data-addr="0x2170ed0880ac9a755fd29b2688956bd959f933f8" data-chain="56">ETH (BSC)</button>
-        </div>
-      </div>
+        </select>
+        <button id="tt-scan-btn" class="btn btn-primary" style="padding:0 30px; border-radius:16px; font-weight:800; font-size:1rem; min-height:55px;">ANALYZE DATA</button>
     </div>
-  </div>
-  <!-- Results area -->
-  <div class="container tool-results-container">
-    <div id="tt-results" class="tool-results-placeholder">
-      <div class="placeholder-content">
-        <div class="placeholder-icon-ring"><i class="fa-solid fa-coins" style="color:#38bdf8;font-size:2rem;"></i></div>
-        <h3>Enter a token contract to begin</h3>
-        <p style="color:var(--secondary-color);">We'll run an institutional-grade security audit in under 5 seconds</p>
-        <div class="feature-chips">
-          <span class="feature-chip"><i class="fa-solid fa-check" style="color:var(--risk-low)"></i> Honeypot Detection</span>
-          <span class="feature-chip"><i class="fa-solid fa-check" style="color:var(--risk-low)"></i> Tax Analysis</span>
-          <span class="feature-chip"><i class="fa-solid fa-check" style="color:var(--risk-low)"></i> Holder Distribution</span>
-          <span class="feature-chip"><i class="fa-solid fa-check" style="color:var(--risk-low)"></i> DEX Liquidity</span>
-          <span class="feature-chip"><i class="fa-solid fa-check" style="color:var(--risk-low)"></i> Ownership Risks</span>
+
+    <div id="tt-results" style="min-height:400px; display:flex; align-items:center; justify-content:center; border:1px dashed rgba(255,255,255,0.1); border-radius:24px; background:rgba(255,255,255,0.01);">
+        <div style="text-align:center; max-width:400px; opacity:0.6;">
+            <div style="font-size:3rem; margin-bottom:20px;">🔍</div>
+            <h3 style="margin-bottom:10px;">Ready for Deep Audit</h3>
+            <p style="font-size:0.9rem;">Paste a contract above. Our AI will analyze honeypot signals, tax manipulation, and liquidity locking in real-time.</p>
         </div>
-      </div>
     </div>
-  </div>
 </div>
 `;
 
 // ─── TOOL 2: WALLET INTELLIGENCE ────────────────────────────────────────────
 window.views['tool-wallet'] = () => `
-<div class="tool-page-layout">
-  <div class="tool-page-header" style="--tool-color:#a855f7;">
-    <div class="container">
-      <div class="tool-breadcrumb"><a href="#" data-route="tools">AI Arsenal</a> <i class="fa-solid fa-chevron-right"></i> Wallet Intelligence</div>
-      <div class="tool-page-title-row">
+<div class="tool-v2-container" style="padding: 40px 24px;">
+    <div class="tool-v2-header" style="margin-bottom: 40px; display:flex; justify-content:space-between; align-items:flex-end; flex-wrap:wrap; gap:20px;">
         <div>
-          <h1 class="tool-page-title"><i class="fa-solid fa-wallet" style="color:#a855f7;"></i> Wallet Intelligence</h1>
-          <p class="tool-page-sub">Chainalysis-grade wallet profiling — threat detection, on-chain history & activity scoring</p>
+            <div style="font-size:0.8rem; color:#a855f7; font-family:var(--font-mono); margin-bottom:10px; text-transform:uppercase; letter-spacing:2px;">Institutional Profile Intelligence</div>
+            <h1 style="font-size:3rem; font-weight:900; margin:0; letter-spacing:-1px;">Wallet God-Mode <span style="font-size:1.5rem; vertical-align:middle; opacity:0.5;">v2.5</span></h1>
         </div>
-        <div style="display:flex;gap:10px;align-items:center;">
-          <span class="xp-pill">+15 XP per scan</span>
-          <span class="plan-pill-free">FREE</span>
+        <div style="display:flex; gap:12px;">
+            <div class="badge" style="background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1);">+15 XP</div>
+            <div class="badge" style="background:#a855f7; border:none; color:#fff;">CORE ACCESS</div>
         </div>
-      </div>
-      <div class="scan-bar-wrapper">
-        <div class="scan-bar">
-          <i class="fa-solid fa-magnifying-glass" style="color:#a855f7;font-size:1.1rem;"></i>
-          <input id="tw-address" type="text" class="scan-bar-input" placeholder="Paste wallet address (0x...)" autocomplete="off"/>
-          <select id="tw-chain" class="scan-bar-select">
-            <option value="eth">Ethereum</option>
-            <option value="bsc">BNB Chain</option>
-            <option value="polygon">Polygon</option>
-          </select>
-          <button id="tw-scan-btn" class="btn btn-primary scan-bar-btn" style="background:linear-gradient(135deg,#a855f7,#7c3aed);"><i class="fa-solid fa-crosshairs"></i> Profile Wallet</button>
-        </div>
-        <div class="scan-bar-examples">
-          <span style="color:var(--secondary-color);font-size:0.75rem;margin-right:8px;">Quick examples:</span>
-          <button class="example-pill" data-addr="0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045" data-chain="eth">Vitalik.eth</button>
-          <button class="example-pill" data-addr="0xBE0eB53F46cd790Cd13851d5EFf43D12404d33E8" data-chain="eth">Binance Cold</button>
-        </div>
-      </div>
     </div>
-  </div>
-  <div class="container tool-results-container">
-    <div id="tw-results" class="tool-results-placeholder">
-      <div class="placeholder-content">
-        <div class="placeholder-icon-ring" style="border-color:rgba(168,85,247,0.5);background:rgba(168,85,247,0.05);"><i class="fa-solid fa-wallet" style="color:#a855f7;font-size:2rem;"></i></div>
-        <h3>Enter a wallet address to profile</h3>
-        <p style="color:var(--secondary-color);">Our AI cross-references 15+ security registries instantly</p>
-        <div class="feature-chips">
-          <span class="feature-chip"><i class="fa-solid fa-check" style="color:var(--risk-low)"></i> Phishing History</span>
-          <span class="feature-chip"><i class="fa-solid fa-check" style="color:var(--risk-low)"></i> Mixer Detection</span>
-          <span class="feature-chip"><i class="fa-solid fa-check" style="color:var(--risk-low)"></i> Sanction Check</span>
-          <span class="feature-chip"><i class="fa-solid fa-check" style="color:var(--risk-low)"></i> On-Chain Balance</span>
-          <span class="feature-chip"><i class="fa-solid fa-check" style="color:var(--risk-low)"></i> Activity Score</span>
+    <div class="scan-bar-v2" style="background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.08); border-radius:24px; padding:10px; display:flex; gap:10px; flex-wrap:wrap; margin-bottom:40px; box-shadow:var(--shadow-premium);">
+        <div style="flex:1; display:flex; align-items:center; padding:10px 20px; min-width:300px;">
+            <i class="fa-solid fa-wallet" style="color:#a855f7; margin-right:15px; font-size:1.2rem;"></i>
+            <input id="tw-address" type="text" placeholder="Paste Wallet Address (0x...)" style="background:transparent; border:none; color:#fff; width:100%; font-size:1.1rem; outline:none; font-family:var(--font-mono);">
         </div>
-      </div>
+        <button id="tw-scan-btn" class="btn btn-primary" style="padding:0 30px; border-radius:16px; font-weight:800; font-size:1rem; min-height:55px; background:linear-gradient(135deg, #a855f7, #6b21a8); border:none;">PROFILE TARGET</button>
     </div>
-  </div>
+    <div id="tw-results" style="min-height:400px; display:flex; align-items:center; justify-content:center; border:1px dashed rgba(255,255,255,0.1); border-radius:24px; background:rgba(255,255,255,0.01);">
+        <div style="text-align:center; max-width:400px; opacity:0.6;">
+            <div style="font-size:3rem; margin-bottom:20px;">🕵️‍♂️</div>
+            <h3 style="margin-bottom:10px;">Awaiting Target Identity</h3>
+            <p style="font-size:0.9rem;">Monitor whale clusters, detect mixer interactions, and map out on-chain reputation before it's too late.</p>
+        </div>
+    </div>
 </div>
 `;
 
 // ─── TOOL 3: PHISHING & URL SCANNER ─────────────────────────────────────────
 window.views['tool-phishing'] = () => `
-<div class="tool-page-layout">
-  <div class="tool-page-header" style="--tool-color:#ef4444;">
-    <div class="container">
-      <div class="tool-breadcrumb"><a href="#" data-route="tools">AI Arsenal</a> <i class="fa-solid fa-chevron-right"></i> Phishing & URL Scanner</div>
-      <div class="tool-page-title-row">
+<div class="tool-v2-container" style="padding: 40px 24px;">
+    <div class="tool-v2-header" style="margin-bottom: 40px; display:flex; justify-content:space-between; align-items:flex-end; flex-wrap:wrap; gap:20px;">
         <div>
-          <h1 class="tool-page-title"><i class="fa-solid fa-spider" style="color:#ef4444;"></i> Phishing & URL Scanner</h1>
-          <p class="tool-page-sub">VirusTotal-grade URL analysis — malicious domain registry, SSL check & contract association</p>
+            <div style="font-size:0.8rem; color:var(--risk-high); font-family:var(--font-mono); margin-bottom:10px; text-transform:uppercase; letter-spacing:2px;">Advanced URL Analysis</div>
+            <h1 style="font-size:3rem; font-weight:900; margin:0; letter-spacing:-1px;">Phishing Shield <span style="font-size:1.5rem; vertical-align:middle; opacity:0.5;">v3.0</span></h1>
         </div>
-        <div style="display:flex;gap:10px;align-items:center;">
-          <span class="xp-pill">+10 XP per scan</span>
-          <span class="plan-pill-free">FREE</span>
+        <div style="display:flex; gap:12px;">
+            <div class="badge" style="background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1);">+10 XP</div>
+            <div class="badge" style="background:var(--risk-high); border:none; color:#fff;">DANGER SCANNER</div>
         </div>
-      </div>
-      <div class="scan-bar-wrapper">
-        <div class="scan-bar">
-          <i class="fa-solid fa-link" style="color:#ef4444;font-size:1.1rem;"></i>
-          <input id="tp-url" type="text" class="scan-bar-input" placeholder="https://suspicious-metamask-login.io or any URL..." autocomplete="off"/>
-          <button id="tp-scan-btn" class="btn btn-primary scan-bar-btn" style="background:linear-gradient(135deg,#ef4444,#b91c1c);"><i class="fa-solid fa-shield-virus"></i> Scan URL</button>
-        </div>
-        <div class="scan-bar-examples">
-          <span style="color:var(--secondary-color);font-size:0.75rem;margin-right:8px;">Try:</span>
-          <button class="example-pill" data-url="uniswap.org">uniswap.org</button>
-          <button class="example-pill" data-url="opensea.io">opensea.io</button>
-          <button class="example-pill" data-url="metamask.io">metamask.io</button>
-        </div>
-      </div>
     </div>
-  </div>
-  <div class="container tool-results-container">
-    <div id="tp-results" class="tool-results-placeholder">
-      <div class="placeholder-content">
-        <div class="placeholder-icon-ring" style="border-color:rgba(239,68,68,0.5);background:rgba(239,68,68,0.05);"><i class="fa-solid fa-spider" style="color:#ef4444;font-size:2rem;"></i></div>
-        <h3>Enter a URL or domain to scan</h3>
-        <p style="color:var(--secondary-color);">We check against 200+ malicious domain registries and blockchain threat intel</p>
-        <div class="feature-chips">
-          <span class="feature-chip"><i class="fa-solid fa-check" style="color:var(--risk-low)"></i> Phishing Registry</span>
-          <span class="feature-chip"><i class="fa-solid fa-check" style="color:var(--risk-low)"></i> SSL Validation</span>
-          <span class="feature-chip"><i class="fa-solid fa-check" style="color:var(--risk-low)"></i> WHOIS Data</span>
-          <span class="feature-chip"><i class="fa-solid fa-check" style="color:var(--risk-low)"></i> Contract Links</span>
-          <span class="feature-chip"><i class="fa-solid fa-check" style="color:var(--risk-low)"></i> Redirect Chain</span>
+    <div class="scan-bar-v2" style="background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.08); border-radius:24px; padding:10px; display:flex; gap:10px; flex-wrap:wrap; margin-bottom:40px; box-shadow:var(--shadow-premium);">
+        <div style="flex:1; display:flex; align-items:center; padding:10px 20px; min-width:300px;">
+            <i class="fa-solid fa-link" style="color:var(--risk-high); margin-right:15px; font-size:1.2rem;"></i>
+            <input id="tp-url" type="text" placeholder="Paste URL or Domain for Malware Check..." style="background:transparent; border:none; color:#fff; width:100%; font-size:1.1rem; outline:none; font-family:var(--font-mono);">
         </div>
-      </div>
+        <button id="tp-scan-btn" class="btn btn-primary" style="padding:0 30px; border-radius:16px; font-weight:800; font-size:1rem; min-height:55px; background:linear-gradient(135deg, var(--risk-high), #7f1d1d); border:none;">SCAN THREAT</button>
     </div>
-  </div>
+    <div id="tp-results" style="min-height:400px; display:flex; align-items:center; justify-content:center; border:1px dashed rgba(255,255,255,0.1); border-radius:24px; background:rgba(255,255,255,0.01);">
+        <div style="text-align:center; max-width:400px; opacity:0.6;">
+            <div style="font-size:3rem; margin-bottom:20px;">🕸️</div>
+            <h3 style="margin-bottom:10px;">Safe Browsing Active</h3>
+            <p style="font-size:0.9rem;">We use 200+ blacklist registries and AI pattern matching to detect clones and wallet drainers before they execute.</p>
+        </div>
+    </div>
 </div>
 `;
 
@@ -216,102 +152,52 @@ window.views['tool-smart-money'] = () => `
 
 // ─── TOOL 5: ARBITRAGE COMMAND CENTER ───────────────────────────────────────
 window.views['tool-arbitrage'] = () => `
-<div class="tool-page-layout">
-  <div class="tool-page-header" style="--tool-color:#10b981;">
-    <div class="container">
-      <div class="tool-breadcrumb"><a href="#" data-route="tools">AI Arsenal</a> <i class="fa-solid fa-chevron-right"></i> Arbitrage Command Center</div>
-      <div class="tool-page-title-row">
+<div class="tool-v2-container" style="padding: 40px 24px;">
+    <div class="tool-v2-header" style="margin-bottom: 40px; display:flex; justify-content:space-between; align-items:flex-end; flex-wrap:wrap; gap:20px;">
         <div>
-          <h1 class="tool-page-title"><i class="fa-solid fa-arrows-left-right" style="color:#10b981;"></i> Arbitrage Command Center</h1>
-          <p class="tool-page-sub">Escanea 5 DEXes simultáneamente — detecta ventanas de profit, calcula spread y optimiza rutas</p>
+            <div style="font-size:0.8rem; color:var(--risk-low); font-family:var(--font-mono); margin-bottom:10px; text-transform:uppercase; letter-spacing:2px;">Cross-DEX Spread Analysis</div>
+            <h1 style="font-size:3rem; font-weight:900; margin:0; letter-spacing:-1px;">Arbitrage Command <span style="font-size:1.5rem; vertical-align:middle; opacity:0.5;">PRO</span></h1>
         </div>
-        <div style="display:flex;gap:10px;align-items:center;">
-          <span class="xp-pill">+20 XP per scan</span>
-          <span class="plan-pill-pro">PRO+</span>
+        <div style="display:flex; gap:12px;">
+            <div class="badge" style="background:rgba(16,185,129,0.1); border:1px solid rgba(16,185,129,0.3); color:var(--risk-low);">+20 XP</div>
+            <div class="badge" style="background:var(--risk-low); border:none; color:#000;">PROFIT ENGINE</div>
         </div>
-      </div>
-      <div class="scan-bar-wrapper">
-        <div class="scan-bar">
-          <i class="fa-solid fa-magnifying-glass" style="color:#10b981;font-size:1.1rem;"></i>
-          <input id="ta-address" type="text" class="scan-bar-input" placeholder="Token contract to find arbitrage (0x...)" autocomplete="off"/>
-          <input id="ta-amount" type="number" class="scan-bar-input" placeholder="Amount (ETH)" style="max-width:120px;" value="1" min="0.01" step="0.1"/>
-          <button id="ta-scan-btn" class="btn btn-primary scan-bar-btn" style="background:linear-gradient(135deg,#10b981,#059669);"><i class="fa-solid fa-bolt"></i> Scan Arbitrage</button>
-        </div>
-        <div class="scan-bar-examples">
-          <span style="color:var(--secondary-color);font-size:0.75rem;margin-right:8px;">Try:</span>
-          <button class="example-pill" data-addr="0xdac17f958d2ee523a2206206994597c13d831ec7" data-tool="arb">USDT</button>
-          <button class="example-pill" data-addr="0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2" data-tool="arb">WETH</button>
-        </div>
-      </div>
     </div>
-  </div>
-  <div class="container tool-results-container">
-    <div id="ta-results" class="tool-results-placeholder">
-      <div class="placeholder-content">
-        <div class="placeholder-icon-ring" style="border-color:rgba(16,185,129,0.5);background:rgba(16,185,129,0.05);"><i class="fa-solid fa-arrows-left-right" style="color:#10b981;font-size:2rem;"></i></div>
-        <h3>Discover cross-DEX arbitrage windows</h3>
-        <p style="color:var(--secondary-color);">We compare prices across Uniswap V3, SushiSwap, PancakeSwap, Curve & 1inch simultaneously</p>
-        <div class="feature-chips">
-          <span class="feature-chip"><i class="fa-solid fa-check" style="color:var(--risk-low)"></i> 5 DEX Matrix</span>
-          <span class="feature-chip"><i class="fa-solid fa-check" style="color:var(--risk-low)"></i> Profit Calculator</span>
-          <span class="feature-chip"><i class="fa-solid fa-check" style="color:var(--risk-low)"></i> Gas Estimator</span>
-          <span class="feature-chip"><i class="fa-solid fa-check" style="color:var(--risk-low)"></i> Best Route Display</span>
-          <span class="feature-chip"><i class="fa-solid fa-check" style="color:var(--risk-low)"></i> Slippage Analysis</span>
-        </div>
-      </div>
+    
+    <div style="background:rgba(2,6,23,0.8); border:1px solid rgba(255,255,255,0.05); border-radius:24px; padding:40px; text-align:center;">
+        <i class="fa-solid fa-arrows-left-right" style="font-size:3rem; color:var(--risk-low); margin-bottom:20px;"></i>
+        <h2 style="margin-bottom:15px;">Scanning Liquidity Pools...</h2>
+        <p style="color:var(--secondary-color); max-width:500px; margin:0 auto 30px;">Deploying probes across Uniswap, Sushi, Pancake, and Curve to find mev-ready spread opportunities.</p>
+        <button id="arb-start-btn" class="btn btn-primary" style="padding:15px 40px; border-radius:12px; background:var(--risk-low); border:none; color:#000; font-weight:900;">SCAN DEX MATRIX</button>
     </div>
-  </div>
+
+    <div id="ta-results" style="margin-top:40px;"></div>
 </div>
 `;
 
 // ─── TOOL 6: AI ALPHA INTELLIGENCE CENTER ───────────────────────────────────
 window.views['tool-alpha'] = () => `
-<div class="tool-page-layout">
-  <div class="tool-page-header" style="--tool-color:#a855f7;background:linear-gradient(135deg,rgba(168,85,247,0.15),rgba(2,6,23,0.95));">
-    <div class="container">
-      <div class="tool-breadcrumb"><a href="#" data-route="tools">AI Arsenal</a> <i class="fa-solid fa-chevron-right"></i> AI Alpha Intelligence</div>
-      <div class="tool-page-title-row">
+<div class="tool-v2-container" style="padding: 40px 24px;">
+    <div class="tool-v2-header" style="margin-bottom: 40px; display:flex; justify-content:space-between; align-items:flex-end; flex-wrap:wrap; gap:20px;">
         <div>
-          <h1 class="tool-page-title"><i class="fa-solid fa-brain" style="color:#a855f7;"></i> AI Alpha Intelligence Center <span style="font-size:1.2rem;">👑</span></h1>
-          <p class="tool-page-sub">5 modelos de IA combinados — whale sentiment, liquidez, momentum on-chain, velocidad social & riesgo de contrato</p>
+            <div style="font-size:0.8rem; color:#a855f7; font-family:var(--font-mono); margin-bottom:10px; text-transform:uppercase; letter-spacing:2px;">Neural Convergence Signal</div>
+            <h1 style="font-size:3rem; font-weight:900; margin:0; letter-spacing:-1px;">Alpha Intelligence Center <span style="font-size:1.5rem; vertical-align:middle; opacity:0.5;">ELITE</span></h1>
         </div>
-        <div style="display:flex;gap:10px;align-items:center;">
-          <span class="xp-pill" style="background:rgba(168,85,247,0.2);border-color:rgba(168,85,247,0.4);color:#a855f7;">+50 XP per scan</span>
-          <span class="plan-pill-elite">ELITE 👑</span>
+        <div style="display:flex; gap:12px;">
+            <div class="badge" style="background:rgba(168,85,247,0.1); border:1px solid rgba(168,85,247,0.3); color:#a855f7;">+50 XP</div>
+            <div class="badge" style="background:#a855f7; border:none; color:#fff;">MAX LEVEL AI</div>
         </div>
-      </div>
-      <div class="scan-bar-wrapper">
-        <div class="scan-bar" style="border-color:rgba(168,85,247,0.4);">
-          <i class="fa-solid fa-satellite-dish" style="color:#a855f7;font-size:1.1rem;"></i>
-          <input id="tal-address" type="text" class="scan-bar-input" placeholder="Token or wallet address (0x...) — our AI will analyze everything" autocomplete="off"/>
-          <button id="tal-scan-btn" class="btn btn-primary scan-bar-btn" style="background:linear-gradient(135deg,#a855f7,#7c3aed);box-shadow:0 0 20px rgba(168,85,247,0.4);"><i class="fa-solid fa-rocket"></i> Run Alpha AI</button>
-        </div>
-        <div class="scan-bar-examples">
-          <span style="color:#a855f7;font-size:0.75rem;margin-right:8px;opacity:0.8;">Neural scan examples:</span>
-          <button class="example-pill" style="border-color:rgba(168,85,247,0.3);color:#a855f7;" data-addr="0xdac17f958d2ee523a2206206994597c13d831ec7" data-tool="alpha">USDT</button>
-          <button class="example-pill" style="border-color:rgba(168,85,247,0.3);color:#a855f7;" data-addr="0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045" data-tool="alpha">Vitalik</button>
-        </div>
-      </div>
     </div>
-  </div>
-  <div class="container tool-results-container">
-    <div id="tal-results" class="tool-results-placeholder">
-      <div class="placeholder-content">
-        <div class="placeholder-icon-ring" style="border-color:rgba(168,85,247,0.6);background:rgba(168,85,247,0.08);animation:pulse 2s ease-in-out infinite;">
-          <i class="fa-solid fa-brain" style="color:#a855f7;font-size:2rem;"></i>
+    
+    <div class="scan-bar-v2" style="background:rgba(168,85,247,0.05); border:1px solid rgba(168,85,247,0.2); border-radius:24px; padding:15px; display:flex; gap:15px; flex-wrap:wrap; margin-bottom:40px; box-shadow:0 0 40px rgba(168,85,247,0.1);">
+        <div style="flex:1; display:flex; align-items:center; padding:10px 20px; min-width:300px;">
+            <i class="fa-solid fa-brain" style="color:#a855f7; margin-right:15px; font-size:1.5rem;"></i>
+            <input id="tal-address" type="text" placeholder="Target Address for Deep AI Synthesis..." style="background:transparent; border:none; color:#fff; width:100%; font-size:1.2rem; outline:none; font-family:var(--font-mono);">
         </div>
-        <h3 style="color:#a855f7;">Elite AI Analysis Engine Ready</h3>
-        <p style="color:var(--secondary-color);">5 independent AI models will converge their signals into a single unified alpha score</p>
-        <div class="feature-chips">
-          <span class="feature-chip" style="border-color:rgba(168,85,247,0.3);color:#a855f7;"><i class="fa-solid fa-fish-fins"></i> Whale Accumulation</span>
-          <span class="feature-chip" style="border-color:rgba(168,85,247,0.3);color:#a855f7;"><i class="fa-solid fa-droplet"></i> DEX Liquidity</span>
-          <span class="feature-chip" style="border-color:rgba(168,85,247,0.3);color:#a855f7;"><i class="fa-brands fa-twitter"></i> Social Velocity</span>
-          <span class="feature-chip" style="border-color:rgba(168,85,247,0.3);color:#a855f7;"><i class="fa-solid fa-chart-line"></i> On-Chain Momentum</span>
-          <span class="feature-chip" style="border-color:rgba(168,85,247,0.3);color:#a855f7;"><i class="fa-solid fa-shield-halved"></i> Contract Risk</span>
-        </div>
-      </div>
+        <button id="tal-scan-btn" class="btn btn-primary" style="padding:0 40px; border-radius:16px; font-weight:900; font-size:1.1rem; min-height:60px; background:linear-gradient(135deg, #a855f7, #6b21a8); border:none; box-shadow:0 0 20px rgba(168,85,247,0.3);">ACTIVATE NEURAL SCAN</button>
     </div>
-  </div>
+
+    <div id="tal-results"></div>
 </div>
 `;
 

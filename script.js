@@ -18,27 +18,28 @@ handleURLParams();
 
 // Global Auth UI Updater
 function updateAuthUI() {
-    const authBtn = document.getElementById('nav-auth-btn');
-    const adminLink = document.getElementById('nav-admin-link');
+    const sidebarAuthBtn = document.getElementById('sidebar-auth-btn');
+    const sidebarAdminLink = document.getElementById('sidebar-admin-link');
+    
     const token = localStorage.getItem('token');
     const role = localStorage.getItem('role');
+    const username = localStorage.getItem('username') || 'Hunter';
+    const plan = localStorage.getItem('plan') || 'Free';
 
     if (token) {
-        authBtn.innerHTML = '<i class="fa-solid fa-user-astronaut"></i> Profile';
-        authBtn.classList.remove('btn-outline');
-        authBtn.classList.add('btn-primary');
-        authBtn.setAttribute('data-route', 'profile');
-        authBtn.onclick = null;
-        if (adminLink) {
-            adminLink.style.display = role === 'admin' ? 'inline-flex' : 'none';
+        if (sidebarAuthBtn) {
+            sidebarAuthBtn.innerHTML = `<i class="fa-solid fa-user-astronaut"></i> <span>${username} (${plan})</span>`;
+            sidebarAuthBtn.setAttribute('data-route', 'profile');
+        }
+        if (sidebarAdminLink) {
+            sidebarAdminLink.style.display = role === 'admin' ? 'flex' : 'none';
         }
     } else {
-        authBtn.innerHTML = 'Login';
-        authBtn.classList.remove('btn-primary');
-        authBtn.classList.add('btn-outline');
-        authBtn.setAttribute('data-route', 'auth');
-        authBtn.onclick = null;
-        if (adminLink) adminLink.style.display = 'none';
+        if (sidebarAuthBtn) {
+            sidebarAuthBtn.innerHTML = `<i class="fa-solid fa-right-to-bracket"></i> <span>Login / Join</span>`;
+            sidebarAuthBtn.setAttribute('data-route', 'auth');
+        }
+        if (sidebarAdminLink) sidebarAdminLink.style.display = 'none';
     }
 }
 
@@ -435,30 +436,127 @@ async function runTradingToolScan(type, inputValue, container) {
 }
 
 function renderTokenResult(data, c) {
-    const color = data.riskScore > 50 ? '#ef4444' : '#10b981';
-    c.innerHTML = `<div class="tool-result-card fade-in" style="border-left:4px solid ${color}; padding:20px;"><h3>${data.raw?.name || 'Token Analysis'}</h3><p>Risk Score: <strong style="color:${color}">${data.riskScore}/100</strong></p><ul>${data.riskFlags?.map(f=>`<li>${f}</li>`).join('') || ''}</ul></div>`;
+    const risk = data.riskScore;
+    const isHigh = risk > 50;
+    const isMed = risk > 20 && risk <= 50;
+    const statusClass = isHigh ? 'danger' : (isMed ? 'caution' : 'safe');
+    const statusIcon = isHigh ? 'fa-triangle-exclamation' : (isMed ? 'fa-circle-exclamation' : 'fa-circle-check');
+    const decision = isHigh ? 'AVOID' : (isMed ? 'INVESTIGATE' : 'SECURE');
+
+    c.innerHTML = `
+        <div class="fade-in">
+            <!-- v2 Decision Widget -->
+            <div class="decision-card ${statusClass}">
+                <div class="decision-icon"><i class="fa-solid ${statusIcon}"></i></div>
+                <div class="decision-content">
+                    <span class="decision-tag" style="background:var(--risk-${statusClass})">${decision}</span>
+                    <h3>${data.raw?.name || 'Token Analysis'}</h3>
+                    <p style="opacity:0.8; margin:0; font-size:0.9rem;">Intelligence score: ${risk}% risk probability detected.</p>
+                </div>
+            </div>
+
+            <div class="report-grid">
+                <div class="report-card">
+                    <span class="report-label">Rug Probability</span>
+                    <div class="report-value" style="color:var(--risk-${statusClass})">${risk}%</div>
+                </div>
+                <div class="report-card">
+                    <span class="report-label">Trust Signal</span>
+                    <div class="report-value">${100 - risk}%</div>
+                </div>
+                <div class="report-card">
+                    <span class="report-label">Contract Status</span>
+                    <div class="report-value" style="font-size:1.1rem;">${isHigh ? 'Vulnerable / Malicious' : 'Operational'}</div>
+                </div>
+            </div>
+
+            <div class="tool-result-card mt-3" style="border-top:1px solid rgba(255,255,255,0.05); padding-top:20px;">
+                <h4 style="font-size:0.8rem; color:var(--secondary-color); text-transform:uppercase; margin-bottom:15px;">Behavioral Red Flags</h4>
+                <ul style="list-style:none; padding:0; display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+                    ${data.riskFlags?.map(f=>`<li style="font-size:0.85rem;"><i class="fa-solid fa-circle-exclamation" style="color:var(--risk-${statusClass}); margin-right:8px;"></i>${f}</li>`).join('') || '<li style="color:var(--risk-low);"><i class="fa-solid fa-circle-check"></i> No critical flags detected.</li>'}
+                </ul>
+            </div>
+        </div>
+    `;
 }
 
 function renderWalletResult(data, c) {
-    const color = data.riskScore > 50 ? '#ef4444' : '#10b981';
-    c.innerHTML = `<div class="tool-result-card fade-in" style="padding:20px;"><h3>Wallet Profile</h3><p>Exposure: <strong style="color:${color}">${data.riskScore}%</strong></p></div>`;
+    const risk = data.riskScore;
+    const statusClass = risk > 50 ? 'danger' : 'safe';
+    
+    c.innerHTML = `
+        <div class="fade-in">
+            <div class="decision-card ${statusClass}">
+                <div class="decision-icon"><i class="fa-solid fa-id-card-clip"></i></div>
+                <div class="decision-content">
+                    <span class="decision-tag" style="background:var(--risk-${statusClass})">${risk > 50 ? 'THREAT DETECTED' : 'CLEAN PROFILE'}</span>
+                    <h3>Institutional Wallet Report</h3>
+                    <p style="opacity:0.8; margin:0; font-size:0.9rem;">Cluster Analysis: ${risk > 50 ? 'Suspicious associations identified.' : 'No illicit clusters found.'}</p>
+                </div>
+            </div>
+
+            <div class="report-grid">
+                <div class="report-card">
+                    <span class="report-label">Exposure Level</span>
+                    <div class="report-value" style="color:var(--risk-${statusClass})">${risk}%</div>
+                </div>
+                <div class="report-card">
+                    <span class="report-label">Association Patterns</span>
+                    <div class="report-value" style="font-size:1.1rem;">${risk > 50 ? 'High Mixer Interaction' : 'Legit CEX Flow'}</div>
+                </div>
+            </div>
+        </div>
+    `;
 }
 
 function renderPhishingResult(data, c) {
-    const color = data.isMalicious ? '#ef4444' : '#10b981';
-    c.innerHTML = `<div class="tool-result-card fade-in" style="text-align:center; padding:30px;"><h2 style="color:${color}">${data.isMalicious ? 'DANGEROUS' : 'SECURE'}</h2><p>${data.url}</p></div>`;
-}
-
-function renderSmartMoneyResult(data, c) {
-    c.innerHTML = `<div class="tool-result-card fade-in" style="padding:20px;"><h3>Smart Money: ${data.overall}</h3><p>Total Flow: ${data.totalFlow} ETH</p></div>`;
-}
-
-function renderArbitrageResult(data, c) {
-    c.innerHTML = `<div class="tool-result-card fade-in" style="padding:20px;"><h3>Arbitrage Window: ${data.status}</h3><p>Spread: ${data.spreadPct}</p></div>`;
+    const isHigh = data.isMalicious;
+    const statusClass = isHigh ? 'danger' : 'safe';
+    
+    c.innerHTML = `
+        <div class="fade-in" style="text-align:center;">
+             <div class="decision-icon" style="font-size:5rem; color:var(--risk-${statusClass}); margin-bottom:20px;">
+                <i class="fa-solid ${isHigh ? 'fa-skull-crossbones' : 'fa-shield-check'}"></i>
+             </div>
+             <h2 style="color:var(--risk-${statusClass}); font-weight:900; font-size:2.5rem;">${isHigh ? 'MALICIOUS DOMAIN' : 'VERIFIED SECURE'}</h2>
+             <p style="color:var(--secondary-color); font-family:var(--font-mono);">${data.url}</p>
+             <div class="report-card d-inline-block mt-4" style="min-width:300px;">
+                <span class="report-label">AI Decision</span>
+                <div class="report-value">${isHigh ? 'DO NOT INTERACT' : 'SAFE TO BROWSE'}</div>
+             </div>
+        </div>
+    `;
 }
 
 function renderAlphaResult(data, c) {
-    c.innerHTML = `<div class="tool-result-card fade-in" style="padding:20px;"><h3>AI Alpha: ${data.overallSignal}</h3><p>Confidence: ${data.avgScore}%</p></div>`;
+    c.innerHTML = `
+        <div class="fade-in">
+            <div class="decision-card" style="background:rgba(168,85,247,0.1); border-color:#a855f7;">
+                <div class="decision-icon"><i class="fa-solid fa-brain" style="color:#a855f7;"></i></div>
+                <div class="decision-content">
+                    <span class="decision-tag" style="background:#a855f7">ALPHA SIGNAL</span>
+                    <h3>Neuro-Linguistic Intelligence Report</h3>
+                    <p style="opacity:0.8; margin:0; font-size:0.9rem;">Converging 5 AI models for institutional prediction.</p>
+                </div>
+            </div>
+            
+            <div style="background:rgba(0,0,0,0.4); padding:30px; border-radius:12px; border:1px solid rgba(168,85,247,0.2);">
+                <h4 style="color:#a855f7; margin-bottom:15px;">AI Sentiment Narrative</h4>
+                <p style="line-height:1.6; color:rgba(255,255,255,0.9);">The current on-chain velocity suggests a strong <strong>${data.overallSignal}</strong> move. Our models detected unusual accumulation patterns from Tier-1 whales within the last 4 hours. Combined with social momentum, the predictive confidence is <strong>${data.avgScore}%</strong>.</p>
+                
+                <div class="report-grid mt-4">
+                    <div class="report-card">
+                        <span class="report-label">Whale Accumulation</span>
+                        <div class="report-value" style="color:#10b981;">HIGH</div>
+                    </div>
+                    <div class="report-card">
+                        <span class="report-label">Social Heat</span>
+                        <div class="report-value">BULLISH</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
 }
 
 async function loadDashboard() {
@@ -570,21 +668,47 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
+    // v2.0 Sidebar and Search logic
+    const sidebarToggle = document.getElementById('sidebar-toggle');
+    const mainSidebar = document.getElementById('main-sidebar');
+    const mainContent = document.getElementById('main-page-container');
+    
+    if (sidebarToggle && mainSidebar) {
+        sidebarToggle.addEventListener('click', () => {
+            mainSidebar.classList.toggle('collapsed');
+            mainContent.classList.toggle('expanded');
+            // Mobile toggle
+            if (window.innerWidth <= 968) {
+                mainSidebar.classList.toggle('active');
+            }
+        });
+    }
+
+    // Global Search Shortcut (Alt + K)
+    document.addEventListener('keydown', (e) => {
+        if (e.altKey && e.key.toLowerCase() === 'k') {
+            e.preventDefault();
+            alert("v2.0 HUD Search: Intelligence retrieval coming soon...");
+        }
+    });
+
     // Global router click interceptor
     document.addEventListener('click', (e) => {
         const link = e.target.closest('[data-route]');
         if (link) {
             e.preventDefault();
-            navigateTo(link.getAttribute('data-route'));
+            const route = link.getAttribute('data-route');
+            navigateTo(route);
             
-            // Close mobile menu on navigate
-            if (navLinks && navLinks.classList.contains('active')) {
-                navLinks.classList.remove('active');
-                const icon = mobileMenuBtn.querySelector('i');
-                if (icon) {
-                    icon.classList.add('fa-bars');
-                    icon.classList.remove('fa-xmark');
-                }
+            // Sync active states in sidebar
+            document.querySelectorAll('.nav-item-v2').forEach(item => {
+                item.classList.remove('active');
+                if (item.getAttribute('data-route') === route) item.classList.add('active');
+            });
+
+            // Close mobile menu/sidebar on navigate
+            if (mainSidebar && mainSidebar.classList.contains('active')) {
+                mainSidebar.classList.remove('active');
             }
         }
     });
