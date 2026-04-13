@@ -1,5 +1,5 @@
 /**
- * CryptoAyuda AI Guardian - Main Script
+ * Synapse AI Intelligence - Main Script
  * Handles SPA Routing, Chatbot functionality, and Analysis Simulations
  */
 
@@ -286,14 +286,14 @@ function initPricingLogic() {
                 return;
             }
             const plan = btn.getAttribute('data-plan');
-            const priceStr = plan === 'basic' ? '7.00' : (plan === 'pro' ? '19.00' : '39.00');
+            const priceStr = plan === 'basic' ? '7.00' : (plan === 'pro' ? '29.00' : '99.00');
             const containerId = `paypal-button-container-${plan}`;
             const containerEl = document.getElementById(containerId);
             if (containerEl && window.paypal) {
                 btn.style.display = 'none'; containerEl.style.display = 'block'; containerEl.innerHTML = '';
                 paypal.Buttons({
                     style: { layout: 'vertical', color: 'gold', shape: 'pill' },
-                    createOrder: (data, actions) => actions.order.create({ purchase_units: [{ amount: { currency_code: 'USD', value: priceStr }, description: `CryptoAyuda - ${plan.toUpperCase()}` }] }),
+                    createOrder: (data, actions) => actions.order.create({ purchase_units: [{ amount: { currency_code: 'USD', value: priceStr }, description: `Synapse AI Alpha - ${plan.toUpperCase()}` }] }),
                     onApprove: (data, actions) => actions.order.capture().then(details => {
                         btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Verifying Payment...';
                         return fetch('/api/orders/capture', {

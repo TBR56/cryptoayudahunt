@@ -1,19 +1,19 @@
 /**
- * CryptoAyuda — Enterprise Tool Views
+ * Synapse AI — Enterprise Tool Views
  * Each tool has its own full-page, multi-panel interface
  */
 
-// ─── TOOL 1: TOKEN SECURITY PRO ─────────────────────────────────────────────
+// ─── TOOL 1: MOONSHOT DISCOVERY PROBE ─────────────────────────────────────────────
 window.views['tool-token'] = () => `
 <div class="tool-v2-container" style="padding: 40px 24px;">
     <div class="tool-v2-header" style="margin-bottom: 40px; display:flex; justify-content:space-between; align-items:flex-end; flex-wrap:wrap; gap:20px;">
         <div>
-            <div style="font-size:0.8rem; color:var(--accent-color); font-family:var(--font-mono); margin-bottom:10px; text-transform:uppercase; letter-spacing:2px;">Advanced Smart Contract Audit</div>
-            <h1 style="font-size:3rem; font-weight:900; margin:0; letter-spacing:-1px;">Token Security Pro <span style="font-size:1.5rem; vertical-align:middle; opacity:0.5;">v3.0</span></h1>
+            <div style="font-size:0.8rem; color:var(--accent-color); font-family:var(--font-mono); margin-bottom:10px; text-transform:uppercase; letter-spacing:2px;">Early-Stage Liquidity Analysis</div>
+            <h1 style="font-size:3rem; font-weight:900; margin:0; letter-spacing:-1px;">Moonshot Discovery <span style="font-size:1.5rem; vertical-align:middle; opacity:0.5;">v4.0</span></h1>
         </div>
         <div style="display:flex; gap:12px;">
             <div class="badge" style="background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1);">+25 XP</div>
-            <div class="badge" style="background:var(--risk-low); border:none; color:#000;">STABLE ENGINE</div>
+            <div class="badge" style="background:var(--risk-low); border:none; color:#000;">NEURAL ACTIVE</div>
         </div>
     </div>
 
@@ -34,24 +34,24 @@ window.views['tool-token'] = () => `
     <div id="tt-results" style="min-height:400px; display:flex; align-items:center; justify-content:center; border:1px dashed rgba(255,255,255,0.1); border-radius:24px; background:rgba(255,255,255,0.01);">
         <div style="text-align:center; max-width:400px; opacity:0.6;">
             <div style="font-size:3rem; margin-bottom:20px;">🔍</div>
-            <h3 style="margin-bottom:10px;">Ready for Deep Audit</h3>
-            <p style="font-size:0.9rem;">Paste a contract above. Our AI will analyze honeypot signals, tax manipulation, and liquidity locking in real-time.</p>
+            <h3 style="margin-bottom:10px;">Awaiting Neural Probe</h3>
+            <p style="font-size:0.9rem;">Paste a contract above. Our AI will analyze historical developer success, initial buyer quality, and moonshot probability in real-time.</p>
         </div>
     </div>
 </div>
 `;
 
-// ─── TOOL 2: WALLET INTELLIGENCE ────────────────────────────────────────────
+// ─── TOOL 2: SMART MONEY TRACKER ────────────────────────────────────────────
 window.views['tool-wallet'] = () => `
 <div class="tool-v2-container" style="padding: 40px 24px;">
     <div class="tool-v2-header" style="margin-bottom: 40px; display:flex; justify-content:space-between; align-items:flex-end; flex-wrap:wrap; gap:20px;">
         <div>
-            <div style="font-size:0.8rem; color:#a855f7; font-family:var(--font-mono); margin-bottom:10px; text-transform:uppercase; letter-spacing:2px;">Institutional Profile Intelligence</div>
-            <h1 style="font-size:3rem; font-weight:900; margin:0; letter-spacing:-1px;">Wallet God-Mode <span style="font-size:1.5rem; vertical-align:middle; opacity:0.5;">v2.5</span></h1>
+            <div style="font-size:0.8rem; color:var(--synapse-purple); font-family:var(--font-mono); margin-bottom:10px; text-transform:uppercase; letter-spacing:2px;">Institutional Alpha Intelligence</div>
+            <h1 style="font-size:3rem; font-weight:900; margin:0; letter-spacing:-1px;">Smart Money Hub <span style="font-size:1.5rem; vertical-align:middle; opacity:0.5;">v2.5</span></h1>
         </div>
         <div style="display:flex; gap:12px;">
             <div class="badge" style="background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1);">+15 XP</div>
-            <div class="badge" style="background:#a855f7; border:none; color:#fff;">CORE ACCESS</div>
+            <div class="badge" style="background:var(--synapse-purple); border:none; color:#fff;">HUNTER RANK</div>
         </div>
     </div>
     <div class="scan-bar-v2" style="background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.08); border-radius:24px; padding:10px; display:flex; gap:10px; flex-wrap:wrap; margin-bottom:40px; box-shadow:var(--shadow-premium);">
@@ -64,24 +64,24 @@ window.views['tool-wallet'] = () => `
     <div id="tw-results" style="min-height:400px; display:flex; align-items:center; justify-content:center; border:1px dashed rgba(255,255,255,0.1); border-radius:24px; background:rgba(255,255,255,0.01);">
         <div style="text-align:center; max-width:400px; opacity:0.6;">
             <div style="font-size:3rem; margin-bottom:20px;">🕵️‍♂️</div>
-            <h3 style="margin-bottom:10px;">Awaiting Target Identity</h3>
-            <p style="font-size:0.9rem;">Monitor whale clusters, detect mixer interactions, and map out on-chain reputation before it's too late.</p>
+            <h3 style="margin-bottom:10px;">Targeting Whales</h3>
+            <p style="font-size:0.9rem;">Map out Smart Money clusters, identify whale entry points, and copy the moves of the on-chain elite.</p>
         </div>
     </div>
 </div>
 `;
 
-// ─── TOOL 3: PHISHING & URL SCANNER ─────────────────────────────────────────
+// ─── TOOL 3: ALPHA MOMENTUM PREDICTOR ─────────────────────────────────────────
 window.views['tool-phishing'] = () => `
 <div class="tool-v2-container" style="padding: 40px 24px;">
     <div class="tool-v2-header" style="margin-bottom: 40px; display:flex; justify-content:space-between; align-items:flex-end; flex-wrap:wrap; gap:20px;">
         <div>
-            <div style="font-size:0.8rem; color:var(--risk-high); font-family:var(--font-mono); margin-bottom:10px; text-transform:uppercase; letter-spacing:2px;">Advanced URL Analysis</div>
-            <h1 style="font-size:3rem; font-weight:900; margin:0; letter-spacing:-1px;">Phishing Shield <span style="font-size:1.5rem; vertical-align:middle; opacity:0.5;">v3.0</span></h1>
+            <div style="font-size:0.8rem; color:var(--synapse-cyan); font-family:var(--font-mono); margin-bottom:10px; text-transform:uppercase; letter-spacing:2px;">Predictive Narrative Intelligence</div>
+            <h1 style="font-size:3rem; font-weight:900; margin:0; letter-spacing:-1px;">Momentum Engine <span style="font-size:1.5rem; vertical-align:middle; opacity:0.5;">v3.0</span></h1>
         </div>
         <div style="display:flex; gap:12px;">
             <div class="badge" style="background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1);">+10 XP</div>
-            <div class="badge" style="background:var(--risk-high); border:none; color:#fff;">DANGER SCANNER</div>
+            <div class="badge" style="background:var(--synapse-cyan); border:none; color:#000;">HUNTER ACTIVE</div>
         </div>
     </div>
     <div class="scan-bar-v2" style="background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.08); border-radius:24px; padding:10px; display:flex; gap:10px; flex-wrap:wrap; margin-bottom:40px; box-shadow:var(--shadow-premium);">
@@ -94,8 +94,8 @@ window.views['tool-phishing'] = () => `
     <div id="tp-results" style="min-height:400px; display:flex; align-items:center; justify-content:center; border:1px dashed rgba(255,255,255,0.1); border-radius:24px; background:rgba(255,255,255,0.01);">
         <div style="text-align:center; max-width:400px; opacity:0.6;">
             <div style="font-size:3rem; margin-bottom:20px;">🕸️</div>
-            <h3 style="margin-bottom:10px;">Safe Browsing Active</h3>
-            <p style="font-size:0.9rem;">We use 200+ blacklist registries and AI pattern matching to detect clones and wallet drainers before they execute.</p>
+            <h3 style="margin-bottom:10px;">Predicting the Flow</h3>
+            <p style="font-size:0.9rem;">Analyze volume divergence, social sentiment heat-maps, and cross-chain money flow to predict the next 100% breakout narrative.</p>
         </div>
     </div>
 </div>
@@ -175,13 +175,13 @@ window.views['tool-arbitrage'] = () => `
 </div>
 `;
 
-// ─── TOOL 6: AI ALPHA INTELLIGENCE CENTER ───────────────────────────────────
+// ─── TOOL 6: NEURAL ALPHA ENGINE ────────────────────────────────────────────
 window.views['tool-alpha'] = () => `
 <div class="tool-v2-container" style="padding: 40px 24px;">
     <div class="tool-v2-header" style="margin-bottom: 40px; display:flex; justify-content:space-between; align-items:flex-end; flex-wrap:wrap; gap:20px;">
         <div>
-            <div style="font-size:0.8rem; color:#a855f7; font-family:var(--font-mono); margin-bottom:10px; text-transform:uppercase; letter-spacing:2px;">Neural Convergence Signal</div>
-            <h1 style="font-size:3rem; font-weight:900; margin:0; letter-spacing:-1px;">Alpha Intelligence Center <span style="font-size:1.5rem; vertical-align:middle; opacity:0.5;">ELITE</span></h1>
+            <div style="font-size:0.8rem; color:var(--synapse-purple); font-family:var(--font-mono); margin-bottom:10px; text-transform:uppercase; letter-spacing:2px;">Neural Convergence Synthesis</div>
+            <h1 style="font-size:3rem; font-weight:900; margin:0; letter-spacing:-1px;">Neural Alpha Engine <span style="font-size:1.5rem; vertical-align:middle; opacity:0.5;">ORACLE</span></h1>
         </div>
         <div style="display:flex; gap:12px;">
             <div class="badge" style="background:rgba(168,85,247,0.1); border:1px solid rgba(168,85,247,0.3); color:#a855f7;">+50 XP</div>

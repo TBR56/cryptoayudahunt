@@ -1,7 +1,7 @@
 {
-  "name": "aigaurdianweb",
+  "name": "synapse-ai-alpha",
   "version": "1.0.0",
-  "description": "CryptoAyuda AI Guardian - Crypto Security Platform",
+  "description": "Synapse AI - Institutional On-Chain Intelligence Engine",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",

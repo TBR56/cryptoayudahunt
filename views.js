@@ -10,34 +10,34 @@ window.views = {
             <div class="particles" id="particles-container"></div>
             
             <div class="container hero-container" style="max-width: 1000px; text-align:center; position:relative; z-index:5;">
-                <div class="badge fade-in" style="margin-bottom:24px; text-transform:uppercase; letter-spacing:3px; background:rgba(239, 68, 68, 0.1); border-color:rgba(239, 68, 68, 0.3); color:var(--risk-high);">
-                    <i class="fa-solid fa-radiation"></i> CRITICAL THREAT WARNING
+                <div class="badge fade-in" style="margin-bottom:24px; text-transform:uppercase; letter-spacing:3px; background:rgba(0, 242, 255, 0.1); border-color:rgba(0, 242, 255, 0.3); color:var(--accent-vibrant);">
+                    <i class="fa-solid fa-brain"></i> NEURAL ALPHA ENGINE V4.0
                 </div>
                 
                 <h1 class="fade-up" style="font-size: clamp(3rem, 10vw, 5.5rem); line-height:0.95; margin-bottom:28px; font-weight:900; letter-spacing:-3px;">
-                    Stop gambling with your <br><span style="color:var(--accent-vibrant); text-shadow:0 0 30px rgba(14, 165, 233, 0.5);">life savings</span>.
+                    Own the on-chain <br><span style="color:var(--accent-vibrant); text-shadow:0 0 30px rgba(0, 242, 255, 0.5);">alpha</span> before <br>it hits the chart.
                 </h1>
                 
                 <p class="hero-sub fade-up" style="font-size: clamp(1.1rem, 3.5vw, 1.6rem); color:var(--secondary-color); margin-bottom:60px; max-width:700px; margin-left:auto; margin-right:auto; opacity:0.9;">
-                    Deploy institutional-grade intelligence to detect rug pulls, insider clusters, and phishing drains <strong style="color:#fff;">before</strong> you click.
+                    Deploy institutional-grade intelligence to detect <strong style="color:#fff;">whales</strong>, locate <strong style="color:#fff;">moonshots</strong>, and predict <strong style="color:#fff;">narrative shifts</strong> with 94% accuracy.
                 </p>
                 
                 <div class="landing-check-box fade-up" style="max-width:800px; margin: 0 auto; background:rgba(2,6,23,0.85); border:1px solid rgba(255,255,255,0.1); border-radius:28px; padding:12px; backdrop-filter:blur(30px); box-shadow:0 30px 60px rgba(0,0,0,0.6);">
                     <div style="display:flex; gap:12px; flex-wrap:wrap;">
                         <div class="input-group-modern" style="flex:1; padding:18px 25px; display:flex; align-items:center; min-width:300px; background:rgba(0,0,0,0.3); border-radius:20px;">
-                            <i class="fa-solid fa-bolt" style="color:var(--risk-medium); margin-right:15px; font-size:1.3rem;"></i>
-                            <input type="text" id="landing-link-input" placeholder="Paste URL, Token Address or Wallet..." style="width:100%; border:none; background:transparent; color:#fff; font-size:1.2rem; outline:none; font-family:var(--font-mono);">
+                            <i class="fa-solid fa-bolt" style="color:var(--accent-vibrant); margin-right:15px; font-size:1.3rem;"></i>
+                            <input type="text" id="landing-link-input" placeholder="Paste Token address to analyze Alpha Potential..." style="width:100%; border:none; background:transparent; color:#fff; font-size:1.2rem; outline:none; font-family:var(--font-mono);">
                         </div>
-                        <button id="landing-check-btn" class="btn btn-primary btn-glow" style="padding:15px 40px; border-radius:20px; font-weight:900; font-size:1.1rem; text-transform:uppercase; background:linear-gradient(135deg, var(--accent-vibrant), #1e40af); border:none;">
-                            RUN AI SCAN
+                        <button id="landing-check-btn" class="btn btn-primary btn-glow" style="padding:15px 40px; border-radius:20px; font-weight:900; font-size:1.1rem; text-transform:uppercase; background:linear-gradient(135deg, var(--accent-vibrant), #7000FF); border:none;">
+                            REVEAL ALPHA
                         </button>
                     </div>
                 </div>
                 
                 <div style="display:flex; justify-content:center; gap:50px; margin-top:50px; opacity:0.6; flex-wrap:wrap;">
-                    <div style="font-size:0.85rem; display:flex; align-items:center; gap:10px;"><i class="fa-solid fa-shield-halved" style="color:var(--risk-low);"></i> ISO-Ready Security</div>
-                    <div style="font-size:0.85rem; display:flex; align-items:center; gap:10px;"><i class="fa-solid fa-microchip" style="color:var(--accent-color);"></i> Neural Net v3.0</div>
-                    <div style="font-size:0.85rem; display:flex; align-items:center; gap:10px;"><i class="fa-solid fa-lock" style="color:var(--risk-medium);"></i> $280M+ Assets Protected</div>
+                    <div style="font-size:0.85rem; display:flex; align-items:center; gap:10px;"><i class="fa-solid fa-chart-line" style="color:var(--risk-low);"></i> High-Yield Alerts</div>
+                    <div style="font-size:0.85rem; display:flex; align-items:center; gap:10px;"><i class="fa-solid fa-microchip" style="color:var(--accent-color);"></i> Institutional Models</div>
+                    <div style="font-size:0.85rem; display:flex; align-items:center; gap:10px;"><i class="fa-solid fa-wallet" style="color:var(--risk-medium);"></i> $1.2B Managed Portfolio Intel</div>
                 </div>
             </div>
 
@@ -71,49 +71,49 @@ window.views = {
 
         <section class="monetization-section center" id="pricing" style="padding: 120px 24px;">
             <div class="container">
-                <div class="badge" style="margin-bottom:20px;">MONETIZATION TIER</div>
-                <h2 style="font-size: clamp(2rem, 5vw, 3.5rem); margin-bottom: 20px; font-weight: 800; letter-spacing:-1px;">Join the Elite 1% of Hunters</h2>
-                <p style="color: var(--secondary-color); margin-bottom: 80px; font-size: 1.2rem; max-width:600px; margin-left:auto; margin-right:auto;">Stop being the "exit liquidity". Pick your tier and deploy protection today.</p>
+                <div class="badge" style="margin-bottom:20px; background:rgba(112, 0, 255, 0.1); color:#7000FF; border-color:rgba(112, 0, 255, 0.3);">MONETIZATION TIER</div>
+                <h2 style="font-size: clamp(2rem, 5vw, 3.5rem); margin-bottom: 20px; font-weight: 800; letter-spacing:-1px;">Join the Elite 1% of Alpha Seekers</h2>
+                <p style="color: var(--secondary-color); margin-bottom: 80px; font-size: 1.2rem; max-width:600px; margin-left:auto; margin-right:auto;">Stop being the "exit liquidity". Deploy institutional intelligence today.</p>
                 
                 <div class="pricing-container" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; max-width: 1200px; margin: 0 auto;">
-                    <!-- Basic -->
+                    <!-- Free / Observer -->
                     <div class="plan-card" style="padding: 50px 40px; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); border-radius: 30px; text-align: left; transition: var(--transition);">
-                        <div style="color: var(--secondary-color); font-weight: bold; letter-spacing: 2px; margin-bottom: 20px; font-size:0.8rem;">SENTRY TIER</div>
-                        <div style="font-size: 3.5rem; font-weight: 900; margin-bottom: 25px;">$7<span style="font-size: 1rem; color: var(--secondary-color); font-weight:400;">/mo</span></div>
+                        <div style="color: var(--secondary-color); font-weight: bold; letter-spacing: 2px; margin-bottom: 20px; font-size:0.8rem;">OBSERVER</div>
+                        <div style="font-size: 3.5rem; font-weight: 900; margin-bottom: 25px;">$0<span style="font-size: 1rem; color: var(--secondary-color); font-weight:400;">/mo</span></div>
                         <ul style="list-style: none; padding: 0; margin: 0 0 50px; color: var(--secondary-color); line-height: 2.2; font-size:0.95rem;">
-                            <li><i class="fa-solid fa-check" style="color:var(--risk-low); margin-right:12px;"></i> 30 Scans per day</li>
+                            <li><i class="fa-solid fa-check" style="color:var(--risk-low); margin-right:12px;"></i> 3 Basic Scans per day</li>
                             <li><i class="fa-solid fa-check" style="color:var(--risk-low); margin-right:12px;"></i> Basic Risk Scoring</li>
-                            <li><i class="fa-solid fa-check" style="color:var(--risk-low); margin-right:12px;"></i> Phishing URL Guard</li>
-                            <li style="opacity:0.4;"><i class="fa-solid fa-xmark" style="margin-right:12px;"></i> Smart Money Tracker</li>
+                            <li style="opacity:0.4;"><i class="fa-solid fa-xmark" style="margin-right:12px;"></i> Real-time Alpha Alerts</li>
+                            <li style="opacity:0.4;"><i class="fa-solid fa-xmark" style="margin-right:12px;"></i> Smart Money Tracking</li>
                         </ul>
-                        <button class="btn btn-outline full-width payment-trigger" data-plan="basic" style="padding:18px; font-weight:800;">Get Sentry</button>
+                        <button class="btn btn-outline full-width" onclick="navigateTo('auth', 'register')" style="padding:18px; font-weight:800;">Get Started</button>
                     </div>
 
-                    <!-- Pro -->
-                    <div class="plan-card" style="padding: 60px 40px; background: rgba(14, 165, 233, 0.05); border: 2px solid var(--accent-vibrant); border-radius: 30px; text-align: left; position: relative; box-shadow: 0 0 60px rgba(14, 165, 233, 0.2); transform: scale(1.05); z-index:2;">
-                        <div class="badge" style="position: absolute; top: -15px; left: 50%; transform: translateX(-50%); background: var(--accent-vibrant); border: none; font-size:0.7rem;">MOST POPULAR</div>
-                        <div style="color: var(--accent-vibrant); font-weight: bold; letter-spacing: 2px; margin-bottom: 20px; font-size:0.8rem;">SENTINEL PRO</div>
-                        <div style="font-size: 4rem; font-weight: 900; margin-bottom: 25px;">$19<span style="font-size: 1rem; color: var(--secondary-color); font-weight:400;">/mo</span></div>
+                    <!-- Pro / Hunter -->
+                    <div class="plan-card" style="padding: 60px 40px; background: rgba(0, 242, 255, 0.05); border: 2px solid var(--accent-vibrant); border-radius: 30px; text-align: left; position: relative; box-shadow: 0 0 60px rgba(0, 242, 255, 0.1); transform: scale(1.05); z-index:2;">
+                        <div class="badge" style="position: absolute; top: -15px; left: 50%; transform: translateX(-50%); background: var(--accent-vibrant); border: none; font-size:0.7rem; color:#000;">PROFIT MAXIMIZER</div>
+                        <div style="color: var(--accent-vibrant); font-weight: bold; letter-spacing: 2px; margin-bottom: 20px; font-size:0.8rem;">ALPHA HUNTER</div>
+                        <div style="font-size: 4rem; font-weight: 900; margin-bottom: 25px;">$29<span style="font-size: 1rem; color: var(--secondary-color); font-weight:400;">/mo</span></div>
                         <ul style="list-style: none; padding: 0; margin: 0 0 50px; line-height: 2.2; font-size:0.95rem;">
                             <li><i class="fa-solid fa-bolt" style="color:var(--accent-vibrant); margin-right:12px;"></i> <strong>Unlimited</strong> AI Scans</li>
-                            <li><i class="fa-solid fa-bolt" style="color:var(--accent-vibrant); margin-right:12px;"></i> Wallet Cluster Detection</li>
-                            <li><i class="fa-solid fa-bolt" style="color:var(--accent-vibrant); margin-right:12px;"></i> AI Smart Money Tracking</li>
-                            <li><i class="fa-solid fa-bolt" style="color:var(--accent-vibrant); margin-right:12px;"></i> Real-time Scam Alerts</li>
+                            <li><i class="fa-solid fa-bolt" style="color:var(--accent-vibrant); margin-right:12px;"></i> Smart Money Tracker Pro</li>
+                            <li><i class="fa-solid fa-bolt" style="color:var(--accent-vibrant); margin-right:12px;"></i> Real-time Whale Alerts</li>
+                            <li><i class="fa-solid fa-bolt" style="color:var(--accent-vibrant); margin-right:12px;"></i> Priority Access to Moonshots</li>
                         </ul>
-                        <button class="btn btn-primary full-width payment-trigger" data-plan="pro" style="padding:20px; font-weight:900; background:var(--accent-vibrant); border:none; box-shadow:0 10px 30px rgba(14, 165, 233, 0.4);">UPGRADE TO PRO</button>
+                        <button class="btn btn-primary full-width payment-trigger" data-plan="pro" style="padding:20px; font-weight:900; background:var(--accent-vibrant); border:none; color:#000; box-shadow:0 10px 30px rgba(0, 242, 255, 0.3);">DEPLOY HUNTER</button>
                     </div>
 
-                    <!-- Elite -->
-                    <div class="plan-card" style="padding: 50px 40px; background: rgba(168, 85, 247, 0.05); border: 1px solid rgba(168, 85, 247, 0.3); border-radius: 30px; text-align: left;">
-                        <div style="color: #a855f7; font-weight: bold; letter-spacing: 2px; margin-bottom: 20px; font-size:0.8rem;">ORACLE ELITE</div>
-                        <div style="font-size: 3.5rem; font-weight: 900; margin-bottom: 25px;">$39<span style="font-size: 1rem; color: var(--secondary-color); font-weight:400;">/mo</span></div>
+                    <!-- Elite / Oracle -->
+                    <div class="plan-card" style="padding: 50px 40px; background: rgba(112, 0, 255, 0.05); border: 1px solid rgba(112, 0, 255, 0.3); border-radius: 30px; text-align: left;">
+                        <div style="color: #7000FF; font-weight: bold; letter-spacing: 2px; margin-bottom: 20px; font-size:0.8rem;">INSTITUTIONAL</div>
+                        <div style="font-size: 3.5rem; font-weight: 900; margin-bottom: 25px;">$99<span style="font-size: 1rem; color: var(--secondary-color); font-weight:400;">/mo</span></div>
                         <ul style="list-style: none; padding: 0; margin: 0 0 50px; color: var(--secondary-color); line-height: 2.2; font-size:0.95rem;">
-                            <li><i class="fa-solid fa-crown" style="color:#a855f7; margin-right:12px;"></i> Everything in Pro</li>
-                            <li><i class="fa-solid fa-crown" style="color:#a855f7; margin-right:12px;"></i> Alpha Momentum Signal</li>
-                            <li><i class="fa-solid fa-crown" style="color:#a855f7; margin-right:12px;"></i> God-Mode Wallet Vision</li>
-                            <li><i class="fa-solid fa-crown" style="color:#a855f7; margin-right:12px;"></i> Private Slack / Discord</li>
+                            <li><i class="fa-solid fa-crown" style="color:#7000FF; margin-right:12px;"></i> Everything in Pro</li>
+                            <li><i class="fa-solid fa-crown" style="color:#7000FF; margin-right:12px;"></i> Predictive Entry/Exit Signals</li>
+                            <li><i class="fa-solid fa-crown" style="color:#7000FF; margin-right:12px;"></i> Narrative Shift Detection</li>
+                            <li><i class="fa-solid fa-crown" style="color:#7000FF; margin-right:12px;"></i> Direct API / Private Signal</li>
                         </ul>
-                        <button class="btn btn-primary full-width payment-trigger" data-plan="elite" style="padding:18px; font-weight:800; background:#a855f7; border:none;">GO ELITE</button>
+                        <button class="btn btn-primary full-width payment-trigger" data-plan="elite" style="padding:18px; font-weight:800; background:#7000FF; border:none;">ASCEND TO ORACLE</button>
                     </div>
                 </div>
             </div>
@@ -123,69 +123,69 @@ window.views = {
     tools: () => `
         <div class="tool-hub-v2" style="padding: 40px 24px;">
             <div style="margin-bottom: 40px;">
-                <h1 style="font-size: 2.5rem; font-weight: 800; margin-bottom: 10px;">AI Arsenal</h1>
-                <p style="color: var(--secondary-color);">Select an intelligence module to deploy. Your hunter rank determines available tools.</p>
+                <h1 style="font-size: 2.5rem; font-weight: 800; margin-bottom: 10px;">Alpha Arsenal</h1>
+                <p style="color: var(--secondary-color);">Select an intelligence module to deploy. Your rank determines signal quality.</p>
             </div>
 
             <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 20px;">
-                <!-- Token Security -->
+                <!-- Moonshot Discovery -->
                 <div class="tool-card-v2 report-card-v2 clickable" onclick="navigateTo('tool-token')" style="cursor:pointer; transition: var(--transition);">
                     <div style="margin-bottom: 20px; display:flex; justify-content:space-between; align-items:center;">
-                        <div style="width:50px; height:50px; background:rgba(14, 165, 233, 0.1); border:1px solid rgba(14, 165, 233, 0.2); border-radius:12px; display:flex; align-items:center; justify-content:center;">
-                            <i class="fa-solid fa-coins" style="color:var(--accent-vibrant); font-size:1.5rem;"></i>
+                        <div style="width:50px; height:50px; background:rgba(0, 242, 255, 0.1); border:1px solid rgba(0, 242, 255, 0.2); border-radius:12px; display:flex; align-items:center; justify-content:center;">
+                            <i class="fa-solid fa-rocket" style="color:var(--accent-vibrant); font-size:1.5rem;"></i>
                         </div>
                         <span class="badge" style="background:var(--risk-low); border:none; color:#000; font-size:0.7rem;">FREE</span>
                     </div>
-                    <h3 style="margin-bottom: 10px;">Token Security Pro</h3>
-                    <p style="font-size: 0.9rem; color: var(--secondary-color); margin-bottom: 20px;">Deep contract auditing, honeypot detection & tax manipulation checks.</p>
+                    <h3 style="margin-bottom: 10px;">Moonshot Discovery</h3>
+                    <p style="font-size: 0.9rem; color: var(--secondary-color); margin-bottom: 20px;">Locate 10x-100x candidates before the social explosion. AI-vetted liquidity.</p>
                     <div style="display:flex; gap:8px; flex-wrap:wrap;">
-                        <span style="font-size:0.7rem; padding:4px 8px; background:rgba(255,255,255,0.05); border-radius:6px; color:var(--secondary-color);">Honeypot</span>
-                        <span style="font-size:0.7rem; padding:4px 8px; background:rgba(255,255,255,0.05); border-radius:6px; color:var(--secondary-color);">v3.0 Engine</span>
+                        <span style="font-size:0.7rem; padding:4px 8px; background:rgba(255,255,255,0.05); border-radius:6px; color:var(--secondary-color);">Early Bird</span>
+                        <span style="font-size:0.7rem; padding:4px 8px; background:rgba(255,255,255,0.05); border-radius:6px; color:var(--secondary-color);">Vetted Pools</span>
                     </div>
                 </div>
 
-                <!-- Wallet Intel -->
+                <!-- Smart Money Tracker -->
                 <div class="tool-card-v2 report-card-v2 clickable" onclick="navigateTo('tool-wallet')" style="cursor:pointer;">
                     <div style="margin-bottom: 20px; display:flex; justify-content:space-between; align-items:center;">
-                        <div style="width:50px; height:50px; background:rgba(168, 85, 247, 0.1); border:1px solid rgba(168, 85, 247, 0.2); border-radius:12px; display:flex; align-items:center; justify-content:center;">
-                            <i class="fa-solid fa-wallet" style="color:#a855f7; font-size:1.5rem;"></i>
+                        <div style="width:50px; height:50px; background:rgba(112, 0, 255, 0.1); border:1px solid rgba(112, 0, 255, 0.2); border-radius:12px; display:flex; align-items:center; justify-content:center;">
+                            <i class="fa-solid fa-user-secret" style="color:var(--synapse-purple); font-size:1.5rem;"></i>
                         </div>
-                        <span class="badge" style="background:var(--risk-low); border:none; color:#000; font-size:0.7rem;">FREE</span>
+                        <span class="badge" style="background:var(--synapse-cyan); border:none; color:#000; font-size:0.7rem;">PRO</span>
                     </div>
-                    <h3 style="margin-bottom: 10px;">Wallet Intelligence</h3>
-                    <p style="font-size: 0.9rem; color: var(--secondary-color); margin-bottom: 20px;">Whale tracking, risk profiling & on-chain reputation scoring.</p>
+                    <h3 style="margin-bottom: 10px;">Smart Money Tracker</h3>
+                    <p style="font-size: 0.9rem; color: var(--secondary-color); margin-bottom: 20px;">Shadow-trade the world's most profitable wallets in real-time.</p>
                     <div style="display:flex; gap:8px; flex-wrap:wrap;">
-                        <span style="font-size:0.7rem; padding:4px 8px; background:rgba(255,255,255,0.05); border-radius:6px; color:var(--secondary-color);">Threat Score</span>
+                        <span style="font-size:0.7rem; padding:4px 8px; background:rgba(255,255,255,0.05); border-radius:6px; color:var(--secondary-color);">PnL Analyzer</span>
                     </div>
                 </div>
 
-                <!-- Phishing -->
+                <!-- Market Momentum -->
                 <div class="tool-card-v2 report-card-v2 clickable" onclick="navigateTo('tool-phishing')" style="cursor:pointer;">
                     <div style="margin-bottom: 20px; display:flex; justify-content:space-between; align-items:center;">
-                        <div style="width:50px; height:50px; background:rgba(239, 68, 68, 0.1); border:1px solid rgba(239, 68, 68, 0.2); border-radius:12px; display:flex; align-items:center; justify-content:center;">
-                            <i class="fa-solid fa-link" style="color:var(--risk-high); font-size:1.5rem;"></i>
+                        <div style="width:50px; height:50px; background:rgba(0, 255, 136, 0.1); border:1px solid rgba(0, 255, 136, 0.2); border-radius:12px; display:flex; align-items:center; justify-content:center;">
+                            <i class="fa-solid fa-chart-line" style="color:var(--risk-low); font-size:1.5rem;"></i>
                         </div>
-                        <span class="badge" style="background:var(--risk-low); border:none; color:#000; font-size:0.7rem;">FREE</span>
+                        <span class="badge" style="background:var(--synapse-cyan); border:none; color:#000; font-size:0.7rem;">PRO</span>
                     </div>
-                    <h3 style="margin-bottom: 10px;">Phishing Shield</h3>
-                    <p style="font-size: 0.9rem; color: var(--secondary-color); margin-bottom: 20px;">Scan URLs for wallet drainers and cloned dApps instantly.</p>
+                    <h3 style="margin-bottom: 10px;">Market Momentum</h3>
+                    <p style="font-size: 0.9rem; color: var(--secondary-color); margin-bottom: 20px;">Predict the next narrative shift (AI vs RWA vs DePIN) with cluster data.</p>
                     <div style="display:flex; gap:8px; flex-wrap:wrap;">
-                        <span style="font-size:0.7rem; padding:4px 8px; background:rgba(255,255,255,0.05); border-radius:6px; color:var(--secondary-color);">Anti-Drain</span>
+                        <span style="font-size:0.7rem; padding:4px 8px; background:rgba(255,255,255,0.05); border-radius:6px; color:var(--secondary-color);">Narrative Engine</span>
                     </div>
                 </div>
 
                 <!-- Alpha Intelligence -->
-                <div class="tool-card-v2 report-card-v2 clickable" onclick="navigateTo('tool-alpha')" style="cursor:pointer; border:1px solid rgba(168, 85, 247, 0.3); background:rgba(168, 85, 247, 0.05);">
+                <div class="tool-card-v2 report-card-v2 clickable" onclick="navigateTo('tool-alpha')" style="cursor:pointer; border:1px solid rgba(112, 0, 255, 0.3); background:rgba(112, 0, 255, 0.05);">
                     <div style="margin-bottom: 20px; display:flex; justify-content:space-between; align-items:center;">
-                        <div style="width:50px; height:50px; background:rgba(168, 85, 247, 0.2); border:1px solid rgba(168, 85, 247, 0.4); border-radius:12px; display:flex; align-items:center; justify-content:center;">
-                            <i class="fa-solid fa-crown" style="color:#a855f7; font-size:1.5rem;"></i>
+                        <div style="width:50px; height:50px; background:rgba(112, 0, 255, 0.2); border:1px solid rgba(112, 0, 255, 0.4); border-radius:12px; display:flex; align-items:center; justify-content:center;">
+                            <i class="fa-solid fa-crown" style="color:var(--synapse-purple); font-size:1.5rem;"></i>
                         </div>
-                        <span class="badge" style="background:#a855f7; border:none; color:#fff; font-size:0.7rem;">ELITE</span>
+                        <span class="badge" style="background:var(--synapse-purple); border:none; color:#fff; font-size:0.7rem;">ORACLE</span>
                     </div>
                     <h3 style="margin-bottom: 10px;">Alpha Intelligence</h3>
-                    <p style="font-size: 0.9rem; color: var(--secondary-color); margin-bottom: 20px;">Combined AI sentiment, momentum & whale activity synthesis.</p>
+                    <p style="font-size: 0.9rem; color: var(--secondary-color); margin-bottom: 20px;">Converged AI sentiment, momentum & whale activity synthesis.</p>
                     <div style="display:flex; gap:8px; flex-wrap:wrap;">
-                        <span style="font-size:0.7rem; padding:4px 8px; background:rgba(168, 85, 247, 0.1); border-radius:6px; color:#a855f7;">5x AI Models</span>
+                        <span style="font-size:0.7rem; padding:4px 8px; background:rgba(112, 0, 255, 0.1); border-radius:6px; color:var(--synapse-purple);">God-Mode Access</span>
                     </div>
                 </div>
             </div>
@@ -195,46 +195,46 @@ window.views = {
         <div class="dashboard-v2" style="padding: 40px 24px;">
             <div style="margin-bottom: 40px; display:flex; justify-content:space-between; align-items:center;">
                 <div>
-                    <h1 style="font-size: 2.5rem; font-weight: 800; margin-bottom: 10px;">Intelligence Dashboard</h1>
-                    <p style="color: var(--secondary-color);">Real-time global threat matrix and community risk feed.</p>
+                    <h1 style="font-size: 2.5rem; font-weight: 800; margin-bottom: 10px;">Alpha Command Center</h1>
+                    <p style="color: var(--secondary-color);">Real-time on-chain velocity and moonshot detection matrix.</p>
                 </div>
-                <div class="badge" style="background:rgba(14, 165, 233, 0.1); color:var(--accent-vibrant); border:1px solid rgba(14, 165, 233, 0.3);">LIVE FEED</div>
+                <div class="badge" style="background:rgba(0, 242, 255, 0.1); color:var(--accent-vibrant); border:1px solid rgba(0, 242, 255, 0.3);">LIVE ALPHA FEED</div>
             </div>
 
             <div class="report-grid-v2" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px;">
-                <!-- Market Sentiment Widget -->
+                <!-- Alpha Velocity Widget -->
                 <div class="report-card-v2">
-                    <h4 style="color:var(--secondary-color); font-size:0.7rem; text-transform:uppercase; letter-spacing:1px; margin-bottom:15px;">Market Risk Matrix</h4>
+                    <h4 style="color:var(--secondary-color); font-size:0.7rem; text-transform:uppercase; letter-spacing:1px; margin-bottom:15px;">Alpha Velocity Matrix</h4>
                     <div style="display:flex; align-items:flex-end; gap:10px;">
-                        <div style="font-size:2.5rem; font-weight:900;">SAFE</div>
-                        <div style="margin-bottom:8px; color:var(--risk-low); font-size:0.8rem;"><i class="fa-solid fa-caret-up"></i> Stable</div>
+                        <div style="font-size:2.5rem; font-weight:900; color:var(--risk-low);">HIGH</div>
+                        <div style="margin-bottom:8px; color:var(--risk-low); font-size:0.8rem;"><i class="fa-solid fa-caret-up"></i> +12% Intelligence</div>
                     </div>
-                    <p style="font-size:0.8rem; opacity:0.6; margin-top:10px;">Network congestion is minimal. No major whale dumps detected in last 6h.</p>
+                    <p style="font-size:0.8rem; opacity:0.6; margin-top:10px;">Whale accumulation has increased by 40% in AI-narrative tokens over the last 4h.</p>
                 </div>
 
-                <!-- Recent Scans / Trending -->
+                <!-- Top Opportunities Feed -->
                 <div class="report-card-v2" style="grid-column: span 2;">
-                    <h4 style="color:var(--secondary-color); font-size:0.7rem; text-transform:uppercase; letter-spacing:1px; margin-bottom:15px;">Trending Risks (Community)</h4>
+                    <h4 style="color:var(--secondary-color); font-size:0.7rem; text-transform:uppercase; letter-spacing:1px; margin-bottom:15px;">Top Moonshot Opportunities (AI Curated)</h4>
                     <div style="display:flex; flex-direction:column; gap:12px;" id="trending-scans-feed">
                         <div style="display:flex; justify-content:space-between; align-items:center; padding-bottom:10px; border-bottom:1px solid rgba(255,255,255,0.05);">
                             <div style="display:flex; align-items:center; gap:10px;">
-                                <div style="color:var(--risk-high);"><i class="fa-solid fa-radiation"></i></div>
+                                <div style="color:var(--accent-vibrant);"><i class="fa-solid fa-bolt"></i></div>
                                 <div>
-                                    <div style="font-size:0.9rem; font-family:var(--font-mono);">0x71C...3a41</div>
-                                    <div style="font-size:0.7rem; color:var(--secondary-color);">Flagged as: Fake Airdrop</div>
+                                    <div style="font-size:0.9rem; font-family:var(--font-mono); font-weight:700;">$NEURAL (AI Agent)</div>
+                                    <div style="font-size:0.7rem; color:var(--secondary-color);">Alpha Score: 94% | Whale Target</div>
                                 </div>
                             </div>
-                            <div class="badge-v2 danger">HIGH RISK</div>
+                            <div class="badge-v2" style="background:var(--risk-low); color:#000; padding:4px 8px; border-radius:4px; font-weight:700; font-size:0.7rem;">BUY SIGNAL</div>
                         </div>
                         <div style="display:flex; justify-content:space-between; align-items:center; padding-bottom:10px; border-bottom:1px solid rgba(255,255,255,0.05);">
                             <div style="display:flex; align-items:center; gap:10px;">
-                                <div style="color:var(--risk-medium);"><i class="fa-solid fa-triangle-exclamation"></i></div>
+                                <div style="color:var(--synapse-purple);"><i class="fa-solid fa-brain"></i></div>
                                 <div>
-                                    <div style="font-size:0.9rem; font-family:var(--font-mono);">0x3a1...f098</div>
-                                    <div style="font-size:0.7rem; color:var(--secondary-color);">Flagged as: High Tax (99%)</div>
+                                    <div style="font-size:0.9rem; font-family:var(--font-mono); font-weight:700;">$QUANT (DePIN)</div>
+                                    <div style="font-size:0.7rem; color:var(--secondary-color);">Alpha Score: 88% | Breakout Zone</div>
                                 </div>
                             </div>
-                            <div class="badge-v2 warning">CAUTION</div>
+                            <div class="badge-v2" style="background:var(--risk-low); color:#000; padding:4px 8px; border-radius:4px; font-weight:700; font-size:0.7rem;">BUY SIGNAL</div>
                         </div>
                     </div>
                 </div>

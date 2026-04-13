@@ -1,31 +1,30 @@
 :root {
-    --bg-color: #020617;
-    --surface-color: rgba(15, 23, 42, 0.8);
-    --surface-overlay: rgba(30, 41, 59, 0.5);
-    --border-color: rgba(56, 189, 248, 0.2);
-    --border-glow: rgba(14, 165, 233, 0.3);
-    --primary-color: #f8fafc;
-    --secondary-color: #94a3b8;
-    --accent-color: #38bdf8;
-    --accent-vibrant: #0ea5e9;
-    --accent-glow: rgba(14, 165, 233, 0.2);
-    --risk-high: #ef4444;
+    --bg-color: #050505;
+    --surface-color: rgba(10, 10, 10, 0.85);
+    --surface-overlay: rgba(20, 20, 20, 0.5);
+    --border-color: rgba(0, 242, 255, 0.1);
+    --border-glow: rgba(0, 242, 255, 0.2);
+    --primary-color: #ffffff;
+    --secondary-color: #a1a1aa;
+    --accent-color: #00F2FF;
+    --accent-vibrant: #00F2FF;
+    --accent-glow: rgba(0, 242, 255, 0.2);
+    --accent-purple: #7000FF;
+    --risk-high: #ff2e2e;
     --risk-medium: #f59e0b;
-    --risk-low: #10b981;
+    --risk-low: #00ff88;
 
-    /* Landing Page Specific Tokens */
-    --neon-cyan: #06b6d4;
-    --neon-purple: #a855f7;
-    --tactical-dark: #0f172a;
-    --danger-soft: rgba(239, 68, 68, 0.1);
-    --success-soft: rgba(16, 185, 129, 0.1);
+    /* Institutional Palette */
+    --synapse-cyan: #00F2FF;
+    --synapse-purple: #7000FF;
+    --glass-blur: blur(30px);
+    --transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
     
     --font-main: 'Inter', system-ui, -apple-system, sans-serif;
-    --font-mono: 'JetBrains Mono', Consolas, monospace;
+    --font-mono: 'JetBrains Mono', monospace;
 
-    --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    --glass-blur: blur(20px);
-    --shadow-premium: 0 0 40px rgba(0,0,0,0.8), 0 0 20px inset rgba(56, 189, 248, 0.05);
+    --shadow-premium: 0 30px 60px rgba(0,0,0,0.8), 0 0 0 1px rgba(255,255,255,0.05);
+    --shadow-glow: 0 0 30px rgba(0, 242, 255, 0.15);
 }
 
 /* Tactical Scanline Effect */
@@ -137,12 +136,12 @@ a {
     transition: var(--transition);
 }
 
-.highlight {
-    background: linear-gradient(to right, #0ea5e9, #38bdf8);
+.highlight-alpha {
+    background: linear-gradient(to right, var(--synapse-cyan), var(--synapse-purple));
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
-    text-shadow: 0 0 30px rgba(14, 165, 233, 0.3);
+    text-shadow: 0 0 30px rgba(0, 242, 255, 0.2);
 }
 
 .badge {

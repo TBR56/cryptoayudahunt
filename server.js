@@ -23,7 +23,7 @@ const provider = PROVIDERS.eth; // Default
 
 const app = express();
 const PORT = process.env.PORT || 3000;
-const JWT_SECRET = process.env.JWT_SECRET || 'cryptoayuda_super_secret_key_123';
+const JWT_SECRET = process.env.JWT_SECRET || 'synapse_ai_super_intelligence_key_999';
 
 // === PayPal Configuration ===
 const clientId = "AWn_Xn6_0m5-3wM31kC3lE71x3t1U883yH5D94D6K9-2B3484h-l4B1sD7M_m0W1-v609Z_b18E1h9s5";
@@ -56,8 +56,8 @@ app.get(['/', /^\/(?!api)/], (req, res) => {
 // PURE JSON "DATABASE" — works on Vercel (no native modules)
 // ============================================================
 const DB_PATH = process.env.VERCEL
-    ? '/tmp/cryptoayuda_db.json'
-    : path.join(__dirname, 'cryptoayuda_db.json');
+    ? '/tmp/synapse_ai_db.json'
+    : path.join(__dirname, 'synapse_ai_db.json');
 
 function readDB() {
     try {
@@ -77,7 +77,7 @@ function writeDB(data) {
 }
 
 function seedAdmin(db) {
-    const adminEmail = 'admin@cryptoayuda.com';
+    const adminEmail = 'admin@synapseai.com';
     const exists = db.users.find(u => u.email === adminEmail);
     if (!exists) {
         const hash = bcrypt.hashSync('Stbr1234', 10);
@@ -275,8 +275,8 @@ app.post('/api/orders/capture', authenticateToken, async (req, res) => {
         const referrer = db.users.find(u => u.affiliateCode === user.referredBy);
         if (referrer) {
             let planPrice = 7.00;
-            if (planType === 'pro') planPrice = 19.00;
-            else if (planType === 'elite') planPrice = 39.00;
+            if (planType === 'pro') planPrice = 29.00;
+            else if (planType === 'elite') planPrice = 99.00;
             
             const commission = planPrice * 0.20; // 20% commission
             referrer.affiliateEarnings = (referrer.affiliateEarnings || 0) + commission;
@@ -343,12 +343,12 @@ function checkScanLimit(req, res, next) {
 
 // === XP / Rank System ===
 const RANKS = [
-    { name: 'Rookie',       minXP: 0,    icon: '🔰', color: '#6b7280' },
-    { name: 'Hunter',       minXP: 100,  icon: '🏹', color: '#10b981' },
-    { name: 'Silver Wolf',  minXP: 300,  icon: '🐺', color: '#94a3b8' },
-    { name: 'Gold Shark',   minXP: 700,  icon: '🦈', color: '#f59e0b' },
-    { name: 'Diamond Whale',minXP: 1500, icon: '💎', color: '#38bdf8' },
-    { name: 'Grandmaster',  minXP: 3000, icon: '👑', color: '#a855f7' }
+    { name: 'Observer',      minXP: 0,    icon: '👁️', color: '#6b7280' },
+    { name: 'Alpha Seeker',  minXP: 100,  icon: '⚡', color: '#10b981' },
+    { name: 'Intelligence',  minXP: 300,  icon: '🧠', color: '#94a3b8' },
+    { name: 'Alpha Hunter',  minXP: 700,  icon: '🦅', color: '#00F2FF' },
+    { name: 'Oracle Elite',  minXP: 1500, icon: '🔮', color: '#7000FF' },
+    { name: 'Neural Master', minXP: 3000, icon: '👑', color: '#7000FF' }
 ];
 
 function getRankFromXP(xp) {
