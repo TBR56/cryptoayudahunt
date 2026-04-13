@@ -14,17 +14,21 @@
     --risk-medium: #f59e0b;
     --risk-low: #00ff88;
 
-    /* Institutional Palette */
+    /* Layout & Design Tokens */
+    --sidebar-width: 280px;
+    --sidebar-collapsed: 80px;
+    --topbar-height: 70px;
+    --card-radius: 18px;
     --synapse-cyan: #00F2FF;
     --synapse-purple: #7000FF;
-    --glass-blur: blur(30px);
-    --transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    --glass-blur: blur(25px);
+    --transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
     
     --font-main: 'Inter', system-ui, -apple-system, sans-serif;
     --font-mono: 'JetBrains Mono', monospace;
 
     --shadow-premium: 0 30px 60px rgba(0,0,0,0.8), 0 0 0 1px rgba(255,255,255,0.05);
-    --shadow-glow: 0 0 30px rgba(0, 242, 255, 0.15);
+    --shadow-glow: 0 0 30px rgba(0, 242, 255, 0.1);
 }
 
 /* Tactical Scanline Effect */
@@ -66,11 +70,11 @@ body {
     width: 100vw;
     height: 100vh;
     background: 
-        radial-gradient(ellipse at top right, rgba(14, 165, 233, 0.15) 0%, transparent 40%),
-        radial-gradient(ellipse at bottom left, rgba(139, 92, 246, 0.1) 0%, transparent 40%),
+        radial-gradient(circle at 0% 0%, rgba(112, 0, 255, 0.12) 0%, transparent 50%),
+        radial-gradient(circle at 100% 100%, rgba(0, 242, 255, 0.08) 0%, transparent 50%),
         linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
         linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
-    background-size: 100% 100%, 100% 100%, 60px 60px, 60px 60px;
+    background-size: 100% 100%, 100% 100%, 80px 80px, 80px 80px;
     z-index: -2;
 }
 
@@ -856,7 +860,7 @@ section {
 }
 
 .dashboard-card {
-    background: rgba(10, 20, 30, 0.7);
+    background: rgba(10, 20, 30, 0.4);
     border: 1px solid var(--border-color);
     border-radius: 20px;
     backdrop-filter: blur(15px);
@@ -2413,7 +2417,7 @@ section {
 
 .sidebar-v2 {
     width: var(--sidebar-width);
-    background: rgba(2, 6, 23, 0.95);
+    background: rgba(2, 6, 23, 0.98);
     border-right: 1px solid var(--border-color);
     backdrop-filter: var(--glass-blur);
     display: flex;
@@ -2422,10 +2426,41 @@ section {
     height: 100vh;
     transition: var(--transition);
     z-index: 1000;
+    overflow-x: hidden;
 }
 
 .sidebar-v2.collapsed {
     width: var(--sidebar-collapsed);
+}
+
+.sidebar-v2.collapsed .sidebar-header span,
+.sidebar-v2.collapsed .nav-item-v2 span,
+.sidebar-v2.collapsed .sidebar-footer span,
+.sidebar-v2.collapsed div[style*="Governance"] {
+    display: none;
+}
+
+.sidebar-v2.collapsed .sidebar-header {
+    padding: 30px 0;
+    justify-content: center;
+}
+
+.sidebar-v2.collapsed .nav-item-v2 {
+    padding: 14px 0;
+    justify-content: center;
+}
+
+.sidebar-v2.collapsed .nav-item-v2 i {
+    margin: 0;
+    font-size: 1.3rem;
+}
+
+.sidebar-v2.collapsed .sidebar-footer {
+    padding: 20px 10px;
+}
+
+.sidebar-v2.collapsed .btn span {
+    display: none;
 }
 
 .sidebar-header {
@@ -2458,9 +2493,10 @@ section {
 }
 
 .nav-item-v2:hover, .nav-item-v2.active {
-    background: rgba(14, 165, 233, 0.1);
+    background: linear-gradient(90deg, rgba(14, 165, 233, 0.15), rgba(112, 0, 255, 0.05));
     color: var(--accent-vibrant);
-    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+    border-right: 2px solid var(--accent-vibrant);
 }
 
 .nav-item-v2 i {
@@ -2573,6 +2609,21 @@ section {
     margin-bottom: 8px;
 }
 
+@keyframes pulse-institutional {
+    0% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.05); opacity: 0.8; }
+    100% { transform: scale(1); opacity: 1; }
+}
+
+@keyframes neural-reveal {
+    from { opacity: 0; transform: translateY(20px); filter: blur(10px); }
+    to { opacity: 1; transform: translateY(0); filter: blur(0); }
+}
+
+.neural-report {
+    animation: neural-reveal 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
 /* REPORT v2.0 ELEMENTS */
 .report-grid {
     display: grid;
@@ -2605,20 +2656,29 @@ section {
 @media (max-width: 968px) {
     .sidebar-v2 {
         transform: translateX(-100%);
+        width: 280px !important; /* Fixed width on mobile drawer */
+        background: rgba(2, 6, 23, 0.99);
+        box-shadow: 20px 0 50px rgba(0,0,0,0.5);
     }
     .sidebar-v2.active {
         transform: translateX(0);
-        width: 100%;
     }
     .main-content-v2 {
+        margin-left: 0 !important;
+    }
+    .main-content-v2.expanded {
         margin-left: 0 !important;
     }
     .top-bar-v2 {
         padding: 0 15px;
     }
+    .sidebar-toggle-btn {
+        display: flex !important;
+    }
     .global-search-trigger {
         min-width: unset;
         flex: 1;
+        padding: 8px 15px;
     }
     .kbd-shortcut {
         display: none;

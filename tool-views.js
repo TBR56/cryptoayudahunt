@@ -17,25 +17,30 @@ window.views['tool-token'] = () => `
         </div>
     </div>
 
-    <div class="scan-bar-v2" style="background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.08); border-radius:24px; padding:10px; display:flex; gap:10px; flex-wrap:wrap; margin-bottom:40px; box-shadow:var(--shadow-premium);">
-        <div style="flex:1; display:flex; align-items:center; padding:10px 20px; min-width:300px;">
+    <div class="scan-bar-v2" style="background:rgba(10, 10, 10, 0.6); border:1px solid rgba(255, 255, 255, 0.05); border-radius:24px; padding:12px; display:flex; gap:12px; flex-wrap:wrap; margin-bottom:40px; box-shadow:var(--shadow-premium); backdrop-filter:blur(30px);">
+        <div style="flex:1; display:flex; align-items:center; padding:10px 20px; min-width:300px; background:rgba(255,255,255,0.02); border-radius:14px; border:1px solid rgba(255,255,255,0.03);">
             <i class="fa-solid fa-coins" style="color:var(--accent-color); margin-right:15px; font-size:1.2rem;"></i>
-            <input id="tt-address" type="text" placeholder="Paste Token Contract Address..." style="background:transparent; border:none; color:#fff; width:100%; font-size:1.1rem; outline:none; font-family:var(--font-mono);">
+            <input id="tt-address" type="text" placeholder="Paste Token Contract Address..." style="background:transparent; border:none; color:#fff; width:100%; font-size:1.1rem; outline:none; font-family:var(--font-mono); font-weight:600;">
         </div>
-        <select id="tt-chain" style="background:rgba(0,0,0,0.3); border:1px solid rgba(255,255,255,0.1); color:#fff; border-radius:14px; padding:0 20px; outline:none; cursor:pointer;">
-            <option value="1">Ethereum</option>
-            <option value="56">BNB Chain</option>
-            <option value="137">Polygon</option>
-            <option value="42161">Arbitrum</option>
-        </select>
-        <button id="tt-scan-btn" class="btn btn-primary" style="padding:0 30px; border-radius:16px; font-weight:800; font-size:1rem; min-height:55px;">ANALYZE DATA</button>
+        <div style="display:flex; gap:8px;">
+            <select id="tt-chain" style="background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.08); color:#fff; border-radius:14px; padding:0 20px; outline:none; cursor:pointer; font-weight:700; font-size:0.85rem;">
+                <option value="1">Ethereum</option>
+                <option value="56">BNB Chain</option>
+                <option value="137">Polygon</option>
+                <option value="42161">Arbitrum</option>
+            </select>
+            <button id="tt-scan-btn" class="btn btn-primary" style="padding:0 30px; border-radius:16px; font-weight:900; font-size:1rem; min-height:55px; letter-spacing:1px; text-transform:uppercase; background:linear-gradient(135deg, var(--synapse-cyan), #00a3af); box-shadow: 0 0 20px rgba(0, 242, 255, 0.2);">Initialize Probe</button>
+        </div>
     </div>
 
-    <div id="tt-results" style="min-height:400px; display:flex; align-items:center; justify-content:center; border:1px dashed rgba(255,255,255,0.1); border-radius:24px; background:rgba(255,255,255,0.01);">
-        <div style="text-align:center; max-width:400px; opacity:0.6;">
-            <div style="font-size:3rem; margin-bottom:20px;">🔍</div>
-            <h3 style="margin-bottom:10px;">Awaiting Neural Probe</h3>
-            <p style="font-size:0.9rem;">Paste a contract above. Our AI will analyze historical developer success, initial buyer quality, and moonshot probability in real-time.</p>
+    <div id="tt-results" class="fade-in" style="min-height:500px; display:flex; align-items:center; justify-content:center; border:1px solid rgba(255,255,255,0.03); border-radius:24px; background:linear-gradient(135deg, rgba(255,255,255,0.01) 0%, rgba(112, 0, 255, 0.02) 100%); position:relative; overflow:hidden;">
+        <div style="position:absolute; top:0; left:0; width:100%; height:100%; background:url('https://grainy-gradients.vercel.app/noise.svg'); opacity:0.03; pointer-events:none;"></div>
+        <div style="text-align:center; max-width:450px; position:relative; z-index:1;">
+            <div style="background:rgba(112, 0, 255, 0.1); width:100px; height:100px; border-radius:50%; display:flex; align-items:center; justify-content:center; margin: 0 auto 30px; border: 1px solid rgba(112, 0, 255, 0.2); box-shadow: 0 0 30px rgba(112, 0, 255, 0.15);">
+                <i class="fa-solid fa-satellite-dish" style="font-size:2.5rem; color:var(--synapse-purple); animation: pulse 2s infinite;"></i>
+            </div>
+            <h2 style="font-size:2rem; font-weight:800; margin-bottom:15px; letter-spacing:-0.5px;">Awaiting Neural Command</h2>
+            <p style="font-size:1.05rem; color:var(--secondary-color); line-height:1.6;">Paste a contract above. Our Neural Engine will perform multi-layered analysis of LP locking, developer reputation, and on-chain buy-velocity in real-time.</p>
         </div>
     </div>
 </div>
@@ -54,18 +59,21 @@ window.views['tool-wallet'] = () => `
             <div class="badge" style="background:var(--synapse-purple); border:none; color:#fff;">HUNTER RANK</div>
         </div>
     </div>
-    <div class="scan-bar-v2" style="background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.08); border-radius:24px; padding:10px; display:flex; gap:10px; flex-wrap:wrap; margin-bottom:40px; box-shadow:var(--shadow-premium);">
-        <div style="flex:1; display:flex; align-items:center; padding:10px 20px; min-width:300px;">
-            <i class="fa-solid fa-wallet" style="color:#a855f7; margin-right:15px; font-size:1.2rem;"></i>
-            <input id="tw-address" type="text" placeholder="Paste Wallet Address (0x...)" style="background:transparent; border:none; color:#fff; width:100%; font-size:1.1rem; outline:none; font-family:var(--font-mono);">
+    <div class="scan-bar-v2" style="background:rgba(10, 10, 10, 0.6); border:1px solid rgba(255, 255, 255, 0.05); border-radius:24px; padding:12px; display:flex; gap:12px; flex-wrap:wrap; margin-bottom:40px; box-shadow:var(--shadow-premium); backdrop-filter:blur(30px);">
+        <div style="flex:1; display:flex; align-items:center; padding:10px 20px; min-width:300px; background:rgba(255,255,255,0.02); border-radius:14px; border:1px solid rgba(255,255,255,0.03);">
+            <i class="fa-solid fa-wallet" style="color:var(--synapse-purple); margin-right:15px; font-size:1.2rem;"></i>
+            <input id="tw-address" type="text" placeholder="Paste Wallet Address (0x...)" style="background:transparent; border:none; color:#fff; width:100%; font-size:1.1rem; outline:none; font-family:var(--font-mono); font-weight:600;">
         </div>
-        <button id="tw-scan-btn" class="btn btn-primary" style="padding:0 30px; border-radius:16px; font-weight:800; font-size:1rem; min-height:55px; background:linear-gradient(135deg, #a855f7, #6b21a8); border:none;">PROFILE TARGET</button>
+        <button id="tw-scan-btn" class="btn btn-primary" style="padding:0 30px; border-radius:16px; font-weight:900; font-size:1rem; min-height:55px; letter-spacing:1px; text-transform:uppercase; background:linear-gradient(135deg, var(--synapse-purple), #581c87); box-shadow: 0 0 20px rgba(112, 0, 255, 0.2);">Profile Cluster</button>
     </div>
-    <div id="tw-results" style="min-height:400px; display:flex; align-items:center; justify-content:center; border:1px dashed rgba(255,255,255,0.1); border-radius:24px; background:rgba(255,255,255,0.01);">
-        <div style="text-align:center; max-width:400px; opacity:0.6;">
-            <div style="font-size:3rem; margin-bottom:20px;">🕵️‍♂️</div>
-            <h3 style="margin-bottom:10px;">Targeting Whales</h3>
-            <p style="font-size:0.9rem;">Map out Smart Money clusters, identify whale entry points, and copy the moves of the on-chain elite.</p>
+    <div id="tw-results" class="fade-in" style="min-height:500px; display:flex; align-items:center; justify-content:center; border:1px solid rgba(255,255,255,0.03); border-radius:24px; background:linear-gradient(135deg, rgba(255,255,255,0.01) 0%, rgba(0, 242, 255, 0.02) 100%); position:relative; overflow:hidden;">
+        <div style="position:absolute; top:0; left:0; width:100%; height:100%; background:url('https://grainy-gradients.vercel.app/noise.svg'); opacity:0.03; pointer-events:none;"></div>
+        <div style="text-align:center; max-width:450px; position:relative; z-index:1;">
+            <div style="background:rgba(0, 242, 255, 0.1); width:100px; height:100px; border-radius:50%; display:flex; align-items:center; justify-content:center; margin: 0 auto 30px; border: 1px solid rgba(0, 242, 255, 0.2); box-shadow: 0 0 30px rgba(0, 242, 255, 0.15);">
+                <i class="fa-solid fa-users-viewfinder" style="font-size:2.5rem; color:var(--synapse-cyan); animation: pulse 2.s infinite;"></i>
+            </div>
+            <h2 style="font-size:2rem; font-weight:800; margin-bottom:15px; letter-spacing:-0.5px;">Awaiting Target Profile</h2>
+            <p style="font-size:1.05rem; color:var(--secondary-color); line-height:1.6;">Map out Smart Money clusters, identify whale entry points, and copy the moves of the on-chain elite. Our Neural Hub tracks 5,000+ top-tier addresses daily.</p>
         </div>
     </div>
 </div>
@@ -91,11 +99,14 @@ window.views['tool-phishing'] = () => `
         </div>
         <button id="tp-scan-btn" class="btn btn-primary" style="padding:0 30px; border-radius:16px; font-weight:800; font-size:1rem; min-height:55px; background:linear-gradient(135deg, var(--risk-high), #7f1d1d); border:none;">SCAN THREAT</button>
     </div>
-    <div id="tp-results" style="min-height:400px; display:flex; align-items:center; justify-content:center; border:1px dashed rgba(255,255,255,0.1); border-radius:24px; background:rgba(255,255,255,0.01);">
-        <div style="text-align:center; max-width:400px; opacity:0.6;">
-            <div style="font-size:3rem; margin-bottom:20px;">🕸️</div>
-            <h3 style="margin-bottom:10px;">Predicting the Flow</h3>
-            <p style="font-size:0.9rem;">Analyze volume divergence, social sentiment heat-maps, and cross-chain money flow to predict the next 100% breakout narrative.</p>
+    <div id="tp-results" class="fade-in" style="min-height:500px; display:flex; align-items:center; justify-content:center; border:1px solid rgba(255,255,255,0.03); border-radius:24px; background:linear-gradient(135deg, rgba(239, 68, 68, 0.01) 0%, rgba(112, 0, 255, 0.02) 100%); position:relative; overflow:hidden;">
+        <div style="position:absolute; top:0; left:0; width:100%; height:100%; background:url('https://grainy-gradients.vercel.app/noise.svg'); opacity:0.03; pointer-events:none;"></div>
+        <div style="text-align:center; max-width:450px; position:relative; z-index:1;">
+            <div style="background:rgba(239, 68, 68, 0.1); width:100px; height:100px; border-radius:50%; display:flex; align-items:center; justify-content:center; margin: 0 auto 30px; border: 1px solid rgba(239, 68, 68, 0.2); box-shadow: 0 0 30px rgba(239, 68, 68, 0.15);">
+                <i class="fa-solid fa-bolt-lightning" style="font-size:2.5rem; color:var(--risk-high); animation: pulse 2s infinite;"></i>
+            </div>
+            <h2 style="font-size:2rem; font-weight:800; margin-bottom:15px; letter-spacing:-0.5px;">Awaiting Momentum Signal</h2>
+            <p style="font-size:1.05rem; color:var(--secondary-color); line-height:1.6;">Analyze volume divergence, social sentiment heat-maps, and cross-chain money flow to predict the next 100% breakout narrative before it goes mainstream.</p>
         </div>
     </div>
 </div>

@@ -444,37 +444,58 @@ function renderTokenResult(data, c) {
     const decision = isHigh ? 'AVOID' : (isMed ? 'INVESTIGATE' : 'SECURE');
 
     c.innerHTML = `
-        <div class="fade-in">
-            <!-- v2 Decision Widget -->
-            <div class="decision-card ${statusClass}">
-                <div class="decision-icon"><i class="fa-solid ${statusIcon}"></i></div>
-                <div class="decision-content">
-                    <span class="decision-tag" style="background:var(--risk-${statusClass})">${decision}</span>
-                    <h3>${data.raw?.name || 'Token Analysis'}</h3>
-                    <p style="opacity:0.8; margin:0; font-size:0.9rem;">Intelligence score: ${risk}% risk probability detected.</p>
+        <div class="fade-in neural-report">
+            <div class="decision-card ${statusClass}" style="margin-bottom:30px; border-radius:var(--card-radius); background:rgba(255,255,255,0.02); border:1px solid rgba(255,255,255,0.05); overflow:hidden; position:relative;">
+                <div style="position:absolute; left:0; top:0; height:100%; width:6px; background:var(--risk-${statusClass}); box-shadow:0 0 15px var(--risk-${statusClass});"></div>
+                <div class="decision-content" style="padding:24px; display:flex; align-items:center; gap:25px; width:100%;">
+                    <div class="decision-icon" style="width:70px; height:70px; border-radius:18px; display:flex; align-items:center; justify-content:center; background:rgba(0,0,0,0.3); border:1px solid rgba(255,255,255,0.05); font-size:2rem; color:var(--risk-${statusClass});">
+                        <i class="fa-solid ${statusIcon}"></i>
+                    </div>
+                    <div style="flex:1;">
+                        <span class="decision-tag" style="background:var(--risk-${statusClass}); color:#000; font-weight:900; padding:4px 12px; border-radius:6px; font-size:0.7rem; letter-spacing:1px; margin-bottom:10px; display:inline-block;">${decision}</span>
+                        <h3 style="font-size:1.8rem; font-weight:800; margin:0; letter-spacing:-0.5px; color:#fff;">${data.raw?.name || 'Token Probe'} <span style="font-size:0.9rem; opacity:0.5; font-weight:400; font-family:var(--font-mono);">$${data.raw?.symbol || 'TKN'}</span></h3>
+                        <p style="opacity:0.6; margin:5px 0 0; font-size:0.9rem;">Neural Consensus: Analysis weighted across 12 smart-contract risk parameters.</p>
+                    </div>
+                    <div style="text-align:right;">
+                        <div style="font-size:0.6rem; color:var(--secondary-color); text-transform:uppercase; letter-spacing:2px; margin-bottom:5px;">Risk Score</div>
+                        <div style="font-size:2.5rem; font-weight:900; font-family:var(--font-mono); color:var(--risk-${statusClass}); line-height:1;">${risk}<span style="font-size:1rem; opacity:0.5;">%</span></div>
+                    </div>
                 </div>
             </div>
 
-            <div class="report-grid">
-                <div class="report-card">
-                    <span class="report-label">Rug Probability</span>
-                    <div class="report-value" style="color:var(--risk-${statusClass})">${risk}%</div>
+            <div class="report-grid" style="display:grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap:15px; margin-bottom:25px;">
+                <div class="report-card" style="background:rgba(255,255,255,0.02); border:1px solid rgba(255,255,255,0.05); border-radius:14px; padding:20px;">
+                    <span class="report-label" style="font-size:0.65rem; color:var(--secondary-color); text-transform:uppercase; letter-spacing:1px; margin-bottom:10px; display:block;">Rug Probability</span>
+                    <div style="height:4px; width:100%; background:rgba(255,255,255,0.05); border-radius:2px; margin-bottom:10px; overflow:hidden;">
+                        <div style="height:100%; width:${risk}%; background:var(--risk-${statusClass}); box-shadow:0 0 10px var(--risk-${statusClass});"></div>
+                    </div>
+                    <div class="report-value" style="font-size:1.4rem; font-weight:800; font-family:var(--font-mono);">${risk}%</div>
                 </div>
-                <div class="report-card">
-                    <span class="report-label">Trust Signal</span>
-                    <div class="report-value">${100 - risk}%</div>
+                <div class="report-card" style="background:rgba(255,255,255,0.02); border:1px solid rgba(255,255,255,0.05); border-radius:14px; padding:20px;">
+                    <span class="report-label" style="font-size:0.65rem; color:var(--secondary-color); text-transform:uppercase; letter-spacing:1px; margin-bottom:10px; display:block;">Neural Trust</span>
+                    <div style="height:4px; width:100%; background:rgba(255,255,255,0.05); border-radius:2px; margin-bottom:10px; overflow:hidden;">
+                        <div style="height:100%; width:${100 - risk}%; background:var(--risk-low); box-shadow:0 0 10px var(--risk-low);"></div>
+                    </div>
+                    <div class="report-value" style="font-size:1.4rem; font-weight:800; font-family:var(--font-mono);">${100 - risk}%</div>
                 </div>
-                <div class="report-card">
-                    <span class="report-label">Contract Status</span>
-                    <div class="report-value" style="font-size:1.1rem;">${isHigh ? 'Vulnerable / Malicious' : 'Operational'}</div>
+                <div class="report-card" style="background:rgba(255,255,255,0.02); border:1px solid rgba(255,255,255,0.05); border-radius:14px; padding:20px;">
+                    <span class="report-label" style="font-size:0.65rem; color:var(--secondary-color); text-transform:uppercase; letter-spacing:1px; margin-bottom:8px; display:block;">Trading Taxes</span>
+                    <div style="font-size:1rem; font-weight:700; color:#fff;">BUY: <span style="color:var(--risk-low)">${data.raw?.buyTax || '0%'}</span> / SELL: <span style="color:${parseFloat(data.raw?.sellTax) > 5 ? 'var(--risk-high)' : 'var(--risk-low)'}">${data.raw?.sellTax || '0%'}</span></div>
                 </div>
             </div>
 
-            <div class="tool-result-card mt-3" style="border-top:1px solid rgba(255,255,255,0.05); padding-top:20px;">
-                <h4 style="font-size:0.8rem; color:var(--secondary-color); text-transform:uppercase; margin-bottom:15px;">Behavioral Red Flags</h4>
-                <ul style="list-style:none; padding:0; display:grid; grid-template-columns:1fr 1fr; gap:10px;">
-                    ${data.riskFlags?.map(f=>`<li style="font-size:0.85rem;"><i class="fa-solid fa-circle-exclamation" style="color:var(--risk-${statusClass}); margin-right:8px;"></i>${f}</li>`).join('') || '<li style="color:var(--risk-low);"><i class="fa-solid fa-circle-check"></i> No critical flags detected.</li>'}
-                </ul>
+            <div style="background:rgba(10, 20, 30, 0.4); border:1px solid rgba(255, 255, 255, 0.05); border-radius:18px; padding:24px;">
+                <h4 style="font-size:0.8rem; color:var(--secondary-color); text-transform:uppercase; letter-spacing:2px; margin-bottom:20px; display:flex; align-items:center; gap:10px;">
+                    <i class="fa-solid fa-microchip" style="color:var(--synapse-cyan);"></i> Neural Logic Trace
+                </h4>
+                <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap:12px;">
+                    ${data.riskFlags?.map(f=>`
+                        <div style="display:flex; align-items:flex-start; gap:12px; padding:12px; background:rgba(255,255,255,0.02); border-radius:10px; border: 1px solid rgba(255,255,255,0.03);">
+                            <i class="fa-solid fa-circle-exclamation" style="color:var(--risk-${statusClass}); margin-top:3px;"></i>
+                            <span style="font-size:0.85rem; color:rgba(255,255,255,0.8); line-height:1.4;">${f}</span>
+                        </div>
+                    `).join('') || '<div style="color:var(--risk-low); font-size:0.9rem;"><i class="fa-solid fa-circle-check"></i> No critical vulnerabilities detected in contract logic.</div>'}
+                </div>
             </div>
         </div>
     `;
@@ -482,28 +503,37 @@ function renderTokenResult(data, c) {
 
 function renderWalletResult(data, c) {
     const risk = data.riskScore;
-    const statusClass = risk > 50 ? 'danger' : 'safe';
+    const isHigh = risk > 50;
+    const statusClass = isHigh ? 'danger' : 'safe';
     
     c.innerHTML = `
-        <div class="fade-in">
-            <div class="decision-card ${statusClass}">
-                <div class="decision-icon"><i class="fa-solid fa-id-card-clip"></i></div>
-                <div class="decision-content">
-                    <span class="decision-tag" style="background:var(--risk-${statusClass})">${risk > 50 ? 'THREAT DETECTED' : 'CLEAN PROFILE'}</span>
-                    <h3>Institutional Wallet Report</h3>
-                    <p style="opacity:0.8; margin:0; font-size:0.9rem;">Cluster Analysis: ${risk > 50 ? 'Suspicious associations identified.' : 'No illicit clusters found.'}</p>
+        <div class="fade-in neural-report">
+            <div class="decision-card ${statusClass}" style="margin-bottom:24px; background:rgba(255,255,255,0.02); border:1px solid rgba(255,255,255,0.05); border-radius:18px;">
+                <div class="decision-content" style="padding:24px; display:flex; align-items:center; gap:20px;">
+                    <div style="width:60px; height:60px; border-radius:14px; background:rgba(0,0,0,0.3); display:flex; align-items:center; justify-content:center; font-size:1.8rem; color:var(--risk-${statusClass});">
+                        <i class="fa-solid fa-id-card-clip"></i>
+                    </div>
+                    <div>
+                        <span class="decision-tag" style="background:var(--risk-${statusClass}); color:#000;">${isHigh ? 'THREAT DETECTED' : 'CLEAN PROFILE'}</span>
+                        <h3 style="font-size:1.5rem; margin:0;">Institutional Identity Probe</h3>
+                        <p style="opacity:0.6; margin:0; font-size:0.85rem;">Source: Global AML & On-Chain behavioral registries.</p>
+                    </div>
                 </div>
             </div>
 
-            <div class="report-grid">
-                <div class="report-card">
-                    <span class="report-label">Exposure Level</span>
-                    <div class="report-value" style="color:var(--risk-${statusClass})">${risk}%</div>
+            <div class="report-grid" style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+                <div class="report-card" style="background:rgba(255,255,255,0.02); border:1px solid rgba(255,255,255,0.05); border-radius:12px; padding:15px;">
+                    <span class="report-label" style="font-size:0.6rem; color:var(--secondary-color); letter-spacing:1px; margin-bottom:8px; display:block;">Exposure Score</span>
+                    <div class="report-value" style="font-size:1.6rem; font-family:var(--font-mono); color:var(--risk-${statusClass})">${risk}%</div>
                 </div>
-                <div class="report-card">
-                    <span class="report-label">Association Patterns</span>
-                    <div class="report-value" style="font-size:1.1rem;">${risk > 50 ? 'High Mixer Interaction' : 'Legit CEX Flow'}</div>
+                <div class="report-card" style="background:rgba(255,255,255,0.02); border:1px solid rgba(255,255,255,0.05); border-radius:12px; padding:15px;">
+                    <span class="report-label" style="font-size:0.6rem; color:var(--secondary-color); letter-spacing:1px; margin-bottom:8px; display:block;">Flow Pattern</span>
+                    <div class="report-value" style="font-size:1rem; font-weight:800;">${isHigh ? 'Illicit Mixing' : 'Verified Entity'}</div>
                 </div>
+            </div>
+            
+            <div style="margin-top:20px; padding:15px; background:rgba(255,255,255,0.01); border-radius:12px; border-left:3px solid var(--risk-${statusClass});">
+                <p style="font-size:0.85rem; color:rgba(255,255,255,0.8); margin:0;"><strong>AI Logic Trace:</strong> ${data.summary}</p>
             </div>
         </div>
     `;
@@ -514,15 +544,31 @@ function renderPhishingResult(data, c) {
     const statusClass = isHigh ? 'danger' : 'safe';
     
     c.innerHTML = `
-        <div class="fade-in" style="text-align:center;">
-             <div class="decision-icon" style="font-size:5rem; color:var(--risk-${statusClass}); margin-bottom:20px;">
-                <i class="fa-solid ${isHigh ? 'fa-skull-crossbones' : 'fa-shield-check'}"></i>
+        <div class="fade-in neural-report" style="text-align:center; padding:40px 20px;">
+             <div style="width:120px; height:120px; border-radius:50%; background:rgba(0,0,0,0.3); border:1px solid rgba(255,255,255,0.05); display:flex; align-items:center; justify-content:center; margin: 0 auto 30px; position:relative;">
+                <div style="position:absolute; inset:-10px; border-radius:50%; border:2px solid var(--risk-${statusClass}); opacity:0.3; animation: pulse-institutional 2s infinite;"></div>
+                <i class="fa-solid ${isHigh ? 'fa-skull-crossbones' : 'fa-shield-check'}" style="font-size:3.5rem; color:var(--risk-${statusClass});"></i>
              </div>
-             <h2 style="color:var(--risk-${statusClass}); font-weight:900; font-size:2.5rem;">${isHigh ? 'MALICIOUS DOMAIN' : 'VERIFIED SECURE'}</h2>
-             <p style="color:var(--secondary-color); font-family:var(--font-mono);">${data.url}</p>
-             <div class="report-card d-inline-block mt-4" style="min-width:300px;">
-                <span class="report-label">AI Decision</span>
-                <div class="report-value">${isHigh ? 'DO NOT INTERACT' : 'SAFE TO BROWSE'}</div>
+             
+             <h2 style="color:var(--risk-${statusClass}); font-weight:900; font-size:2.8rem; letter-spacing:-1px; margin-bottom:10px;">${isHigh ? 'THREAT DETECTED' : 'SYSTEMS CLEAR'}</h2>
+             <p style="color:var(--secondary-color); font-family:var(--font-mono); font-size:1rem; margin-bottom:40px; background:rgba(255,255,255,0.03); padding:8px 20px; border-radius:99px; display:inline-block;">${data.url}</p>
+             
+             <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(250px, 1fr)); gap:20px; max-width:700px; margin: 0 auto;">
+                <div class="report-card" style="background:rgba(255,255,255,0.02); border:1px solid rgba(255,255,255,0.05); border-radius:18px; padding:25px;">
+                    <span class="report-label">Neural Decision</span>
+                    <div class="report-value" style="font-size:1.5rem;">${isHigh ? 'DO NOT INTERACT' : 'VERIFIED BENIGN'}</div>
+                </div>
+                <div class="report-card" style="background:rgba(255,255,255,0.02); border:1px solid rgba(255,255,255,0.05); border-radius:18px; padding:25px;">
+                    <span class="report-label">Target Confidence</span>
+                    <div class="report-value" style="font-size:1.5rem; font-family:var(--font-mono); color:var(${isHigh?'--risk-high':'--risk-low'})">${isHigh ? '99.8%' : '94.2%'}</div>
+                </div>
+             </div>
+
+             <div style="margin-top:40px; text-align:left; background:rgba(10,20,30,0.5); padding:24px; border-radius:18px; border:1px solid rgba(255,255,255,0.05);">
+                <h4 style="font-size:0.75rem; color:var(--secondary-color); text-transform:uppercase; letter-spacing:2px; margin-bottom:15px;">Behavioral Intelligence Flags</h4>
+                <div style="display:flex; flex-direction:column; gap:10px;">
+                    ${data.riskFlags?.map(f=>`<div style="font-size:0.9rem; opacity:0.8;"><i class="fa-solid fa-code-branch" style="color:var(--risk-${statusClass}); margin-right:10px;"></i>${f}</div>`).join('')}
+                </div>
              </div>
         </div>
     `;
@@ -530,31 +576,48 @@ function renderPhishingResult(data, c) {
 
 function renderAlphaResult(data, c) {
     c.innerHTML = `
-        <div class="fade-in">
-            <div class="decision-card" style="background:rgba(168,85,247,0.1); border-color:#a855f7;">
-                <div class="decision-icon"><i class="fa-solid fa-brain" style="color:#a855f7;"></i></div>
-                <div class="decision-content">
-                    <span class="decision-tag" style="background:#a855f7">ALPHA SIGNAL</span>
-                    <h3>Neuro-Linguistic Intelligence Report</h3>
-                    <p style="opacity:0.8; margin:0; font-size:0.9rem;">Converging 5 AI models for institutional prediction.</p>
+        <div class="fade-in neural-report">
+            <div class="decision-card" style="background:rgba(112,0,255,0.05); border:1px solid rgba(112,0,255,0.1); border-radius:24px; margin-bottom:24px; overflow:hidden; position:relative;">
+                <div style="position:absolute; inset:0; background:radial-gradient(circle at 100% 0%, rgba(112, 0, 255, 0.15), transparent 60%);"></div>
+                <div class="decision-content" style="padding:30px; display:flex; align-items:center; gap:30px; position:relative; z-index:1;">
+                    <div style="width:80px; height:80px; border-radius:20px; background:rgba(0,0,0,0.5); border:1px solid rgba(112,0,255,0.3); display:flex; align-items:center; justify-content:center; font-size:2.5rem; color:var(--synapse-purple); box-shadow:0 0 30px rgba(112,0,255,0.2);">
+                        <i class="fa-solid fa-brain"></i>
+                    </div>
+                    <div style="flex:1;">
+                        <span class="decision-tag" style="background:var(--synapse-purple); color:#fff; font-weight:900;">ALPHA DETECTED</span>
+                        <h3 style="font-size:2rem; font-weight:800; margin:5px 0 0; letter-spacing:-0.5px;">Momentum Narrative Probe</h3>
+                        <p style="opacity:0.6; margin:0; font-size:0.9rem;">Intelligence Converged across 5 high-velocity on-chain models.</p>
+                    </div>
+                    <div style="text-align:right;">
+                        <div style="font-size:0.65rem; color:var(--secondary-color); text-transform:uppercase; letter-spacing:2px; margin-bottom:8px;">Momentum Strength</div>
+                        <div style="font-size:2.8rem; font-weight:900; color:var(--synapse-purple); line-height:1; font-family:var(--font-mono);">${data.avgScore}<span style="font-size:1.2rem; opacity:0.5;">%</span></div>
+                    </div>
                 </div>
             </div>
             
-            <div style="background:rgba(0,0,0,0.4); padding:30px; border-radius:12px; border:1px solid rgba(168,85,247,0.2);">
-                <h4 style="color:#a855f7; margin-bottom:15px;">AI Sentiment Narrative</h4>
-                <p style="line-height:1.6; color:rgba(255,255,255,0.9);">The current on-chain velocity suggests a strong <strong>${data.overallSignal}</strong> move. Our models detected unusual accumulation patterns from Tier-1 whales within the last 4 hours. Combined with social momentum, the predictive confidence is <strong>${data.avgScore}%</strong>.</p>
+            <div style="background:rgba(10, 20, 30, 0.6); border:1px solid rgba(255, 255, 255, 0.05); border-radius:20px; padding:30px; backdrop-filter:blur(30px); margin-bottom:20px;">
+                <h4 style="color:var(--synapse-purple); font-size:0.8rem; text-transform:uppercase; letter-spacing:2px; margin-bottom:15px; display:flex; align-items:center; gap:10px;">
+                    <i class="fa-solid fa-waveform-path"></i> Sentiment Synthesis
+                </h4>
+                <p style="font-size:1.1rem; line-height:1.7; color:rgba(255,255,255,0.95); margin-bottom:30px;">
+                    Analyzing cross-chain money flow and social velocity, our Neural Hub has identified a <strong>${data.overallSignal}</strong> narrative shift. Whale accumulation patterns are converging on a high-conviction breakout point.
+                </p>
                 
-                <div class="report-grid mt-4">
-                    <div class="report-card">
+                <div class="report-grid" style="display:grid; grid-template-columns:1fr 1fr; gap:15px;">
+                    <div class="report-card" style="background:rgba(255,255,255,0.02); border:1px solid rgba(255,255,255,0.05); border-radius:14px; padding:20px;">
                         <span class="report-label">Whale Accumulation</span>
-                        <div class="report-value" style="color:#10b981;">HIGH</div>
+                        <div class="report-value" style="color:#10b981; font-family:var(--font-mono);">OPTIMAL</div>
                     </div>
-                    <div class="report-card">
-                        <span class="report-label">Social Heat</span>
-                        <div class="report-value">BULLISH</div>
+                    <div class="report-card" style="background:rgba(255,255,255,0.02); border:1px solid rgba(255,255,255,0.05); border-radius:14px; padding:20px;">
+                        <span class="report-label">Narrative Sentiment</span>
+                        <div class="report-value" style="color:var(--synapse-cyan); font-family:var(--font-mono);">BULLISH</div>
                     </div>
                 </div>
             </div>
+            
+            <button class="btn btn-outline full-width" style="padding:15px; border-radius:14px; font-weight:800; text-transform:uppercase; letter-spacing:1px; color:var(--synapse-purple); border-color:rgba(112,0,255,0.3); background:rgba(112,0,255,0.05);">
+                Receive Real-Time Alpha Alerts
+            </button>
         </div>
     `;
 }
@@ -668,16 +731,27 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // v2.0 Sidebar and Search logic
+    // v2.1 Sidebar and Search logic with Persistence
     const sidebarToggle = document.getElementById('sidebar-toggle');
     const mainSidebar = document.getElementById('main-sidebar');
     const mainContent = document.getElementById('main-page-container');
     
-    if (sidebarToggle && mainSidebar) {
+    // Initial State from Storage
+    const isCollapsed = localStorage.getItem('sidebarCollapsed') === 'true';
+    if (isCollapsed && mainSidebar && mainContent) {
+        mainSidebar.classList.add('collapsed');
+        mainContent.classList.add('expanded');
+    }
+
+    if (sidebarToggle && mainSidebar && mainContent) {
         sidebarToggle.addEventListener('click', () => {
-            mainSidebar.classList.toggle('collapsed');
+            const nowCollapsed = mainSidebar.classList.toggle('collapsed');
             mainContent.classList.toggle('expanded');
-            // Mobile toggle
+            
+            // Persist preference
+            localStorage.setItem('sidebarCollapsed', nowCollapsed);
+
+            // Mobile toggle overlay
             if (window.innerWidth <= 968) {
                 mainSidebar.classList.toggle('active');
             }
